@@ -16,7 +16,7 @@ fi
 mkdir -p /opt/telepathy/
 mkdir -p /etc/telepathy/
 cd /opt/telepathy/
-kill $(ps -ef | grep telepathy-client | tr -s " " | cut -f2 -d" ") >> /dev/null || true
+kill $(ps -ef | grep telepathy-client | grep -v installer | tr -s " " | cut -f2 -d" ") >> /dev/null || true
 
 # Binaries
 rm -fr telepathy-client-installer.sh
