@@ -10,4 +10,5 @@ services:
       - ../package.json:/opt/app/package.json
       - ../package-lock.json:/opt/app/package-lock.json
       - ./start-cmd-dev.sh:/start-cmd.sh
-      - ./config-sample.json:/etc/telepathy/config.json
+      - ./sample-config-client.json:/etc/telepathy/config-client.json
+      - ./sample-version-client:/opt/telepathy/version-client
