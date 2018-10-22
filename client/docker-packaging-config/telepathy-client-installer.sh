@@ -6,6 +6,9 @@ set -e
 if [ "$(uname -a | grep Linux | grep x86_64)" != "" ]; then
     ARCH=linux-x64
 fi
+if [ "$(uname -a | grep Linux | grep armv7)" != "" ]; then
+    ARCH=linux-armv7
+fi
 if [ "${ARCH}" == "" ]; then
     echo Unsupported achitecture
     exit 1
