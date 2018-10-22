@@ -5,12 +5,12 @@ import { Timeout } from './utils-std-ts/timeout';
 
 const logger = new Logger('app');
 
-logger.info(`====== Starting Telepaty-Client ======`);
+logger.info(`====== Starting Telepathy-Client ======`);
 
 Promise.resolve().then(async () => {
   while (true) {
     await config.reload();
     await Updater.checkUpdate();
-    await Timeout.wait(10000);
+    await Timeout.wait(30 * 60 * 1000);
   }
 });
