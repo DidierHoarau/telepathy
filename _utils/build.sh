@@ -10,9 +10,8 @@ mkdir -p ../builds/
 
 # Client
 
-cd client
+cd agent
 npm install
 npm run packaging:init
 
 npm run binary:linux:x64
-npm run binary:linux:armv7
