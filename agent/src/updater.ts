@@ -22,7 +22,6 @@ export class Updater {
 
   private static async checkUpdate(): Promise<void> {
     logger.debug('Checking update');
-    console.log(config.UPDATE_URL_INFO);
     const data = await HttpTools.get({ url: config.UPDATE_URL_INFO, json: false });
     const builds = data.split('\n');
     for (const build of builds) {
