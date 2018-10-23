@@ -31,8 +31,8 @@ cat telepathy-agent-list | grep ${ARCH} | cut -f2 -d":" > version
 if [ ! -f /etc/telepathy/config-agent.json ]; then
 echo '{
     "UPDATE_AUTO": true,
-    "UPDATE_URL_INFO": "https://s3-ap-southeast-1.amazonaws.com/telepathy-dist/telepathy-list",
-    "UPDATE_URL_BINARY": "https://s3-ap-southeast-1.amazonaws.com/telepathy-dist/telepathy-agent-linux-x64"
+    "UPDATE_URL_INFO": "https://s3-ap-southeast-1.amazonaws.com/telepathy-dist/telepathy-agent-list",
+    "UPDATE_URL_BINARY": "https://s3-ap-southeast-1.amazonaws.com/telepathy-dist/telepathy-agent-'${ARCH}'"
 }
 ' > /etc/telepathy/config-agent.json
 fi
