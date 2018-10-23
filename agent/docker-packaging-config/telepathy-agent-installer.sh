@@ -27,7 +27,7 @@ wget https://s3-ap-southeast-1.amazonaws.com/telepathy-dist/telepathy-agent-inst
 
 # Config
 cd /opt/telepathy/
-cat telepathy-agent-list | grep ${ARCH} | cut -f2 -d":" > version
+cat telepathy-agent-list | grep ${ARCH} | cut -f2 -d":" > version-agent
 if [ ! -f /etc/telepathy/config-agent.json ]; then
 echo '{
     "UPDATE_AUTO": true,
