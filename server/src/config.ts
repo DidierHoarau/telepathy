@@ -1,18 +1,18 @@
 import * as fse from 'fs-extra';
-import * as os from 'os';
 
 class Config {
   //
-  public readonly VERSION_FILE: string = '/opt/telepathy/version-agent';
-  public readonly CONFIG_FILE: string = '/etc/telepathy/config-agent.json';
-  public ARCH: string = 'telepathy-agent-linux-x64';
+  public readonly CONFIG_FILE: string = '/etc/telepathy/config-server.json';
+  public readonly VERSION_FILE: string = '/opt/telepathy/version-server';
+  public readonly API_PORT: number = 3000;
+  public ARCH: string = 'telepathy-server-linux-x64';
   public VERSION: string = 'undefined';
   public UPDATE_AUTO: boolean = false;
   public UPDATE_URL_INFO: string = 'undefined';
   public UPDATE_URL_BINARY: string = 'undefined';
   public MANAGED_FOLDERS: string[] = [];
   public SERVERS: string[] = [];
-  public AGENT_ID: string = os.hostname();
+  public AGENT_REGISTRATION_DURATION: number = 30 * 60 * 1000;
 
   public constructor() {
     this.reload();
@@ -30,7 +30,6 @@ class Config {
     setIfSet('UPDATE_URL_BINARY');
     setIfSet('MANAGED_FOLDERS');
     setIfSet('SERVERS');
-    setIfSet('AGENT_ID');
     try {
       this.VERSION = (await fse.readFile(this.VERSION_FILE)).toString().split('\n')[0];
     } catch (err) {

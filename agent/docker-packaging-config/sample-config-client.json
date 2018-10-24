@@ -1,5 +1,0 @@
-{
-  "UPDATE_AUTO": true,
-  "UPDATE_URL_INFO": "https://s3-ap-southeast-1.amazonaws.com/telepathy-dist/telepathy-agent-list",
-  "UPDATE_URL_BINARY": "https://s3-ap-southeast-1.amazonaws.com/telepathy-dist/telepathy-agent-linux-x64"
-}

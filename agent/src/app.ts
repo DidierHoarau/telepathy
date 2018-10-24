@@ -1,7 +1,9 @@
+import { watchFile } from 'fs-extra';
 import { config } from './config';
+import { ManagedFolders } from './managed-folders';
+import { ServerLink } from './server-link';
 import { Updater } from './updater';
 import { Logger } from './utils-std-ts/logger';
-import { Timeout } from './utils-std-ts/timeout';
 
 const logger = new Logger('app');
 
@@ -9,9 +11,11 @@ logger.info(`====== Starting Telepathy Agent ======`);
 
 Promise.resolve().then(async () => {
   await config.reload();
-  await Updater.startAutoUpdater();
-  while (true) {
-    await config.reload();
-    await Timeout.wait(30 * 60 * 1000);
-  }
+  watchFile(config.CONFIG_FILE, () => {
+    logger.info(`Config updated: ${config.CONFIG_FILE}`);
+    config.reload();
+  });
+  Updater.startAutoUpdater();
+  await ManagedFolders.load();
+  ServerLink.connect();
 });

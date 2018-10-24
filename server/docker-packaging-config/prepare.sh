@@ -4,6 +4,7 @@ set -e
 
 rm -fr $PROJECT_DIR/node_modules
 npm install --only=production
+npm install
 
 npm run lint
 
