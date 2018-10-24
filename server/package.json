@@ -1,5 +1,5 @@
 {
-  "name": "telepathy-agent",
+  "name": "telepathy-server",
   "version": "2018.10.0",
   "author": "",
   "license": "MIT",
@@ -19,9 +19,9 @@
     "dev": "npm run build && NODE_ENV=dev concurrently --kill-others \"tsc -w\" \"nodemon dist/app.js\"",
     "dev:docker": "docker-packaging-config/start-dev-docker.sh || true",
     "dev:test": "NODE_ENV=dev jest --watch --coverage",
-    "binary:linux:x64": "npm run build && pkg dist/app.js --target node10-linux-x64 --output ../builds/telepathy-agent-linux-x64",
-    "binary:linux:armv6": "npm run build && pkg dist/app.js --target node10-linux-armv7 --output ../builds/telepathy-agent-linux-armv6",
-    "binary:linux:armv7": "npm run build && pkg dist/app.js --target node10-linux-armv7 --output ../builds/telepathy-agent-linux-armv7"
+    "binary:linux:x64": "npm run build && pkg dist/app.js --target node10-linux-x64 --output ../builds/telepathy-server-linux-x64",
+    "binary:linux:armv6": "npm run build && pkg dist/app.js --target node10-linux-armv7 --output ../builds/telepathy-server-linux-armv6",
+    "binary:linux:armv7": "npm run build && pkg dist/app.js --target node10-linux-armv7 --output ../builds/telepathy-server-linux-armv7"
   },
   "dependencies": {
     "express": "^4.16.4",

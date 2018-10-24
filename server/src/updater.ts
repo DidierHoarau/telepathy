@@ -33,7 +33,7 @@ export class Updater {
         buildInfo[1] !== config.VERSION
       ) {
         logger.info(`Update available: ${config.VERSION} -> ${buildInfo[1]}`);
-        childProcess.spawn('/opt/telepathy/telepathy-agent-installer.sh', {
+        childProcess.spawn('/opt/telepathy/telepathy-server-installer.sh', {
           detached: true
         } as any);
       }

@@ -1,0 +1,7 @@
+{
+  "UPDATE_AUTO": false,
+  "UPDATE_URL_INFO": "https://s3-ap-southeast-1.amazonaws.com/telepathy-dist/telepathy-agent-list",
+  "UPDATE_URL_BINARY": "https://s3-ap-southeast-1.amazonaws.com/telepathy-dist/telepathy-agent-linux-x64",
+  "MANAGED_FOLDERS": ["/home/test/shared"],
+  "SERVERS": ["192.168.56.111:3000"]
+}
