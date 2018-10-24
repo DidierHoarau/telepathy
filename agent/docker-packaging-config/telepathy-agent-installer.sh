@@ -44,13 +44,13 @@ chmod +x telepathy-agent-installer.sh
 chmod +x telepathy-agent-${ARCH}
 ./telepathy-agent-${ARCH} &
 echo '[Unit]
-Description = Telepathy server
+Description = Telepathy agent
 After = network.target
 
 [Service]
 ExecStart = /opt/telepathy/telepathy-agent-'${ARCH}'
 
 [Install]
-WantedBy = multi-user.target' > /etc/systemd/system/telepathy.service
-systemctl enable telepathy.service
-systemctl restart telepathy.service
+WantedBy = multi-user.target' > /etc/systemd/system/telepathy-agent.service
+systemctl enable telepathy-agent.service
+systemctl restart telepathy-agent.service

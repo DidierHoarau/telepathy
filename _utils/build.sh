@@ -8,10 +8,14 @@ cd ${REPO_DIR}
 
 mkdir -p ../builds/
 
-# Client
-
+# Agent
 cd agent
 npm install
 npm run packaging:init
+npm run binary:linux:x64
 
+# Server
+cd server
+npm install
+npm run packaging:init
 npm run binary:linux:x64
