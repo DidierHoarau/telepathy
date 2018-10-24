@@ -15,7 +15,7 @@ npm run packaging:init
 npm run binary:linux:x64
 
 # Server
-cd agent
+cd server
 npm install
 npm run packaging:init
 npm run binary:linux:x64
