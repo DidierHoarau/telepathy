@@ -45,7 +45,6 @@ rm telepathy-agent-list
 cd /opt/telepathy/
 chmod +x telepathy-agent-installer.sh
 chmod +x telepathy-agent-${ARCH}
-./telepathy-agent-${ARCH} &
 echo '[Unit]
 Description = Telepathy agent
 After = network.target

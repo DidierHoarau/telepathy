@@ -45,7 +45,6 @@ rm telepathy-server-list
 cd /opt/telepathy/
 chmod +x telepathy-server-installer.sh
 chmod +x telepathy-server-${ARCH}
-./telepathy-server-${ARCH} &
 echo '[Unit]
 Description = Telepathy server
 After = network.target
