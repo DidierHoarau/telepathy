@@ -13,6 +13,8 @@ class Config {
   public MANAGED_FOLDERS: string[] = [];
   public SERVERS: string[] = [];
   public AGENT_ID: string = os.hostname();
+  public SCAN_CYCLE_TIME: number = 2 * 60 * 1000;
+  public LOG_DEBUG: boolean = false;
 
   public constructor() {
     this.reload();
@@ -31,6 +33,8 @@ class Config {
     setIfSet('MANAGED_FOLDERS');
     setIfSet('SERVERS');
     setIfSet('AGENT_ID');
+    setIfSet('SCAN_CYCLE_TIME');
+    setIfSet('LOG_DEBUG');
     try {
       this.VERSION = (await fse.readFile(this.VERSION_FILE)).toString().split('\n')[0];
     } catch (err) {

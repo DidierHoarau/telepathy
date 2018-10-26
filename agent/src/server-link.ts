@@ -20,7 +20,7 @@ export class ServerLink {
             logger.error(`Can not connect to server: ${error}`);
           });
         }
-        await Timeout.wait(2 * 30 * 1000);
+        await Timeout.wait(config.SCAN_CYCLE_TIME);
       }
     });
   }

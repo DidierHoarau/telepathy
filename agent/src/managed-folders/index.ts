@@ -31,7 +31,7 @@ export class ManagedFolders {
           });
         }
         managedFolders = newFolders;
-        await Timeout.wait(1 * 60 * 1000);
+        await Timeout.wait(config.SCAN_CYCLE_TIME);
       }
     });
   }

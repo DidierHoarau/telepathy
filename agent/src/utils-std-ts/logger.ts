@@ -1,9 +1,4 @@
-const DEV_MODE = (() => {
-  if (process.env.NODE_ENV === 'dev') {
-    return true;
-  }
-  return false;
-})();
+import { config } from '../config';
 
 export class Logger {
   private module: string;
@@ -13,7 +8,7 @@ export class Logger {
   }
 
   public debug(message: Error | string | any): void {
-    if (DEV_MODE) {
+    if (config.LOG_DEBUG) {
       this.display('debug', message);
     }
   }
