@@ -15,7 +15,7 @@ export class ServerLink {
             json: {
               agent_id: config.AGENT_ID
             },
-            url: `http://${serverUrl}/agents`
+            url: `${serverUrl}/agents`
           }).catch(error => {
             logger.error(`Can not connect to server: ${error}`);
           });
