@@ -10,6 +10,7 @@ export class ServerLink {
   public static connect(): void {
     Promise.resolve().then(async () => {
       while (true) {
+        logger.debug(`Contacting server(s)`);
         for (const serverUrl of config.SERVERS) {
           await HttpTools.post({
             json: {
