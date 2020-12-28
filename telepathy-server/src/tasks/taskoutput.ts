@@ -9,4 +9,3 @@ export class TaskOutput {
     this.value = "";
   }
 }
-  

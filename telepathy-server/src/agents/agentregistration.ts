@@ -1,10 +1,10 @@
-import * as _ from 'lodash';
-import { config } from '../config';
-import { Logger } from '../utils-std-ts/logger';
-import { Timeout } from '../utils-std-ts/timeout';
-import { Agent } from './agent';
+import * as _ from "lodash";
+import { config } from "../config";
+import { Logger } from "../utils-std-ts/logger";
+import { Timeout } from "../utils-std-ts/timeout";
+import { Agent } from "./agent";
 
-const logger = new Logger('agents/agentregistration');
+const logger = new Logger("agents/agentregistration");
 
 export class AgentRegistration {
   //
@@ -15,10 +15,12 @@ export class AgentRegistration {
   }
 
   public async register(newAgent: Agent): Promise<void> {
-    const knownAgent = _.find(this.registeredAgents, { agentId: newAgent.agentId });
+    const knownAgent = _.find(this.registeredAgents, {
+      agentId: newAgent.agentId,
+    });
     if (knownAgent) {
       knownAgent.lastSyncDate = new Date();
-    } else { 
+    } else {
       logger.info(`New agent registered: ${newAgent.agentId}`);
       newAgent.lastSyncDate = new Date();
       this.registeredAgents.push(newAgent);
@@ -33,11 +35,13 @@ export class AgentRegistration {
             this.registeredAgents[i].lastSyncDate.getTime() <
             new Date().getTime() - config.AGENT_REGISTRATION_DURATION
           ) {
-            logger.info(`Agent un-registered: ${this.registeredAgents[i].agentId}`);
+            logger.info(
+              `Agent un-registered: ${this.registeredAgents[i].agentId}`
+            );
             this.registeredAgents.splice(i, 1);
           }
         }
-        await Timeout.wait(config.AGENT_REGISTRATION_DURATION / 2);
+        await Timeout.wait((1000 * config.AGENT_REGISTRATION_DURATION) / 2);
       }
     });
   }

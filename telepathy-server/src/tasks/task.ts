@@ -1,14 +1,16 @@
-import { TaskOutput } from "./taskoutput";
+import { TaskOutput } from "./taskOutput";
 
 export class Task {
   //
-  public script: Date;
+  public script: string;
   public outputRaw: string;
   public outputs: TaskOutput[];
+  public status: string;
+  public success: boolean = false;
+  public agentId: string;
 
   constructor() {
     this.outputRaw = "";
     this.outputs = [];
   }
 }
-  

@@ -1,20 +1,17 @@
-import * as fse from 'fs-extra';
-import * as os from 'os';
+import * as fse from "fs-extra";
+import * as os from "os";
+import { Logger } from "./utils-std-ts/logger";
+
+const logger = new Logger("config");
 
 class Config {
   //
-  public readonly VERSION_FILE: string = '/opt/telepathy/version-agent';
   public readonly CONFIG_FILE: string = process.env.TELEPATHY_CONFIG;
-  public ARCH: string = 'telepathy-agent-linux-x64';
-  public VERSION: string = 'undefined';
-  public UPDATE_AUTO: boolean = false;
-  public UPDATE_URL_INFO: string = 'undefined';
-  public UPDATE_URL_BINARY: string = 'undefined';
-  public MANAGED_FOLDERS: string[] = [];
+  public VERSION: number = 1;
   public SERVER: string = "";
   public AGENT_ID: string = os.hostname();
-  public SCAN_CYCLE_TIME: number = 2 * 60 * 1000;
   public LOG_DEBUG: boolean = false;
+  public HEARTBEAT_CYCLE: number = 60;
 
   public constructor() {
     this.reload();
@@ -22,24 +19,18 @@ class Config {
 
   public async reload(): Promise<void> {
     const content = await fse.readJson(this.CONFIG_FILE);
-    const setIfSet = field => {
+    const setIfSet = (field) => {
       if (content[field]) {
         this[field] = content[field];
       }
+      logger.info(`Configuration Value: ${field}: ${this[field]}`);
     };
-    setIfSet('UPDATE_AUTO');
-    setIfSet('UPDATE_URL_INFO');
-    setIfSet('UPDATE_URL_BINARY');
-    setIfSet('MANAGED_FOLDERS');
-    setIfSet('SERVER');
-    setIfSet('AGENT_ID');
-    setIfSet('SCAN_CYCLE_TIME');
-    setIfSet('LOG_DEBUG');
-    try {
-      this.VERSION = (await fse.readFile(this.VERSION_FILE)).toString().split('\n')[0];
-    } catch (err) {
-      this.VERSION = 'undefined';
-    }
+    logger.info(`Configuration Value: CONFIG_FILE: ${this.CONFIG_FILE}`);
+    logger.info(`Configuration Value: VERSION: ${this.VERSION}`);
+    setIfSet("SERVER");
+    setIfSet("AGENT_ID");
+    setIfSet("HEARTBEAT_CYCLE");
+    setIfSet("LOG_DEBUG");
   }
 }
 

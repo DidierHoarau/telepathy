@@ -1,3 +1,4 @@
 {
-    "SERVER": "http://localhost:3000"
+    "SERVER": "http://localhost:8080",
+    "HEARTBEAT_CYCLE": 10
 }
