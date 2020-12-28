@@ -1,0 +1,74 @@
+{
+  "name": "telepathy-agent",
+  "version": "2018.10.0",
+  "author": "",
+  "license": "MIT",
+  "scripts": {
+    "packaging:init": "rm -fr docker-packaging && cp -R ../_shared/docker-packaging . && chmod +x docker-packaging-config/*.sh && docker-packaging-config/init.sh",
+    "//": "-------------------------------------------------------------------",
+    "packaging:prepare": "docker-packaging/prepare.sh",
+    "packaging:image-build": "docker-packaging/image-build.sh",
+    "packaging:image-push": "docker-packaging/image-push.sh",
+    "packaging:service-deploy": "docker-packaging/service-deploy.sh",
+    "packaging:service-run": "docker-packaging/service-run.sh",
+    "///": "------------------------------------------------------------------",
+    "build": "tsc",
+    "lint": "tslint --project tsconfig.json ./src/**/*.ts || exit 1",
+    "test:unit": "npm run lint && NODE_ENV=dev jest --watch --coverage",
+    "////": "-----------------------------------------------------------------",
+    "dev": "DEV_MODE=true TELEPATHY_CONFIG=../_dev/config/config-agent.json TELEPATHY_DATA_DIR=../_dev/data/agent pm2 start ts-node --watch --name agent -- -P tsconfig.json ./src/app.ts",
+    "dev:docker": "docker-packaging-config/start-dev-docker.sh || true",
+    "dev:test": "NODE_ENV=dev jest --watch --coverage",
+    "binary:linux:x64": "npm run build && pkg dist/app.js --target node8-linux-x64 --output ../builds/telepathy-agent-linux-x64",
+    "binary:linux:armv6": "npm run build && pkg dist/app.js --target node8-linux-armv6 --output ../builds/telepathy-agent-linux-armv6",
+    "binary:linux:armv7": "npm run build && pkg dist/app.js --target node8-linux-armv7 --output ../builds/telepathy-agent-linux-armv7"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "fs-extra": "^7.0.1",
+    "lodash": "^4.17.20",
+    "md5-file": "^4.0.0",
+    "pkg": "^4.4.9",
+    "pm2": "^4.5.1",
+    "request": "^2.88.2"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^5.1.0",
+    "@types/jest": "^23.3.14",
+    "@types/lodash": "^4.14.166",
+    "@types/node": "^10.17.50",
+    "@types/request": "^2.48.5",
+    "@types/sinon": "^5.0.7",
+    "concurrently": "^4.1.2",
+    "eslint": "^5.16.0",
+    "jest": "^23.6.0",
+    "nodemon": "^1.19.4",
+    "npm-watch": "^0.4.0",
+    "sinon": "^7.5.0",
+    "ts-jest": "^23.10.5",
+    "ts-node": "^7.0.1",
+    "tslint": "^5.20.1",
+    "typescript": "^3.9.7"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "transform": {
+      "\\.(ts|tsx)$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "testRegex": "src/.*.spec.ts",
+    "collectCoverageFrom": [
+      "src/**/*.{ts}"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 80,
+        "functions": 80,
+        "lines": 80
+      }
+    }
+  }
+}
