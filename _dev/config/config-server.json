@@ -1,1 +1,4 @@
-{}
+{
+    "CORS_POLICY_ORIGIN": "*",
+    "DATA_DIR": "../_dev/data"
+}

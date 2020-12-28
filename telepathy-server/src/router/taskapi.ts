@@ -10,14 +10,8 @@ const logger = new Logger("router/agents");
 export const taskApi = express.Router();
 
 ERW.route(taskApi, "get", "/", async (req, res, next, stopAndSend) => {
-  const agentId = req.params.agentId;
-
-  await AppContext.getAgentRegistration().register(
-    new Agent(req.params.agentId)
-  );
-
+  const tasks = await AppContext.getTasks().list();
   res.status(201).json({
-    agent_registered: true,
-    tasks: AppContext.getTasks(),
+    tasks,
   });
 });

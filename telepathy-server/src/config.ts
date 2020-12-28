@@ -9,6 +9,8 @@ class Config {
   public readonly API_PORT: number = 8080;
   public VERSION: number = 1;
   public AGENT_REGISTRATION_DURATION: number = 30 * 60;
+  public CORS_POLICY_ORIGIN: string;
+  public DATA_DIR: ".";
 
   public constructor() {
     this.reload();
@@ -25,6 +27,8 @@ class Config {
     logger.info(`Configuration Value: CONFIG_FILE: ${this.CONFIG_FILE}`);
     logger.info(`Configuration Value: VERSION: ${this.VERSION}`);
     setIfSet("AGENT_REGISTRATION_DURATION");
+    setIfSet("CORS_POLICY_ORIGIN");
+    setIfSet("DATA_DIR");
   }
 }
 
