@@ -7,9 +7,9 @@ import { Logger } from '../utils-std-ts/logger';
 
 const logger = new Logger('router/agents');
 
-export const agentsApi = express.Router();
+export const agentApi = express.Router();
 
-ERW.route(agentsApi, 'post', '/', async (req, res, next, stopAndSend) => {
+ERW.route(agentApi, 'post', '/', async (req, res, next, stopAndSend) => {
   if (!_.has(req, 'body.agent_id') || !_.has(req, 'body.agent_id')) {
     stopAndSend(400, { agent_registered: false, error: 'ERROR_PARAM_MISSING_AGENT_ID' });
   }

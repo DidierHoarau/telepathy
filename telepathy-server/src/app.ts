@@ -26,6 +26,7 @@ Promise.resolve().then(async () => {
   agentRegistration.waitRegistrations();
 
   const taskQueue = new TaskQueue();
+  AppContext.setTaskQueue(taskQueue);
 
   const app = express();
   app.use(router);
