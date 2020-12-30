@@ -1,7 +1,7 @@
-import * as fs from "fs-extra";
-import { config } from "../config";
-import { TaskExecution } from "./taskExecution";
-import * as _ from "lodash";
+import * as fs from 'fs-extra';
+import * as _ from 'lodash';
+import { TaskExecution } from '../common-model/taskExecution';
+import { config } from '../config';
 
 export class TaskExecutions {
   //
@@ -28,12 +28,28 @@ export class TaskExecutions {
     return this.taskExecutions;
   }
 
-  async add(taskExecution: TaskExecution): Promise<void> {
+  public async add(taskExecution: TaskExecution): Promise<void> {
     this.taskExecutions.push(taskExecution);
     await this.save();
   }
 
-  async save(): Promise<void> {
+  public async update(
+    id: string,
+    taskExecutionUpdate: TaskExecution
+  ): Promise<void> {
+    const taskExecution = await this.get(id);
+    taskExecution.status = taskExecutionUpdate.status;
+    taskExecution.outputRaw = taskExecutionUpdate.outputRaw;
+    taskExecution.outputs = taskExecutionUpdate.outputs;
+    taskExecution.success = taskExecutionUpdate.success;
+    taskExecution.agentId = taskExecutionUpdate.agentId;
+    taskExecution.dateQueued = taskExecutionUpdate.dateQueued;
+    taskExecution.dateExecuting = taskExecutionUpdate.dateExecuting;
+    taskExecution.dateExecuted = taskExecutionUpdate.dateExecuted;
+    await this.save();
+  }
+
+  public async save(): Promise<void> {
     await fs.writeJSON(
       `${config.DATA_DIR}/task-executions.json`,
       this.taskExecutions

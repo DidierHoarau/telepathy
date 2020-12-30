@@ -1,17 +1,16 @@
-import * as express from "express";
-import * as bodyParser from "body-parser";
-import { watchFile } from "fs-extra";
-import { Agent } from "./agents/agent";
-import { Agents } from "./agents/agents";
-import { AppContext } from "./appContext";
-import { config } from "./config";
-import { router } from "./router";
-import { Task } from "./tasks/task";
-import { Logger } from "./utils-std-ts/logger";
-import { Tasks } from "./tasks/tasks";
-import { TaskExecutions } from "./tasks/taskExecutions";
+import * as bodyParser from 'body-parser';
+import * as express from 'express';
+import { watchFile } from 'fs-extra';
+import { Agent } from './agents/agent';
+import { Agents } from './agents/agents';
+import { AppContext } from './appContext';
+import { config } from './config';
+import { router } from './router';
+import { TaskExecutions } from './tasks/taskExecutions';
+import { Tasks } from './tasks/tasks';
+import { Logger } from './utils-std-ts/logger';
 
-const logger = new Logger("app");
+const logger = new Logger('app');
 
 logger.info(`====== Starting Telepathy Server ======`);
 
@@ -36,14 +35,14 @@ Promise.resolve().then(async () => {
     const app = express();
     if (config.CORS_POLICY_ORIGIN) {
       app.use(function (req, res, next) {
-        res.header("Access-Control-Allow-Origin", config.CORS_POLICY_ORIGIN);
+        res.header('Access-Control-Allow-Origin', config.CORS_POLICY_ORIGIN);
         res.header(
-          "Access-Control-Allow-Headers",
-          "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+          'Access-Control-Allow-Headers',
+          'Origin, X-Requested-With, Content-Type, Accept, Authorization'
         );
         res.header(
-          "Access-Control-Allow-Methods",
-          "POST, GET, OPTIONS, PUT, DELETE"
+          'Access-Control-Allow-Methods',
+          'POST, GET, OPTIONS, PUT, DELETE'
         );
         next();
       });

@@ -17,16 +17,7 @@ export default {
       count: 0,
     };
   },
-  setup() {
-    axios
-      .get("http://localhost:8080/tasks")
-      .then((res) => {
-        console.log(res.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  },
+  setup() {},
 };
 </script>
 

@@ -1,10 +1,9 @@
-import { watchFile } from "fs-extra";
-import { config } from "./config";
-import { ServerTasks } from "./tasks/serverTasks";
-import { TaskExecutions } from "./tasks/taskExecutions";
-import { Logger } from "./utils-std-ts/logger";
+import { watchFile } from 'fs-extra';
+import { config } from './config';
+import { TaskExecutions } from './tasks/taskExecutions';
+import { Logger } from './utils-std-ts/logger';
 
-const logger = new Logger("app");
+const logger = new Logger('app');
 
 logger.info(`====== Starting Telepathy Agent ======`);
 

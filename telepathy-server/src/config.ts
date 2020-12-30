@@ -1,7 +1,7 @@
-import * as fse from "fs-extra";
-import { Logger } from "./utils-std-ts/logger";
+import * as fse from 'fs-extra';
+import { Logger } from './utils-std-ts/logger';
 
-const logger = new Logger("config");
+const logger = new Logger('config');
 
 class Config {
   //
@@ -10,7 +10,7 @@ class Config {
   public VERSION: number = 1;
   public AGENT_REGISTRATION_DURATION: number = 30 * 60;
   public CORS_POLICY_ORIGIN: string;
-  public DATA_DIR: ".";
+  public DATA_DIR: '.';
 
   public constructor() {
     this.reload();
@@ -26,9 +26,9 @@ class Config {
     };
     logger.info(`Configuration Value: CONFIG_FILE: ${this.CONFIG_FILE}`);
     logger.info(`Configuration Value: VERSION: ${this.VERSION}`);
-    setIfSet("AGENT_REGISTRATION_DURATION");
-    setIfSet("CORS_POLICY_ORIGIN");
-    setIfSet("DATA_DIR");
+    setIfSet('AGENT_REGISTRATION_DURATION');
+    setIfSet('CORS_POLICY_ORIGIN');
+    setIfSet('DATA_DIR');
   }
 }
 

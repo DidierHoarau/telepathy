@@ -1,20 +1,20 @@
-import * as _ from "lodash";
-import { config } from "../config";
-import { Logger } from "../utils-std-ts/logger";
-import { Timeout } from "../utils-std-ts/timeout";
-import { Agent } from "./agent";
+import * as _ from 'lodash';
+import { config } from '../config';
+import { Logger } from '../utils-std-ts/logger';
+import { Timeout } from '../utils-std-ts/timeout';
+import { Agent } from './agent';
 
-const logger = new Logger("agents/agentregistration");
+const logger = new Logger('agents/agentregistration');
 
 export class Agents {
   //
-  agents: Agent[];
+  private agents: Agent[];
 
   constructor(agentList: Agent[]) {
     this.agents = agentList;
   }
 
-  async list(): Promise<Agent[]> {
+  public async list(): Promise<Agent[]> {
     return this.agents;
   }
 
@@ -37,7 +37,7 @@ export class Agents {
         for (let i = this.agents.length - 1; i >= 0; i--) {
           if (
             this.agents[i].lastSyncDate.getTime() <
-            new Date().getTime() - config.AGENT_REGISTRATION_DURATION
+            new Date().getTime() - config.AGENT_REGISTRATION_DURATION * 1000
           ) {
             logger.info(`Agent un-registered: ${this.agents[i].id}`);
             this.agents.splice(i, 1);

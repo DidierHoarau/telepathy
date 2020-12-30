@@ -1,15 +1,16 @@
-import * as express from "express";
-import * as _ from "lodash";
-import { Agent } from "../agents/agent";
-import { AppContext } from "../appContext";
-import { ExpressRouterWrapper as ERW } from "../utils-std-ts/express-router-wrapper";
-import { Logger } from "../utils-std-ts/logger";
+import * as express from 'express';
+import * as _ from 'lodash';
+import { Agent } from '../agents/agent';
+import { AppContext } from '../appContext';
+import { ExpressRouterWrapper as ERW } from '../utils-std-ts/express-router-wrapper';
+import { Logger } from '../utils-std-ts/logger';
 
-const logger = new Logger("router/agentApi");
+const logger = new Logger('router/agentApi');
 
 export const agentApi = express.Router();
 
-ERW.route(agentApi, "get", "/", async (req, res, next, stopAndSend) => {
+ERW.route(agentApi, 'get', '/', async (req, res, next, stopAndSend) => {
+  logger.debug(`[${req.method}] ${req.originalUrl}`);
   const agents = await AppContext.getAgents().list();
   res.status(200).json({
     agents,
@@ -18,9 +19,10 @@ ERW.route(agentApi, "get", "/", async (req, res, next, stopAndSend) => {
 
 ERW.route(
   agentApi,
-  "get",
-  "/:agentId/tasks/executions",
+  'get',
+  '/:agentId/tasks/executions',
   async (req, res, next, stopAndSend) => {
+    logger.debug(`[${req.method}] ${req.originalUrl}`);
     const agentId = req.params.agentId;
 
     await AppContext.getAgents().register(new Agent(req.params.agentId));

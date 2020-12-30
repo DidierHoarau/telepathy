@@ -1,5 +1,5 @@
-import { TaskOutput } from "./taskOutput";
-import { v4 as uuidv4 } from "uuid";
+import { v4 as uuidv4 } from 'uuid';
+import { TaskOutput } from './taskOutput';
 
 export class TaskExecution {
   //
@@ -11,10 +11,13 @@ export class TaskExecution {
   public status: string;
   public success: boolean = false;
   public agentId: string;
+  public dateQueued: Date;
+  public dateExecuting: Date;
+  public dateExecuted: Date;
 
   constructor() {
     this.id = uuidv4();
-    this.outputRaw = "";
+    this.outputRaw = '';
     this.outputs = [];
   }
 }

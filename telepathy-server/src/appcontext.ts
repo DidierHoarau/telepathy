@@ -1,6 +1,6 @@
-import { Agents } from "./agents/agents";
-import { TaskExecutions } from "./tasks/taskExecutions";
-import { Tasks } from "./tasks/tasks";
+import { Agents } from './agents/agents';
+import { TaskExecutions } from './tasks/taskExecutions';
+import { Tasks } from './tasks/tasks';
 
 let agents: Agents;
 let tasks: Tasks;

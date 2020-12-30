@@ -26,6 +26,7 @@ export default {
   },
   created() {
     this.load();
+    console.log(process.env);
   },
   methods: {
     load() {

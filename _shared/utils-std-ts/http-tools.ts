@@ -73,7 +73,11 @@ export class HttpTools {
     });
   }
 
-  public static uploadFile(filepath: string, url: string, fieldName: string): Promise<any> {
+  public static uploadFile(
+    filepath: string,
+    url: string,
+    fieldName: string
+  ): Promise<any> {
     return new Promise((resolve, reject) => {
       const req = request.post(url, (err, resp) => {
         if (err) {
@@ -85,7 +89,7 @@ export class HttpTools {
       const form = req.form();
       form.append(fieldName, fse.createReadStream(filepath), {
         contentType: 'text/plain',
-        filename: filepath
+        filename: filepath,
       });
     });
   }

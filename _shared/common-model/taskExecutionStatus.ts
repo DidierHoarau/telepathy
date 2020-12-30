@@ -1,5 +1,5 @@
 export enum TaskExecutionStatus {
-  queued = "queued",
-  executing = "executing",
-  executed = "executed",
+  queued = 'queued',
+  executing = 'executing',
+  executed = 'executed',
 }
