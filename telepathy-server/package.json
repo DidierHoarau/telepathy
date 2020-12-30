@@ -31,7 +31,8 @@
     "md5-file": "^4.0.0",
     "pkg": "^4.4.9",
     "pm2": "^4.5.1",
-    "request": "^2.88.2"
+    "request": "^2.88.2",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@types/fs-extra": "^5.1.0",

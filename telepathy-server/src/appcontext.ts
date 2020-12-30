@@ -1,19 +1,18 @@
-import { AgentRegistration } from "./agents/agentRegistration";
-import { Task } from "./tasks/task";
+import { Agents } from "./agents/agents";
 import { TaskExecutions } from "./tasks/taskExecutions";
 import { Tasks } from "./tasks/tasks";
 
-let agentRegistration: AgentRegistration;
+let agents: Agents;
 let tasks: Tasks;
 let taskExecutions: TaskExecutions;
 
 export class AppContext {
   //
-  public static setAgentRegistration(reference: AgentRegistration): void {
-    agentRegistration = reference;
+  public static setAgents(reference: Agents): void {
+    agents = reference;
   }
-  public static getAgentRegistration(): AgentRegistration {
-    return agentRegistration;
+  public static getAgents(): Agents {
+    return agents;
   }
 
   public static setTasks(reference: Tasks): void {

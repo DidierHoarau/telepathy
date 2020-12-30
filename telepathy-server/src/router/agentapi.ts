@@ -5,24 +5,31 @@ import { AppContext } from "../appContext";
 import { ExpressRouterWrapper as ERW } from "../utils-std-ts/express-router-wrapper";
 import { Logger } from "../utils-std-ts/logger";
 
-const logger = new Logger("router/agents");
+const logger = new Logger("router/agentApi");
 
 export const agentApi = express.Router();
+
+ERW.route(agentApi, "get", "/", async (req, res, next, stopAndSend) => {
+  const agents = await AppContext.getAgents().list();
+  res.status(200).json({
+    agents,
+  });
+});
 
 ERW.route(
   agentApi,
   "get",
-  "/:agentId/tasks",
+  "/:agentId/tasks/executions",
   async (req, res, next, stopAndSend) => {
     const agentId = req.params.agentId;
 
-    await AppContext.getAgentRegistration().register(
-      new Agent(req.params.agentId)
-    );
+    await AppContext.getAgents().register(new Agent(req.params.agentId));
+
+    const taskExecutions = await AppContext.getTaskExecutions().list();
 
     res.status(201).json({
       agent_registered: true,
-      tasks: AppContext.getTasks(),
+      task_executions: taskExecutions,
     });
   }
 );

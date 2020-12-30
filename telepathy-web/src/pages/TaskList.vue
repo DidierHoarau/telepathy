@@ -1,6 +1,9 @@
 <template>
-  <div>
+  <div class="container">
     <h1>Tasks</h1>
+    <div class="task-list row">
+      <Task v-for="task in tasks" v-bind:key="task.id" :task="task" />
+    </div>
     <button type="button" class="btn btn-primary">
       <router-link to="/tasks/new">Add</router-link>
     </button>
@@ -9,28 +12,38 @@
 
 <script>
 import axios from "axios";
+import Task from "../components/Task.vue";
 
 export default {
   name: "Tasks",
-  props: {
-    msg: String,
+  components: {
+    Task,
   },
   data() {
     return {
-      count: 0,
+      tasks: [],
     };
   },
-  setup() {
-    axios
-      .get("http://localhost:8080/tasks")
-      .then((res) => {
-        console.log(res.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+  created() {
+    this.load();
+  },
+  methods: {
+    load() {
+      axios
+        .get("http://localhost:8080/tasks")
+        .then((res) => {
+          this.tasks = res.data.tasks;
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
   },
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.task-list {
+  width: 100%;
+}
+</style>

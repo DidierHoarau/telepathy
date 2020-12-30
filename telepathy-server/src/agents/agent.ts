@@ -1,9 +1,9 @@
 export class Agent {
   //
-  public agentId: string;
+  public id: string;
   public lastSyncDate: Date;
 
-  constructor(agentId: string) {
-    this.agentId = agentId;
+  constructor(id: string) {
+    this.id = id;
   }
 }

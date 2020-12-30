@@ -1,9 +1,9 @@
 <template>
-  <form>
+  <div>
     <h1>New Task</h1>
     <div class="mb-12">
       <label class="form-label">Name</label>
-      <input type="text" class="form-control" />
+      <input v-model="task.name" type="text" class="form-control" />
     </div>
     <div class="mb-12">
       <label class="form-label">Script</label>
@@ -12,11 +12,12 @@
           class="form-control"
           id="floatingTextarea2"
           style="height: 100px"
+          v-model="task.script"
         ></textarea>
       </div>
     </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
-  </form>
+    <button v-on:click="save()" class="btn btn-primary">Save</button>
+  </div>
 </template>
 
 <script>
@@ -29,10 +30,24 @@ export default {
   },
   data() {
     return {
-      count: 0,
+      task: { name: "", script: "" },
     };
   },
   setup() {},
+  methods: {
+    save() {
+      if (this.task.name && this.task.script) {
+        axios
+          .post("http://localhost:8080/tasks", this.task)
+          .then((res) => {
+            console.log(res.data);
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      }
+    },
+  },
 };
 </script>
 

@@ -6,39 +6,41 @@ import { Agent } from "./agent";
 
 const logger = new Logger("agents/agentregistration");
 
-export class AgentRegistration {
+export class Agents {
   //
-  registeredAgents: Agent[];
+  agents: Agent[];
 
   constructor(agentList: Agent[]) {
-    this.registeredAgents = agentList;
+    this.agents = agentList;
+  }
+
+  async list(): Promise<Agent[]> {
+    return this.agents;
   }
 
   public async register(newAgent: Agent): Promise<void> {
-    const knownAgent = _.find(this.registeredAgents, {
-      agentId: newAgent.agentId,
-    });
+    const knownAgent: Agent = _.find(this.agents, {
+      id: newAgent.id,
+    }) as Agent;
     if (knownAgent) {
       knownAgent.lastSyncDate = new Date();
     } else {
-      logger.info(`New agent registered: ${newAgent.agentId}`);
+      logger.info(`New agent registered: ${newAgent.id}`);
       newAgent.lastSyncDate = new Date();
-      this.registeredAgents.push(newAgent);
+      this.agents.push(newAgent);
     }
   }
 
   public waitRegistrations(): void {
     Promise.resolve().then(async () => {
       while (true) {
-        for (let i = this.registeredAgents.length - 1; i >= 0; i--) {
+        for (let i = this.agents.length - 1; i >= 0; i--) {
           if (
-            this.registeredAgents[i].lastSyncDate.getTime() <
+            this.agents[i].lastSyncDate.getTime() <
             new Date().getTime() - config.AGENT_REGISTRATION_DURATION
           ) {
-            logger.info(
-              `Agent un-registered: ${this.registeredAgents[i].agentId}`
-            );
-            this.registeredAgents.splice(i, 1);
+            logger.info(`Agent un-registered: ${this.agents[i].id}`);
+            this.agents.splice(i, 1);
           }
         }
         await Timeout.wait((1000 * config.AGENT_REGISTRATION_DURATION) / 2);

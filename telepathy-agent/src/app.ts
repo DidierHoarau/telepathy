@@ -1,6 +1,7 @@
 import { watchFile } from "fs-extra";
 import { config } from "./config";
 import { ServerTasks } from "./tasks/serverTasks";
+import { TaskExecutions } from "./tasks/taskExecutions";
 import { Logger } from "./utils-std-ts/logger";
 
 const logger = new Logger("app");
@@ -13,6 +14,6 @@ Promise.resolve().then(async () => {
     config.reload();
   });
   setTimeout(() => {
-    ServerTasks.connect();
+    TaskExecutions.check();
   }, 100);
 });

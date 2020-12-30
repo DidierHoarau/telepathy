@@ -2,7 +2,7 @@ import * as express from "express";
 import * as bodyParser from "body-parser";
 import { watchFile } from "fs-extra";
 import { Agent } from "./agents/agent";
-import { AgentRegistration } from "./agents/agentRegistration";
+import { Agents } from "./agents/agents";
 import { AppContext } from "./appContext";
 import { config } from "./config";
 import { router } from "./router";
@@ -24,8 +24,8 @@ Promise.resolve().then(async () => {
   setTimeout(() => {
     //
     const registeredAgents: Agent[] = [];
-    const agentRegistration = new AgentRegistration(registeredAgents);
-    AppContext.setAgentRegistration(agentRegistration);
+    const agentRegistration = new Agents(registeredAgents);
+    AppContext.setAgents(agentRegistration);
     agentRegistration.waitRegistrations();
 
     const tasks = new Tasks();
