@@ -13,9 +13,9 @@
     "dev": "DEV_MODE=true TELEPATHY_CONFIG=../_dev/config/config-agent.json TELEPATHY_DATA_DIR=../_dev/data/agent pm2 start ts-node --watch --name agent -- -P tsconfig.json ./src/app.ts",
     "dev:docker": "docker-packaging-config/start-dev-docker.sh || true",
     "dev:test": "NODE_ENV=dev jest --watch --coverage",
-    "binary:linux:x64": "npm run build && pkg dist/app.js --target node8-linux-x64 --output ../builds/telepathy-agent-linux-x64",
-    "binary:linux:armv6": "npm run build && pkg dist/app.js --target node8-linux-armv6 --output ../builds/telepathy-agent-linux-armv6",
-    "binary:linux:armv7": "npm run build && pkg dist/app.js --target node8-linux-armv7 --output ../builds/telepathy-agent-linux-armv7"
+    "binary:linux:x64": "npm run build && pkg dist/app.js --target node14-linux-x64 --output ../builds/telepathy-agent-linux-x64",
+    "binary:linux:armv6": "npm run build && pkg dist/app.js --target node12-linux-armv6 --output ../builds/telepathy-agent-linux-armv6",
+    "binary:linux:armv7": "npm run build && pkg dist/app.js --target node12-linux-armv7 --output ../builds/telepathy-agent-linux-armv7"
   },
   "dependencies": {
     "axios": "^0.21.1",
