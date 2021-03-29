@@ -7,7 +7,11 @@
           {{ taskExecutions[0].status }}
           {{ taskExecutions[0].dateExecuted }}
         </p>
-        <button v-on:click="execute()" class="btn btn-primary">Execute</button>
+        <button v-on:click="edit()" class="btn btn-primary btn-sm">Edit</button
+        >&nbsp;
+        <button v-on:click="execute()" class="btn btn-primary btn-sm">
+          Execute
+        </button>
       </div>
     </div>
   </div>
@@ -18,6 +22,7 @@ import axios from 'axios';
 import Config from '../Config.ts';
 import { EventBus, EventTypes } from '../services/EventBus';
 import { AuthService } from '../services/AuthService';
+import router from '../router';
 
 export default {
   name: 'Task',
@@ -34,6 +39,9 @@ export default {
     this.checkExecutions();
   },
   methods: {
+    edit() {
+      router.push({ path: `/tasks/${this.task.id}/edit` });
+    },
     async execute() {
       axios
         .post(

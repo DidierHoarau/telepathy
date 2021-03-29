@@ -1,7 +1,7 @@
-import * as fs from 'fs-extra';
-import * as _ from 'lodash';
-import { Task } from '../common-model/task';
-import { config } from '../config';
+import * as fs from "fs-extra";
+import * as _ from "lodash";
+import { Task } from "../common-model/task";
+import { config } from "../config";
 
 export class Tasks {
   //
@@ -21,6 +21,25 @@ export class Tasks {
     return _.find(this.tasks, {
       id,
     }) as Task;
+  }
+
+  public async update(id: string, taskUpdate: Task): Promise<void> {
+    const task = _.find(this.tasks, {
+      id,
+    }) as Task;
+    task.name = taskUpdate.name;
+    task.script = taskUpdate.script;
+    await this.save();
+  }
+
+  public async delete(id: string): Promise<void> {
+    const position = _.findIndex(this.tasks, {
+      id,
+    });
+    if (position >= 0) {
+      this.tasks.splice(position, 1);
+    }
+    await this.save();
   }
 
   public async list(): Promise<Task[]> {

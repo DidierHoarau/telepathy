@@ -52,6 +52,43 @@ ERW.route(taskApi, "get", "/:taskId", async (req, res, next, stopAndSend) => {
 
 ERW.route(
   taskApi,
+  "delete",
+  "/:taskId",
+  async (req, res, next, stopAndSend) => {
+    logger.info(`[${req.method}] ${req.originalUrl}`);
+    if (!req.user.authenticated) {
+      stopAndSend(403, { error: "Access Denied" });
+    }
+    const taskId = req.params.taskId;
+    const task = await AppContext.getTasks().delete(taskId);
+    res.status(202).json({});
+  }
+);
+
+ERW.route(taskApi, "put", "/:taskId", async (req, res, next, stopAndSend) => {
+  logger.info(`[${req.method}] ${req.originalUrl}`);
+  if (!req.user.authenticated) {
+    stopAndSend(403, { error: "Access Denied" });
+  }
+  const taskId = req.params.taskId;
+  const task = await AppContext.getTasks().get(taskId);
+  if (!task) {
+    stopAndSend(404, { error: "Not Found" });
+  }
+  if (!req.body.name) {
+    stopAndSend(400, { error: "Missing: Name" });
+  }
+  if (!req.body.script) {
+    stopAndSend(400, { error: "Missing: Script" });
+  }
+  task.name = req.body.name;
+  task.script = req.body.script;
+  await AppContext.getTasks().update(taskId, task);
+  res.status(201).json(task);
+});
+
+ERW.route(
+  taskApi,
   "get",
   "/:taskId/executions",
   async (req, res, next, stopAndSend) => {
