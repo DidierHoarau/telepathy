@@ -1,13 +1,14 @@
-import axios from 'axios';
-import * as _ from 'lodash';
-import { TaskExecution } from '../common-model/taskExecution';
-import { TaskExecutionStatus } from '../common-model/taskExecutionStatus';
-import { config } from '../config';
-import { Logger } from '../utils-std-ts/logger';
-import { SystemCommand } from '../utils-std-ts/system-command';
-import { Timeout } from '../utils-std-ts/timeout';
+import axios from "axios";
+import * as _ from "lodash";
+import { Auth } from "../agents/auth";
+import { TaskExecution } from "../common-model/taskExecution";
+import { TaskExecutionStatus } from "../common-model/taskExecutionStatus";
+import { config } from "../config";
+import { Logger } from "../utils-std-ts/logger";
+import { SystemCommand } from "../utils-std-ts/system-command";
+import { Timeout } from "../utils-std-ts/timeout";
 
-const logger = new Logger('tasks/taskExecutions');
+const logger = new Logger("tasks/taskExecutions");
 
 export class TaskExecutions {
   //
@@ -16,9 +17,11 @@ export class TaskExecutions {
       while (true) {
         logger.debug(`Contacting server(s)`);
         await axios
-          .get(`${config.SERVER}/agents/${config.AGENT_ID}/tasks/executions`)
+          .get(
+            `${config.SERVER}/agents/${config.AGENT_ID}/tasks/executions`,
+            await Auth.getAuthHeader()
+          )
           .then(async (res) => {
-            logger.debug(`Heartbeat Successful to Server: ${config.SERVER}`);
             if (
               _.isArray(res.data.task_executions) &&
               res.data.task_executions.length > 0
@@ -47,7 +50,8 @@ export class TaskExecutions {
     taskExecution.dateExecuting = new Date();
     await axios.put(
       `${config.SERVER}/tasks/${taskExecution.taskId}/executions/${taskExecution.id}`,
-      taskExecution
+      taskExecution,
+      await Auth.getAuthHeader()
     );
 
     taskExecution.outputRaw = await SystemCommand.execute(taskExecution.script);
@@ -57,7 +61,8 @@ export class TaskExecutions {
 
     await axios.put(
       `${config.SERVER}/tasks/${taskExecution.taskId}/executions/${taskExecution.id}`,
-      taskExecution
+      taskExecution,
+      await Auth.getAuthHeader()
     );
   }
 }

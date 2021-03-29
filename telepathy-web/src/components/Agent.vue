@@ -10,7 +10,7 @@
 
 <script>
 export default {
-  name: "Agent",
+  name: 'Agent',
   props: {
     agent: Object,
   },

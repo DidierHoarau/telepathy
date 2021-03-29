@@ -1,20 +1,13 @@
 <template>
   <div>
-    <h1>New Task</h1>
+    <h1>New User</h1>
     <div class="mb-12">
       <label class="form-label">Name</label>
-      <input v-model="task.name" type="text" class="form-control" />
+      <input v-model="user.name" type="text" class="form-control" />
     </div>
     <div class="mb-12">
-      <label class="form-label">Script</label>
-      <div class="form-floating">
-        <textarea
-          class="form-control"
-          id="floatingTextarea2"
-          style="height: 100px"
-          v-model="task.script"
-        ></textarea>
-      </div>
+      <label class="form-label">Password</label>
+      <input v-model="user.password" type="password" class="form-control" />
     </div>
     <button v-on:click="save()" class="btn btn-primary">Save</button>
   </div>
@@ -23,39 +16,37 @@
 <script>
 import axios from 'axios';
 import Config from '../Config.ts';
-import { EventBus, EventTypes } from '../services/EventBus';
 import { AuthService } from '../services/AuthService';
 
 export default {
-  name: 'TaskEdit',
+  name: 'UserEdit',
   props: {
     msg: String,
   },
   data() {
     return {
-      task: { name: '', script: '' },
+      user: { name: '', script: '' },
     };
   },
   setup() {},
   methods: {
     async save() {
-      if (this.task.name && this.task.script) {
+      console.log('foo');
+      if (this.user.name && this.user.password) {
         axios
           .post(
-            `${(await Config.get()).SERVER_URL}/tasks`,
-            this.task,
+            `${(await Config.get()).SERVER_URL}/users`,
+            this.user,
             await AuthService.getAuthHeader()
           )
           .then((res) => {
-            EventBus.emit(EventTypes.ALERT_MESSAGE, {
-              type: 'info',
-              text: 'Task created',
-            });
+            console.log(res.data);
           })
           .catch((error) => {
+            console.log('bar');
             EventBus.emit(EventTypes.ALERT_MESSAGE, {
               type: 'error',
-              text: error,
+              text: error.message,
             });
           });
       }

@@ -1,17 +1,19 @@
-import * as fse from 'fs-extra';
-import * as os from 'os';
-import { Logger } from './utils-std-ts/logger';
+import * as fse from "fs-extra";
+import * as os from "os";
+import { Logger } from "./utils-std-ts/logger";
+import { v4 as uuidv4 } from "uuid";
 
-const logger = new Logger('config');
+const logger = new Logger("config");
 
 class Config {
   //
   public readonly CONFIG_FILE: string = process.env.TELEPATHY_CONFIG;
   public VERSION: number = 1;
-  public SERVER: string = '';
+  public SERVER: string = "";
   public AGENT_ID: string = os.hostname();
   public LOG_DEBUG: boolean = false;
   public HEARTBEAT_CYCLE: number = 60;
+  public AGENT_KEY: string = uuidv4();
 
   public constructor() {
     this.reload();
@@ -27,10 +29,11 @@ class Config {
     };
     logger.info(`Configuration Value: CONFIG_FILE: ${this.CONFIG_FILE}`);
     logger.info(`Configuration Value: VERSION: ${this.VERSION}`);
-    setIfSet('SERVER');
-    setIfSet('AGENT_ID');
-    setIfSet('HEARTBEAT_CYCLE');
-    setIfSet('LOG_DEBUG');
+    setIfSet("SERVER");
+    setIfSet("AGENT_ID");
+    setIfSet("HEARTBEAT_CYCLE");
+    setIfSet("LOG_DEBUG");
+    setIfSet("AGENT_KEY");
   }
 }
 

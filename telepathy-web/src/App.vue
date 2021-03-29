@@ -15,16 +15,25 @@
         <router-view />
       </div>
     </main>
+    <div id="alerts-messages">
+      <AlertMessages />
+    </div>
   </div>
 </template>
 
 <script>
-import Navigation from "./components/Navigation.vue";
+import Navigation from './components/Navigation.vue';
+import AlertMessages from './components/AlertMessages.vue';
+import Config from './Config.ts';
 
 export default {
-  name: "App",
+  name: 'App',
   components: {
     Navigation,
+    AlertMessages,
+  },
+  created() {
+    Config.get();
   },
 };
 </script>

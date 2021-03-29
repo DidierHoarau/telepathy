@@ -1,14 +1,18 @@
 <template>
   <div>
     <h1>Users</h1>
+    <button type="button" class="btn btn-primary">
+      <router-link to="/users/new">Add</router-link>
+    </button>
   </div>
 </template>
 
 <script>
-import axios from "axios";
+import axios from 'axios';
+import Config from '../Config.ts';
 
 export default {
-  name: "Tasks",
+  name: 'Tasks',
   props: {
     msg: String,
   },

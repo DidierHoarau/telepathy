@@ -1,4 +1,5 @@
 {
-    "CORS_POLICY_ORIGIN": "*",
-    "DATA_DIR": "../_dev/data"
+  "CORS_POLICY_ORIGIN": "*",
+  "DATA_DIR": "../_dev/data",
+  "AGENT_KEY": "aR77TdeCdSCtUZmBghxeHQ6GCzS8aq7btNDy6798WkH3RznhswEpV5ZAJXW6fMZqCJEJ8g"
 }

@@ -14,10 +14,13 @@
 </template>
 
 <script>
-import axios from "axios";
+import axios from 'axios';
+import Config from '../Config.ts';
+import { EventBus, EventTypes } from '../services/EventBus';
+import { AuthService } from '../services/AuthService';
 
 export default {
-  name: "Task",
+  name: 'Task',
   props: {
     task: Object,
   },
@@ -31,22 +34,37 @@ export default {
     this.checkExecutions();
   },
   methods: {
-    execute() {
+    async execute() {
       axios
-        .post(`http://localhost:8080/tasks/${this.task.id}/executions`, {})
-        .then((res) => {})
+        .post(
+          `${(await Config.get()).SERVER_URL}/tasks/${this.task.id}/executions`,
+          {},
+          await AuthService.getAuthHeader()
+        )
+        .then((res) => {
+          EventBus.emit(EventTypes.TASK_UPDATED, { taskId: this.task.id });
+        })
         .catch((error) => {
-          console.error(error);
+          EventBus.emit(EventTypes.ALERT_MESSAGE, {
+            type: 'error',
+            text: error.message,
+          });
         });
     },
-    checkExecutions() {
+    async checkExecutions() {
       axios
-        .get(`http://localhost:8080/tasks/${this.task.id}/executions`, {})
+        .get(
+          `${(await Config.get()).SERVER_URL}/tasks/${this.task.id}/executions`,
+          await AuthService.getAuthHeader()
+        )
         .then((res) => {
           this.taskExecutions = res.data.task_executions;
         })
         .catch((error) => {
-          console.error(error);
+          EventBus.emit(EventTypes.ALERT_MESSAGE, {
+            type: 'error',
+            text: error.message,
+          });
         });
     },
   },

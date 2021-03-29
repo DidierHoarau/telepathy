@@ -1,13 +1,22 @@
-import { Agents } from './agents/agents';
-import { TaskExecutions } from './tasks/taskExecutions';
-import { Tasks } from './tasks/tasks';
+import { Agents } from "./agents/agents";
+import { TaskExecutions } from "./tasks/taskExecutions";
+import { Tasks } from "./tasks/tasks";
+import { Users } from "./users/users";
 
 let agents: Agents;
 let tasks: Tasks;
+let users: Users;
 let taskExecutions: TaskExecutions;
 
 export class AppContext {
   //
+  public static setUsers(reference: Users): void {
+    users = reference;
+  }
+  public static getUsers(): Users {
+    return users;
+  }
+
   public static setAgents(reference: Agents): void {
     agents = reference;
   }

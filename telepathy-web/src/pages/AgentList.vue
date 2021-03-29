@@ -8,11 +8,13 @@
 </template>
 
 <script>
-import axios from "axios";
-import Agent from "../components/Agent.vue";
+import axios from 'axios';
+import Agent from '../components/Agent.vue';
+import Config from '../Config.ts';
+import { AuthService } from '../services/AuthService';
 
 export default {
-  name: "Agents",
+  name: 'Agents',
   components: {
     Agent,
   },
@@ -25,14 +27,20 @@ export default {
     this.load();
   },
   methods: {
-    load() {
+    async load() {
       axios
-        .get("http://localhost:8080/agents")
+        .get(
+          `${(await Config.get()).SERVER_URL}/agents`,
+          await AuthService.getAuthHeader()
+        )
         .then((res) => {
           this.agents = res.data.agents;
         })
         .catch((error) => {
-          console.error(error);
+          EventBus.emit(EventTypes.ALERT_MESSAGE, {
+            type: 'error',
+            text: error.message,
+          });
         });
     },
   },
