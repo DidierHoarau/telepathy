@@ -6,7 +6,7 @@
   "scripts": {
     "dependencies": "rm -fr src/common-model && cp -R ../_shared/common-model src/common-model && rm -fr src/utils-std-ts && cp -R ../_shared/utils-std-ts src/utils-std-ts",
     "//": "-------------------------------------------------------------------",
-    "build": "npm run dependencies && npm run lint && tsc",
+    "build": "npm run dependencies && tsc",
     "lint": "tslint --project tsconfig.json ./src/**/*.ts || exit 0",
     "test": "echo 'No Test Yet'",
     "test:unit": "npm run lint && NODE_ENV=dev jest --watch --coverage",
