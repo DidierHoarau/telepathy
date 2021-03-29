@@ -9,7 +9,7 @@ import { config } from "./config";
 import { router } from "./router";
 import { TaskExecutions } from "./tasks/taskExecutions";
 import { Tasks } from "./tasks/tasks";
-import { Auth } from "./users/Auth";
+import { Auth } from "./users/auth";
 import { Users } from "./users/users";
 import { Logger } from "./utils-std-ts/logger";
 

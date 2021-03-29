@@ -4,7 +4,7 @@ import { Agent } from "../agents/agent";
 import { AppContext } from "../appContext";
 import { User } from "../common-model/user";
 import { config } from "../config";
-import { Auth } from "../users/Auth";
+import { Auth } from "../users/auth";
 import { ExpressRouterWrapper as ERW } from "../utils-std-ts/express-router-wrapper";
 import { Logger } from "../utils-std-ts/logger";
 

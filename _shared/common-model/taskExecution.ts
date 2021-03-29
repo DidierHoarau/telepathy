@@ -1,5 +1,5 @@
-import { v4 as uuidv4 } from 'uuid';
-import { TaskOutput } from './taskOutput';
+import { v4 as uuidv4 } from "uuid";
+import { TaskOutput } from "./taskOutput";
 
 export class TaskExecution {
   //
@@ -17,7 +17,7 @@ export class TaskExecution {
 
   constructor() {
     this.id = uuidv4();
-    this.outputRaw = '';
+    this.outputRaw = "";
     this.outputs = [];
   }
 }

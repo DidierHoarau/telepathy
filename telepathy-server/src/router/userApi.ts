@@ -2,7 +2,7 @@ import * as express from "express";
 import * as _ from "lodash";
 import { AppContext } from "../appContext";
 import { User } from "../common-model/user";
-import { Auth } from "../users/Auth";
+import { Auth } from "../users/auth";
 import { ExpressRouterWrapper as ERW } from "../utils-std-ts/express-router-wrapper";
 import { Logger } from "../utils-std-ts/logger";
 

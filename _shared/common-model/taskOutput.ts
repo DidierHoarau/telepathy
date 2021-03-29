@@ -5,7 +5,7 @@ export class TaskOutput {
   public computed: boolean = false;
 
   constructor() {
-    this.matchingPattern = '';
-    this.value = '';
+    this.matchingPattern = "";
+    this.value = "";
   }
 }
