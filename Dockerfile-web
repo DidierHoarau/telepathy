@@ -23,4 +23,6 @@ COPY ./telepathy-web/docker/nginx/default.conf /etc/nginx/site-enabled/
 COPY ./telepathy-web/docker/nginx/default.conf /etc/nginx/conf.d/
 COPY ./telepathy-web/docker/entrypoint.sh /entrypoint.sh
 
+RUN chmod +x /entrypoint.sh
+
 ENTRYPOINT [ "/entrypoint.sh" ]
