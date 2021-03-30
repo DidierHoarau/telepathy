@@ -133,6 +133,23 @@ ERW.route(
 
 ERW.route(
   taskApi,
+  "get",
+  "/:taskId/executions/:taskExecutionId",
+  async (req, res, next, stopAndSend) => {
+    logger.debug(`[${req.method}] ${req.originalUrl}`);
+    if (!req.user.authenticated) {
+      stopAndSend(403, { error: "Access Denied" });
+    }
+    const taskExecutionId = req.params.taskExecutionId;
+    const taskExecution = await AppContext.getTaskExecutions().get(
+      taskExecutionId
+    );
+    res.status(200).json(taskExecution);
+  }
+);
+
+ERW.route(
+  taskApi,
   "put",
   "/:taskId/executions/:taskExecutionId",
   async (req, res, next, stopAndSend) => {
@@ -143,6 +160,44 @@ ERW.route(
     const taskExecutionUpdate = req.body as TaskExecution;
     const taskExecutionId = req.params.taskExecutionId;
     await AppContext.getTaskExecutions().update(
+      taskExecutionId,
+      taskExecutionUpdate
+    );
+    res.status(200).json({});
+  }
+);
+
+ERW.route(
+  taskApi,
+  "get",
+  "/:taskId/executions/:taskExecutionId/logs",
+  async (req, res, next, stopAndSend) => {
+    logger.debug(`[${req.method}] ${req.originalUrl}`);
+    if (!req.user.authenticated) {
+      stopAndSend(403, { error: "Access Denied" });
+    }
+    const taskExecutionId = req.params.taskExecutionId;
+    const taskId = req.params.taskId;
+    const logs = await AppContext.getTaskExecutions().getLogs(
+      taskExecutionId,
+      taskId
+    );
+    res.status(200).json({ logs: logs.toString() });
+  }
+);
+
+ERW.route(
+  taskApi,
+  "put",
+  "/:taskId/executions/:taskExecutionId/logs",
+  async (req, res, next, stopAndSend) => {
+    logger.info(`[${req.method}] ${req.originalUrl}`);
+    if (!req.user.authenticated) {
+      stopAndSend(403, { error: "Access Denied" });
+    }
+    const taskExecutionUpdate = req.body as TaskExecution;
+    const taskExecutionId = req.params.taskExecutionId;
+    await AppContext.getTaskExecutions().updateLogs(
       taskExecutionId,
       taskExecutionUpdate
     );

@@ -40,8 +40,11 @@ export default {
   created() {
     this.load();
     EventBus.on(EventTypes.TASK_UPDATED, (event) => {
-      console.log(event);
+      this.load();
     });
+    setInterval(() => {
+      this.load();
+    }, 5 * 1000);
   },
   methods: {
     async load() {

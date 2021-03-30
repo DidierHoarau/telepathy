@@ -11,7 +11,7 @@
         <textarea
           class="form-control"
           id="floatingTextarea2"
-          style="height: 100px"
+          style="height: 300px"
           v-model="task.script"
         ></textarea>
       </div>

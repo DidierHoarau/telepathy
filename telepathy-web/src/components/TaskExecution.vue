@@ -6,14 +6,14 @@
         <div class="card-body">
           <h5 class="card-title">Execution (task: {{ task.name }})</h5>
           <p>
-            {{ taskExecution.status }}
-            <span v-if="taskExecution.dateExecuted"
+            {{ taskExecutionInfo.status }}
+            <span v-if="taskExecutionInfo.dateExecuted"
               >({{
-                new Date(taskExecution.dateExecuted).toLocaleString()
+                new Date(taskExecutionInfo.dateExecuted).toLocaleString()
               }})</span
             >
           </p>
-          <pre>{{ taskExecution.outputRaw }}</pre>
+          <pre>{{ logs }}</pre>
         </div>
       </div>
     </div>
@@ -23,6 +23,8 @@
 <script>
 import axios from 'axios';
 import Config from '../Config.ts';
+import { AuthService } from '../services/AuthService';
+import { EventBus, EventTypes } from '../services/EventBus';
 
 export default {
   name: 'TaskExecution',
@@ -32,16 +34,30 @@ export default {
   watch: {
     async taskExecution(newValue) {
       this.getTaskInfo(newValue.taskId);
+      this.getTaskExecutionInfo(newValue.taskId, newValue.id);
+      this.getTaskLogs(newValue.taskId, newValue.id);
     },
   },
   data() {
     return {
       task: {},
+      taskExecutionInfo: {},
+      logs: '',
     };
   },
   setup() {},
   created() {
+    setInterval(() => {
+      this.getTaskInfo(this.taskExecution.taskId);
+      this.getTaskExecutionInfo(
+        this.taskExecution.taskId,
+        this.taskExecution.id
+      );
+      this.getTaskLogs(this.taskExecution.taskId, this.taskExecution.id);
+    }, 5 * 1000);
     this.getTaskInfo(this.taskExecution.taskId);
+    this.getTaskExecutionInfo(this.taskExecution.taskId, this.taskExecution.id);
+    this.getTaskLogs(this.taskExecution.taskId, this.taskExecution.id);
   },
   methods: {
     async getTaskInfo(taskId) {
@@ -54,7 +70,46 @@ export default {
           this.task = res.data;
         })
         .catch((error) => {
-          console.error(error);
+          EventBus.emit(EventTypes.ALERT_MESSAGE, {
+            type: 'error',
+            text: error.message,
+          });
+        });
+    },
+    async getTaskLogs(taskId, executionId) {
+      axios
+        .get(
+          `${
+            (await Config.get()).SERVER_URL
+          }/tasks/${taskId}/executions/${executionId}/logs`,
+          await AuthService.getAuthHeader()
+        )
+        .then((res) => {
+          this.logs = res.data.logs;
+        })
+        .catch((error) => {
+          EventBus.emit(EventTypes.ALERT_MESSAGE, {
+            type: 'error',
+            text: error.message,
+          });
+        });
+    },
+    async getTaskExecutionInfo(taskId, executionId) {
+      axios
+        .get(
+          `${
+            (await Config.get()).SERVER_URL
+          }/tasks/${taskId}/executions/${executionId}`,
+          await AuthService.getAuthHeader()
+        )
+        .then((res) => {
+          this.taskExecutionInfo = res.data;
+        })
+        .catch((error) => {
+          EventBus.emit(EventTypes.ALERT_MESSAGE, {
+            type: 'error',
+            text: error.message,
+          });
         });
     },
   },

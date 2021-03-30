@@ -1,7 +1,7 @@
-import * as fs from 'fs-extra';
-import * as _ from 'lodash';
-import { TaskExecution } from '../common-model/taskExecution';
-import { config } from '../config';
+import * as fs from "fs-extra";
+import * as _ from "lodash";
+import { TaskExecution } from "../common-model/taskExecution";
+import { config } from "../config";
 
 export class TaskExecutions {
   //
@@ -39,7 +39,7 @@ export class TaskExecutions {
   ): Promise<void> {
     const taskExecution = await this.get(id);
     taskExecution.status = taskExecutionUpdate.status;
-    taskExecution.outputRaw = taskExecutionUpdate.outputRaw;
+    // taskExecution.outputRaw = taskExecutionUpdate.outputRaw;
     taskExecution.outputs = taskExecutionUpdate.outputs;
     taskExecution.success = taskExecutionUpdate.success;
     taskExecution.agentId = taskExecutionUpdate.agentId;
@@ -47,6 +47,25 @@ export class TaskExecutions {
     taskExecution.dateExecuting = taskExecutionUpdate.dateExecuting;
     taskExecution.dateExecuted = taskExecutionUpdate.dateExecuted;
     await this.save();
+  }
+
+  public async getLogs(id: string, taskId: TaskExecution): Promise<Buffer> {
+    if (fs.existsSync(`${config.DATA_DIR}/logs/${taskId}_${id}.log`)) {
+      return await fs.readFile(`${config.DATA_DIR}/logs/${taskId}_${id}.log`);
+    } else {
+      return Buffer.from("");
+    }
+  }
+
+  public async updateLogs(
+    id: string,
+    taskExecutionUpdate: TaskExecution
+  ): Promise<void> {
+    await fs.ensureDir(`${config.DATA_DIR}/logs`);
+    await fs.writeFile(
+      `${config.DATA_DIR}/logs/${taskExecutionUpdate.taskId}_${id}.log`,
+      taskExecutionUpdate.outputRaw
+    );
   }
 
   public async save(): Promise<void> {

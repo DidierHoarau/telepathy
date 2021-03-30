@@ -59,7 +59,7 @@ export class TaskExecutions {
     command.stdout.on("data", async (data) => {
       taskExecution.outputRaw += data;
       await axios.put(
-        `${config.SERVER}/tasks/${taskExecution.taskId}/executions/${taskExecution.id}`,
+        `${config.SERVER}/tasks/${taskExecution.taskId}/executions/${taskExecution.id}/logs`,
         taskExecution,
         await Auth.getAuthHeader()
       );
@@ -68,7 +68,7 @@ export class TaskExecutions {
     command.stderr.on("data", async (data) => {
       taskExecution.outputRaw += data;
       await axios.put(
-        `${config.SERVER}/tasks/${taskExecution.taskId}/executions/${taskExecution.id}`,
+        `${config.SERVER}/tasks/${taskExecution.taskId}/executions/${taskExecution.id}/logs`,
         taskExecution,
         await Auth.getAuthHeader()
       );
@@ -78,7 +78,7 @@ export class TaskExecutions {
       logger.info(error.message);
       taskExecution.outputRaw += error.message;
       await axios.put(
-        `${config.SERVER}/tasks/${taskExecution.taskId}/executions/${taskExecution.id}`,
+        `${config.SERVER}/tasks/${taskExecution.taskId}/executions/${taskExecution.id}/logs`,
         taskExecution,
         await Auth.getAuthHeader()
       );

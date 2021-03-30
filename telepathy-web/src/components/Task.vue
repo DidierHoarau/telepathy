@@ -38,6 +38,9 @@ export default {
   },
   setup() {},
   created() {
+    setInterval(() => {
+      this.checkExecutions();
+    }, 5 * 1000);
     this.checkExecutions();
   },
   methods: {
