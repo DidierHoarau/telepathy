@@ -8,7 +8,9 @@
           <p>
             {{ taskExecution.status }}
             <span v-if="taskExecution.dateExecuted"
-              >({{ taskExecution.dateExecuted }})</span
+              >({{
+                new Date(taskExecution.dateExecuted).toLocaleString()
+              }})</span
             >
           </p>
           <pre>{{ taskExecution.outputRaw }}</pre>

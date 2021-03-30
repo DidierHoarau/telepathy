@@ -5,7 +5,9 @@
         <h5 class="card-title">{{ task.name }}</h5>
         <p v-if="taskExecutions.length > 0">
           {{ taskExecutions[0].status }}
-          {{ taskExecutions[0].dateExecuted }}
+          <span v-if="taskExecutions[0].dateExecuted">{{
+            new Date(taskExecutions[0].dateExecuted).toLocaleString()
+          }}</span>
         </p>
         <button v-on:click="edit()" class="btn btn-primary btn-sm">Edit</button
         >&nbsp;

@@ -5,8 +5,8 @@ import { TaskExecution } from "../common-model/taskExecution";
 import { TaskExecutionStatus } from "../common-model/taskExecutionStatus";
 import { config } from "../config";
 import { Logger } from "../utils-std-ts/logger";
-import { SystemCommand } from "../utils-std-ts/system-command";
 import { Timeout } from "../utils-std-ts/timeout";
+import { exec } from "child_process";
 
 const logger = new Logger("tasks/taskExecutions");
 
@@ -54,15 +54,46 @@ export class TaskExecutions {
       await Auth.getAuthHeader()
     );
 
-    taskExecution.outputRaw = await SystemCommand.execute(taskExecution.script);
-    taskExecution.dateExecuted = new Date();
-    taskExecution.success = true;
-    taskExecution.status = TaskExecutionStatus.executed;
+    const command = exec(taskExecution.script);
 
-    await axios.put(
-      `${config.SERVER}/tasks/${taskExecution.taskId}/executions/${taskExecution.id}`,
-      taskExecution,
-      await Auth.getAuthHeader()
-    );
+    command.stdout.on("data", async (data) => {
+      taskExecution.outputRaw += data;
+      await axios.put(
+        `${config.SERVER}/tasks/${taskExecution.taskId}/executions/${taskExecution.id}`,
+        taskExecution,
+        await Auth.getAuthHeader()
+      );
+    });
+
+    command.stderr.on("data", async (data) => {
+      taskExecution.outputRaw += data;
+      await axios.put(
+        `${config.SERVER}/tasks/${taskExecution.taskId}/executions/${taskExecution.id}`,
+        taskExecution,
+        await Auth.getAuthHeader()
+      );
+    });
+
+    command.on("error", async (error) => {
+      logger.info(error.message);
+      taskExecution.outputRaw += error.message;
+      await axios.put(
+        `${config.SERVER}/tasks/${taskExecution.taskId}/executions/${taskExecution.id}`,
+        taskExecution,
+        await Auth.getAuthHeader()
+      );
+    });
+
+    command.on("close", async (code) => {
+      logger.info(`Command executed with code: ${code}`);
+      taskExecution.dateExecuted = new Date();
+      taskExecution.success = true;
+      taskExecution.status = TaskExecutionStatus.executed;
+      await axios.put(
+        `${config.SERVER}/tasks/${taskExecution.taskId}/executions/${taskExecution.id}`,
+        taskExecution,
+        await Auth.getAuthHeader()
+      );
+    });
   }
 }
