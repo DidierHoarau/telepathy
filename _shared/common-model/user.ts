@@ -19,4 +19,26 @@ export class User {
   public async checkPassword(password: string): Promise<boolean> {
     return await bcrypt.compare(password, this.passwordEncrypted); // updated
   }
+
+  public static fromJson(json: any): User {
+    if (!json) {
+      return null;
+    }
+    const user = new User();
+    if (json.id) {
+      user.id = json.id;
+    }
+    user.id = json.id;
+    user.name = json.name;
+    user.passwordEncrypted = json.passwordEncrypted;
+    return user;
+  }
+
+  public toJson(): any {
+    return {
+      id: this.id,
+      name: this.name,
+      passwordEncrypted: this.passwordEncrypted,
+    };
+  }
 }

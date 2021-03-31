@@ -18,9 +18,11 @@ export class Tasks {
   }
 
   public async get(id: string): Promise<Task> {
-    return _.find(this.tasks, {
-      id,
-    }) as Task;
+    return Task.fromJson(
+      _.find(this.tasks, {
+        id,
+      })
+    );
   }
 
   public async update(id: string, taskUpdate: Task): Promise<void> {
@@ -29,6 +31,7 @@ export class Tasks {
     }) as Task;
     task.name = taskUpdate.name;
     task.script = taskUpdate.script;
+    task.webhook = taskUpdate.webhook;
     await this.save();
   }
 

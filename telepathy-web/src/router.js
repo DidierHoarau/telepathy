@@ -1,7 +1,6 @@
 import { createWebHistory, createRouter } from 'vue-router';
 import TaskList from './pages/TaskList.vue';
 import TaskEdit from './pages/TaskEdit.vue';
-import TaskNew from './pages/TaskNew.vue';
 import AgentList from './pages/AgentList.vue';
 import UserList from './pages/UserList.vue';
 import UserEdit from './pages/UserEdit.vue';
@@ -12,7 +11,7 @@ const history = createWebHistory();
 const routes = [
   { path: '/', component: TaskList },
   { path: '/tasks', component: TaskList },
-  { path: '/tasks/new', component: TaskNew },
+  { path: '/tasks/new', component: TaskEdit },
   {
     path: '/tasks/:taskId/edit',
     component: TaskEdit,

@@ -53,33 +53,33 @@ export class TaskExecutions {
       taskExecution,
       await Auth.getAuthHeader()
     );
-
+    let outputRaw = "";
     const command = exec(taskExecution.script);
 
     command.stdout.on("data", async (data) => {
-      taskExecution.outputRaw += data;
+      outputRaw += data;
       await axios.put(
         `${config.SERVER}/tasks/${taskExecution.taskId}/executions/${taskExecution.id}/logs`,
-        taskExecution,
+        { logs: outputRaw },
         await Auth.getAuthHeader()
       );
     });
 
     command.stderr.on("data", async (data) => {
-      taskExecution.outputRaw += data;
+      outputRaw += data;
       await axios.put(
         `${config.SERVER}/tasks/${taskExecution.taskId}/executions/${taskExecution.id}/logs`,
-        taskExecution,
+        { logs: outputRaw },
         await Auth.getAuthHeader()
       );
     });
 
     command.on("error", async (error) => {
       logger.info(error.message);
-      taskExecution.outputRaw += error.message;
+      outputRaw += error.message;
       await axios.put(
         `${config.SERVER}/tasks/${taskExecution.taskId}/executions/${taskExecution.id}/logs`,
-        taskExecution,
+        { logs: outputRaw },
         await Auth.getAuthHeader()
       );
     });

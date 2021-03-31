@@ -18,33 +18,19 @@ export class Users {
   }
 
   public async get(id: string): Promise<User> {
-    const userRaw = _.find(this.users, {
-      id,
-    });
-    if (!userRaw) {
-      return userRaw;
-    } else {
-      const user = new User();
-      user.id = userRaw.id;
-      user.name = userRaw.name;
-      user.passwordEncrypted = userRaw.passwordEncrypted;
-      return user;
-    }
+    return User.fromJson(
+      _.find(this.users, {
+        id,
+      })
+    );
   }
 
   public async getByName(name: string): Promise<User> {
-    const userRaw = _.find(this.users, {
-      name,
-    });
-    if (!userRaw) {
-      return userRaw;
-    } else {
-      const user = new User();
-      user.id = userRaw.id;
-      user.name = userRaw.name;
-      user.passwordEncrypted = userRaw.passwordEncrypted;
-      return user;
-    }
+    return User.fromJson(
+      _.find(this.users, {
+        name,
+      })
+    );
   }
 
   public async list(): Promise<User[]> {

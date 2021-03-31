@@ -6,8 +6,6 @@ export class TaskExecution {
   public id: string;
   public taskId: string;
   public script: string;
-  public outputRaw: string;
-  public outputs: TaskOutput[];
   public status: string;
   public success: boolean = false;
   public agentId: string;
@@ -17,7 +15,38 @@ export class TaskExecution {
 
   constructor() {
     this.id = uuidv4();
-    this.outputRaw = "";
-    this.outputs = [];
+  }
+
+  public static fromJson(json: any): TaskExecution {
+    if (!json) {
+      return null;
+    }
+    const taskExecution = new TaskExecution();
+    if (json.id) {
+      taskExecution.id = json.id;
+    }
+    taskExecution.taskId = json.taskId;
+    taskExecution.script = json.script;
+    taskExecution.status = json.status;
+    taskExecution.success = json.success;
+    taskExecution.agentId = json.agentId;
+    taskExecution.dateQueued = json.dateQueued;
+    taskExecution.dateExecuting = json.dateExecuting;
+    taskExecution.dateExecuted = json.dateExecuted;
+    return taskExecution;
+  }
+
+  public toJson(): any {
+    return {
+      id: this.id,
+      taskId: this.taskId,
+      script: this.script,
+      status: this.status,
+      success: this.success,
+      agentId: this.agentId,
+      dateQueued: this.dateQueued,
+      dateExecuting: this.dateExecuting,
+      dateExecuted: this.dateExecuted,
+    };
   }
 }

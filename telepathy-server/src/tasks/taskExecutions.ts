@@ -19,9 +19,11 @@ export class TaskExecutions {
   }
 
   public async get(id: string): Promise<TaskExecution> {
-    return _.find(this.taskExecutions, {
-      id,
-    }) as TaskExecution;
+    return TaskExecution.fromJson(
+      _.find(this.taskExecutions, {
+        id,
+      })
+    );
   }
 
   public async list(): Promise<TaskExecution[]> {
@@ -37,10 +39,10 @@ export class TaskExecutions {
     id: string,
     taskExecutionUpdate: TaskExecution
   ): Promise<void> {
-    const taskExecution = await this.get(id);
+    const taskExecution = _.find(this.taskExecutions, {
+      id,
+    });
     taskExecution.status = taskExecutionUpdate.status;
-    // taskExecution.outputRaw = taskExecutionUpdate.outputRaw;
-    taskExecution.outputs = taskExecutionUpdate.outputs;
     taskExecution.success = taskExecutionUpdate.success;
     taskExecution.agentId = taskExecutionUpdate.agentId;
     taskExecution.dateQueued = taskExecutionUpdate.dateQueued;
@@ -58,13 +60,14 @@ export class TaskExecutions {
   }
 
   public async updateLogs(
-    id: string,
-    taskExecutionUpdate: TaskExecution
+    taskExecutionId: string,
+    taskId: string,
+    logs: Buffer
   ): Promise<void> {
     await fs.ensureDir(`${config.DATA_DIR}/logs`);
     await fs.writeFile(
-      `${config.DATA_DIR}/logs/${taskExecutionUpdate.taskId}_${id}.log`,
-      taskExecutionUpdate.outputRaw
+      `${config.DATA_DIR}/logs/${taskId}_${taskExecutionId}.log`,
+      logs
     );
   }
 

@@ -27,17 +27,15 @@ ERW.route(taskApi, "post", "/", async (req, res, next, stopAndSend) => {
   if (!req.user.authenticated) {
     stopAndSend(403, { error: "Access Denied" });
   }
-  const newTask = new Task();
   if (!req.body.name) {
     stopAndSend(400, { error: "Missing: Name" });
   }
   if (!req.body.script) {
     stopAndSend(400, { error: "Missing: Script" });
   }
-  newTask.name = req.body.name;
-  newTask.script = req.body.script;
+  const newTask = Task.fromJson(req.body);
   await AppContext.getTasks().add(newTask);
-  res.status(201).json(newTask);
+  res.status(201).json(newTask.toJson());
 });
 
 ERW.route(taskApi, "get", "/:taskId", async (req, res, next, stopAndSend) => {
@@ -45,9 +43,8 @@ ERW.route(taskApi, "get", "/:taskId", async (req, res, next, stopAndSend) => {
   if (!req.user.authenticated) {
     stopAndSend(403, { error: "Access Denied" });
   }
-  const taskId = req.params.taskId;
-  const task = await AppContext.getTasks().get(taskId);
-  res.status(200).json(task);
+  const task = await AppContext.getTasks().get(req.params.taskId);
+  res.status(200).json(task.toJson());
 });
 
 ERW.route(
@@ -59,8 +56,7 @@ ERW.route(
     if (!req.user.authenticated) {
       stopAndSend(403, { error: "Access Denied" });
     }
-    const taskId = req.params.taskId;
-    const task = await AppContext.getTasks().delete(taskId);
+    await AppContext.getTasks().delete(req.params.taskId);
     res.status(202).json({});
   }
 );
@@ -70,8 +66,7 @@ ERW.route(taskApi, "put", "/:taskId", async (req, res, next, stopAndSend) => {
   if (!req.user.authenticated) {
     stopAndSend(403, { error: "Access Denied" });
   }
-  const taskId = req.params.taskId;
-  const task = await AppContext.getTasks().get(taskId);
+  const task = await AppContext.getTasks().get(req.params.taskId);
   if (!task) {
     stopAndSend(404, { error: "Not Found" });
   }
@@ -83,7 +78,8 @@ ERW.route(taskApi, "put", "/:taskId", async (req, res, next, stopAndSend) => {
   }
   task.name = req.body.name;
   task.script = req.body.script;
-  await AppContext.getTasks().update(taskId, task);
+  task.webhook = req.body.webhook;
+  await AppContext.getTasks().update(req.params.taskId, task);
   res.status(201).json(task);
 });
 
@@ -96,12 +92,11 @@ ERW.route(
     if (!req.user.authenticated) {
       stopAndSend(403, { error: "Access Denied" });
     }
-    const taskId = req.params.taskId;
     AppContext.getTaskExecutions();
     const tasksExecutions = await AppContext.getTaskExecutions().list();
     const output: TaskExecution[] = [];
     for (const tasksExecution of tasksExecutions) {
-      if (tasksExecution.taskId === taskId) {
+      if (tasksExecution.taskId === req.params.taskId) {
         output.push(tasksExecution);
       }
     }
@@ -119,11 +114,10 @@ ERW.route(
     if (!req.user.authenticated) {
       stopAndSend(403, { error: "Access Denied" });
     }
-    const taskId = req.params.taskId;
     AppContext.getTaskExecutions();
-    const task = await AppContext.getTasks().get(taskId);
+    const task = await AppContext.getTasks().get(req.params.taskId);
     const newTaskExecution = new TaskExecution();
-    newTaskExecution.taskId = taskId;
+    newTaskExecution.taskId = req.params.taskId;
     newTaskExecution.script = task.script;
     newTaskExecution.status = TaskExecutionStatus.queued;
     await AppContext.getTaskExecutions().add(newTaskExecution);
@@ -140,11 +134,10 @@ ERW.route(
     if (!req.user.authenticated) {
       stopAndSend(403, { error: "Access Denied" });
     }
-    const taskExecutionId = req.params.taskExecutionId;
     const taskExecution = await AppContext.getTaskExecutions().get(
-      taskExecutionId
+      req.params.taskExecutionId
     );
-    res.status(200).json(taskExecution);
+    res.status(200).json(taskExecution.toJson());
   }
 );
 
@@ -157,10 +150,9 @@ ERW.route(
     if (!req.user.authenticated) {
       stopAndSend(403, { error: "Access Denied" });
     }
-    const taskExecutionUpdate = req.body as TaskExecution;
-    const taskExecutionId = req.params.taskExecutionId;
+    const taskExecutionUpdate = TaskExecution.fromJson(req.body);
     await AppContext.getTaskExecutions().update(
-      taskExecutionId,
+      req.params.taskExecutionId,
       taskExecutionUpdate
     );
     res.status(200).json({});
@@ -176,11 +168,9 @@ ERW.route(
     if (!req.user.authenticated) {
       stopAndSend(403, { error: "Access Denied" });
     }
-    const taskExecutionId = req.params.taskExecutionId;
-    const taskId = req.params.taskId;
     const logs = await AppContext.getTaskExecutions().getLogs(
-      taskExecutionId,
-      taskId
+      req.params.taskExecutionId,
+      req.params.taskId
     );
     res.status(200).json({ logs: logs.toString() });
   }
@@ -195,12 +185,36 @@ ERW.route(
     if (!req.user.authenticated) {
       stopAndSend(403, { error: "Access Denied" });
     }
-    const taskExecutionUpdate = req.body as TaskExecution;
-    const taskExecutionId = req.params.taskExecutionId;
+    if (!req.body.logs) {
+      stopAndSend(400, { error: "Missing: Logs" });
+    }
     await AppContext.getTaskExecutions().updateLogs(
-      taskExecutionId,
-      taskExecutionUpdate
+      req.params.taskExecutionId,
+      req.params.taskId,
+      req.body.logs
     );
     res.status(200).json({});
+  }
+);
+
+ERW.route(
+  taskApi,
+  "post",
+  "/webhooks/:webhookId",
+  async (req, res, next, stopAndSend) => {
+    logger.info(`[${req.method}] ${req.originalUrl}`);
+    const tasks = await AppContext.getTasks().list();
+    const task = _.find(tasks, {
+      webhook: req.params.webhookId,
+    });
+    if (!task) {
+      stopAndSend(404, { error: "Not Found" });
+    }
+    const newTaskExecution = new TaskExecution();
+    newTaskExecution.taskId = task.id;
+    newTaskExecution.script = task.script;
+    newTaskExecution.status = TaskExecutionStatus.queued;
+    await AppContext.getTaskExecutions().add(newTaskExecution);
+    res.status(201).json(newTaskExecution.toJson());
   }
 );
