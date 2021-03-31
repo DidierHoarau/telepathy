@@ -27,14 +27,14 @@
                     <span v-else-if="currentTaskExecution.dateExecuting">
                       ({{
                         new Date(
-                          currentTaskExecution.dateExecuted
+                          currentTaskExecution.dateExecuting
                         ).toLocaleString()
                       }})
                     </span>
                     <span v-else-if="currentTaskExecution.dateQueued">
                       ({{
                         new Date(
-                          currentTaskExecution.dateExecuted
+                          currentTaskExecution.dateQueued
                         ).toLocaleString()
                       }})
                     </span>
