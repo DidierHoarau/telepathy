@@ -21,7 +21,7 @@ export class TaskExecutionListHandler {
         output.push(tasksExecution);
       }
     }
-    const outputSorted = _.reverse(_.sortBy(output, "dateExecuted"));
+    const outputSorted = _.reverse(_.sortBy(output, "dateQueued"));
     res.status(200).json({ task_executions: outputSorted });
   }
 

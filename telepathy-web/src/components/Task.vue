@@ -40,7 +40,7 @@ export default {
   created() {
     setInterval(() => {
       this.checkExecutions();
-    }, 5 * 1000);
+    }, 10 * 1000);
     this.checkExecutions();
   },
   methods: {

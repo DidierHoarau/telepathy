@@ -92,7 +92,6 @@ export default {
       this.refreshTastExecutionInfo();
     }, 5000);
     EventBus.on(EventTypes.TASK_EXECUTION_TRIGGERED, async (event) => {
-      console.log(event);
       if (event.taskId === this.taskId) {
         this.loadTaskExecutionHistory();
       }
