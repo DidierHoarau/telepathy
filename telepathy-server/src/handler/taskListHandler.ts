@@ -19,7 +19,7 @@ export class TaskListHandler {
 
   public static async createTask(req, res, next, stopAndSend): Promise<void> {
     logger.info(`[${req.method}] ${req.originalUrl}`);
-    if (!req.user.authenticatAed) {
+    if (!req.user.authenticated) {
       stopAndSend(403, { error: "Access Denied" });
     }
     if (!req.body.name) {

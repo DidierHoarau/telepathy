@@ -17,6 +17,7 @@ export class Auth {
         await axios
           .post(`${config.SERVER}/agents/${config.AGENT_ID}/session`, {
             key: config.AGENT_KEY,
+            tags: config.TAGS,
           })
           .then(async (res) => {
             token = res.data.token;

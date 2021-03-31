@@ -1,5 +1,6 @@
 {
   "SERVER": "http://localhost:8080",
   "HEARTBEAT_CYCLE": 10,
-  "AGENT_KEY": "aR77TdeCdSCtUZmBghxeHQ6GCzS8aq7btNDy6798WkH3RznhswEpV5ZAJXW6fMZqCJEJ8g"
+  "AGENT_KEY": "aR77TdeCdSCtUZmBghxeHQ6GCzS8aq7btNDy6798WkH3RznhswEpV5ZAJXW6fMZqCJEJ8g",
+  "TAGS": ["linux_x86", "cloud"]
 }

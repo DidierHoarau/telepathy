@@ -19,6 +19,7 @@
         </div>
       </div>
       <div class="mb-3">
+        <label class="form-label">Webhook</label>
         <div class="form-check form-switch">
           <input
             class="form-check-input"
@@ -37,6 +38,19 @@
             >Webhook call: {API}/tasks/webhooks/{WEBHOOK_ID}</label
           >
         </div>
+      </div>
+      <div>
+        <label class="form-label">Tag</label>
+        <select
+          v-model="task.tag"
+          class="form-select"
+          aria-label="Task Tag Selection"
+        >
+          <option value="">Any</option>
+          <option v-for="tag in tags" v-bind:key="tag" :value="tag">
+            {{ tag }}
+          </option>
+        </select>
       </div>
       <br />
       <button v-if="taskId" v-on:click="saveUpdate()" class="btn btn-primary">
@@ -68,10 +82,25 @@ export default {
     return {
       task: { name: '', script: '' },
       webhookEnabled: false,
+      tags: [],
     };
   },
   setup() {},
   async created() {
+    axios
+      .get(
+        `${(await Config.get()).SERVER_URL}/agents/tags`,
+        await AuthService.getAuthHeader()
+      )
+      .then((res) => {
+        this.tags = res.data;
+      })
+      .catch((error) => {
+        EventBus.emit(EventTypes.ALERT_MESSAGE, {
+          type: 'error',
+          text: error.message,
+        });
+      });
     if (this.taskId) {
       axios
         .get(
@@ -98,7 +127,6 @@ export default {
     async webhookSwitched() {
       setTimeout(() => {
         if (this.webhookEnabled) {
-          console.log('foo');
           const chars =
             'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
           let randomString = '';
@@ -139,7 +167,6 @@ export default {
 
     async saveNew() {
       if (this.task.name && this.task.script) {
-        console.log(this.task);
         axios
           .post(
             `${(await Config.get()).SERVER_URL}/tasks`,
@@ -192,5 +219,7 @@ export default {
 <style scoped>
 .task-script {
   font-family: monospace;
+  white-space: nowrap;
+  overflow: auto;
 }
 </style>

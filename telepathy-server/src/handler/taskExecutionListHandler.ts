@@ -35,6 +35,7 @@ export class TaskExecutionListHandler {
     const newTaskExecution = new TaskExecution();
     newTaskExecution.taskId = req.params.taskId;
     newTaskExecution.script = task.script;
+    newTaskExecution.tag = task.tag;
     newTaskExecution.status = TaskExecutionStatus.queued;
     await AppContext.getTaskExecutions().add(newTaskExecution);
     res.status(201).json(newTaskExecution);

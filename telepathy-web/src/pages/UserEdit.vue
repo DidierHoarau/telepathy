@@ -1,11 +1,11 @@
 <template>
   <div>
     <h1>New User</h1>
-    <div class="mb-12">
+    <div class="mb-3">
       <label class="form-label">Name</label>
       <input v-model="user.name" type="text" class="form-control" />
     </div>
-    <div class="mb-12">
+    <div class="mb-3">
       <label class="form-label">Password</label>
       <input v-model="user.password" type="password" class="form-control" />
     </div>
@@ -31,7 +31,6 @@ export default {
   setup() {},
   methods: {
     async save() {
-      console.log('foo');
       if (this.user.name && this.user.password) {
         axios
           .post(
@@ -39,11 +38,8 @@ export default {
             this.user,
             await AuthService.getAuthHeader()
           )
-          .then((res) => {
-            console.log(res.data);
-          })
+          .then((res) => {})
           .catch((error) => {
-            console.log('bar');
             EventBus.emit(EventTypes.ALERT_MESSAGE, {
               type: 'error',
               text: error.message,

@@ -42,6 +42,7 @@ export class TaskHandler {
     task.name = req.body.name;
     task.script = req.body.script;
     task.webhook = req.body.webhook;
+    task.tag = req.body.tag;
     await AppContext.getTasks().update(req.params.taskId, task);
     res.status(201).json(task);
   }

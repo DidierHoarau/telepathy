@@ -1,5 +1,4 @@
 import { v4 as uuidv4 } from "uuid";
-import { TaskOutput } from "./taskOutput";
 
 export class TaskExecution {
   //
@@ -9,6 +8,7 @@ export class TaskExecution {
   public status: string;
   public success: boolean = false;
   public agentId: string;
+  public tag: string;
   public dateQueued: Date;
   public dateExecuting: Date;
   public dateExecuted: Date;
@@ -24,6 +24,9 @@ export class TaskExecution {
     const taskExecution = new TaskExecution();
     if (json.id) {
       taskExecution.id = json.id;
+    }
+    if (json.tag) {
+      taskExecution.tag = json.tag;
     }
     taskExecution.taskId = json.taskId;
     taskExecution.script = json.script;
@@ -44,6 +47,7 @@ export class TaskExecution {
       status: this.status,
       success: this.success,
       agentId: this.agentId,
+      tag: this.tag,
       dateQueued: this.dateQueued,
       dateExecuting: this.dateExecuting,
       dateExecuted: this.dateExecuted,

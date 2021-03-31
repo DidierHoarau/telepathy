@@ -125,3 +125,7 @@ button a {
 div {
   width: 100%;
 }
+
+.icon-button {
+  font-size: 1.6rem;
+}

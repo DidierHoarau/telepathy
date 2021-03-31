@@ -1,8 +1,14 @@
 <template>
-  <div class="card-container col-sm-6 col-md-4 col-lg-3">
+  <div class="card-container col-sm-12 col-md-6 col-lg-4">
     <div class="card">
       <div class="card-body">
         <h5 class="card-title">{{ agent.id }}</h5>
+        <p>
+          <span v-for="tag in agent.tags" v-bind:key="tag">
+            <span class="badge bg-secondary">{{ tag }}</span
+            >&nbsp;
+          </span>
+        </p>
       </div>
     </div>
   </div>

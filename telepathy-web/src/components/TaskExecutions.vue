@@ -11,12 +11,12 @@
                 <i
                   v-if="taskExecutionHasNewer"
                   v-on:click="selectTaskExecution(taskExecutionPosition - 1)"
-                  class="bi bi-arrow-left-circle"
+                  class="bi bi-arrow-left-circle icon-button"
                 ></i>
               </div>
               <div class="col">
-                <div v-if="currentTaskExecution">
-                  <p>
+                <div class="execution-header" v-if="currentTaskExecution">
+                  <h6>
                     <span v-if="currentTaskExecution.dateExecuted">
                       ({{
                         new Date(
@@ -39,18 +39,19 @@
                       }})
                     </span>
                     {{ currentTaskExecution.status }}
-                  </p>
+                  </h6>
                 </div>
               </div>
-              <div class="col-1">
+              <div class="col-1 text-end">
                 <i
                   v-if="taskExecutionHasOlder"
                   v-on:click="selectTaskExecution(taskExecutionPosition + 1)"
-                  class="bi bi-arrow-right-circle"
+                  class="bi bi-arrow-right-circle icon-button"
                 ></i>
               </div>
             </div>
           </div>
+          <br />
           <pre>{{ logs }}</pre>
         </div>
       </div>
@@ -152,7 +153,7 @@ export default {
       }
     },
     selectTaskExecution(position) {
-      if (this.taskExecutions.length < position - 1) {
+      if (this.taskExecutions.length === 0) {
         this.currentTaskExecution = null;
         this.taskExecutionHasOlder = false;
         this.taskExecutionHasNewer = false;
@@ -194,4 +195,8 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.execution-header {
+  margin-top: 0.6rem;
+}
+</style>

@@ -1,6 +1,6 @@
 import axios from "axios";
 import * as _ from "lodash";
-import { Auth } from "../agents/auth";
+import { Auth } from "./auth";
 import { TaskExecution } from "../common-model/taskExecution";
 import { TaskExecutionStatus } from "../common-model/taskExecutionStatus";
 import { config } from "../config";

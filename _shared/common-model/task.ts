@@ -5,7 +5,7 @@ export class Task {
   public id: string;
   public name: string;
   public script: string;
-  public agentId: string;
+  public tag: string;
   public webhook: string;
 
   constructor() {
@@ -20,10 +20,13 @@ export class Task {
     if (json.id) {
       task.id = json.id;
     }
+    if (json.tag) {
+      task.tag = json.tag;
+    }
     task.name = json.name;
     task.script = json.script;
-    task.agentId = json.agentId;
     task.webhook = json.webhook;
+
     return task;
   }
 
@@ -32,7 +35,7 @@ export class Task {
       id: this.id,
       name: this.name,
       script: this.script,
-      agentId: this.agentId,
+      tag: this.tag,
       webhook: this.webhook,
     };
   }

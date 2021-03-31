@@ -13,6 +13,7 @@ class Config {
   public AGENT_ID: string = os.hostname();
   public LOG_DEBUG: boolean = false;
   public HEARTBEAT_CYCLE: number = 60;
+  public TAGS: string[] = [];
   public AGENT_KEY: string = uuidv4();
 
   public constructor() {
@@ -35,6 +36,7 @@ class Config {
     logger.info(`Configuration Value: VERSION: ${this.VERSION}`);
     setIfSet("SERVER");
     setIfSet("AGENT_ID");
+    setIfSet("TAGS");
     setIfSet("HEARTBEAT_CYCLE");
     setIfSet("LOG_DEBUG");
     setIfSet("AGENT_KEY", false);

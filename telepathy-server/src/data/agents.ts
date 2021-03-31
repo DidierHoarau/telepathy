@@ -14,6 +14,12 @@ export class Agents {
     this.agents = agentList;
   }
 
+  public async get(id): Promise<Agent> {
+    return _.find(this.agents, {
+      id,
+    }) as Agent;
+  }
+
   public async list(): Promise<Agent[]> {
     return this.agents;
   }
@@ -24,8 +30,11 @@ export class Agents {
     }) as Agent;
     if (knownAgent) {
       knownAgent.lastSyncDate = new Date();
+      knownAgent.tags = newAgent.tags;
     } else {
-      logger.info(`New agent registered: ${newAgent.id}`);
+      logger.info(
+        `New agent registered: ${newAgent.id} (tags: ${newAgent.tags})`
+      );
       newAgent.lastSyncDate = new Date();
       this.agents.push(newAgent);
     }

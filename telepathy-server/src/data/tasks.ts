@@ -31,6 +31,7 @@ export class Tasks {
     }) as Task;
     task.name = taskUpdate.name;
     task.script = taskUpdate.script;
+    task.tag = taskUpdate.tag;
     task.webhook = taskUpdate.webhook;
     await this.save();
   }
