@@ -1,10 +1,10 @@
-import * as _ from 'lodash';
-import { config } from '../config';
-import { Logger } from '../utils-std-ts/logger';
-import { Timeout } from '../utils-std-ts/timeout';
-import { Agent } from './agent';
+import * as _ from "lodash";
+import { Agent } from "../common-model/agent";
+import { config } from "../config";
+import { Logger } from "../utils-std-ts/logger";
+import { Timeout } from "../utils-std-ts/timeout";
 
-const logger = new Logger('agents/agentregistration');
+const logger = new Logger("agents/agentregistration");
 
 export class Agents {
   //

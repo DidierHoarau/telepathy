@@ -21,11 +21,15 @@ class Config {
 
   public async reload(): Promise<void> {
     const content = await fse.readJson(this.CONFIG_FILE);
-    const setIfSet = (field) => {
+    const setIfSet = (field: string, displayLog = true) => {
       if (content[field]) {
         this[field] = content[field];
       }
-      logger.info(`Configuration Value: ${field}: ${this[field]}`);
+      if (displayLog) {
+        logger.info(`Configuration Value: ${field}: ${this[field]}`);
+      } else {
+        logger.info(`Configuration Value: ${field}: ********************`);
+      }
     };
     logger.info(`Configuration Value: CONFIG_FILE: ${this.CONFIG_FILE}`);
     logger.info(`Configuration Value: VERSION: ${this.VERSION}`);
@@ -33,7 +37,7 @@ class Config {
     setIfSet("AGENT_ID");
     setIfSet("HEARTBEAT_CYCLE");
     setIfSet("LOG_DEBUG");
-    setIfSet("AGENT_KEY");
+    setIfSet("AGENT_KEY", false);
   }
 }
 

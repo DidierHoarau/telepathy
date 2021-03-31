@@ -56,6 +56,9 @@ export default {
         )
         .then((res) => {
           EventBus.emit(EventTypes.TASK_UPDATED, { taskId: this.task.id });
+          EventBus.emit(EventTypes.TASK_EXECUTION_TRIGGERED, {
+            taskId: this.task.id,
+          });
         })
         .catch((error) => {
           EventBus.emit(EventTypes.ALERT_MESSAGE, {

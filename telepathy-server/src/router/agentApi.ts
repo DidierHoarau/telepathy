@@ -1,10 +1,10 @@
 import * as express from "express";
 import * as _ from "lodash";
-import { Agent } from "../agents/agent";
 import { AppContext } from "../appContext";
+import { Agent } from "../common-model/agent";
 import { User } from "../common-model/user";
 import { config } from "../config";
-import { Auth } from "../users/auth";
+import { Auth } from "../data/auth";
 import { ExpressRouterWrapper as ERW } from "../utils-std-ts/express-router-wrapper";
 import { Logger } from "../utils-std-ts/logger";
 

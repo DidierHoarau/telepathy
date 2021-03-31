@@ -1,9 +1,6 @@
 import * as jwt from "jsonwebtoken";
-import { v4 as uuidv4 } from "uuid";
 import { User } from "../common-model/user";
 import { config } from "../config";
-
-const AUTH_KEY = uuidv4();
 
 export class Auth {
   //
@@ -14,13 +11,13 @@ export class Auth {
         user_id: user.id,
         user_name: user.name,
       },
-      AUTH_KEY
+      config.JWT_KEY
     );
   }
 
   public static async checkToken(token: string): Promise<any> {
     try {
-      const info = jwt.verify(token, AUTH_KEY);
+      const info = jwt.verify(token, config.JWT_KEY);
       return { authenticated: true, info };
     } catch (err) {
       return {

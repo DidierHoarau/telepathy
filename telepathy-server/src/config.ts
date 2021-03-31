@@ -14,6 +14,7 @@ class Config {
   public CORS_POLICY_ORIGIN: string;
   public DATA_DIR: string = ".";
   public AGENT_KEY: string = uuidv4();
+  public JWT_KEY: string = uuidv4();
 
   public constructor() {
     this.reload();
@@ -21,19 +22,24 @@ class Config {
 
   public async reload(): Promise<void> {
     const content = await fse.readJson(this.CONFIG_FILE);
-    const setIfSet = (field) => {
+    const setIfSet = (field: string, displayLog = true) => {
       if (content[field]) {
         this[field] = content[field];
       }
-      logger.info(`Configuration Value: ${field}: ${this[field]}`);
+      if (displayLog) {
+        logger.info(`Configuration Value: ${field}: ${this[field]}`);
+      } else {
+        logger.info(`Configuration Value: ${field}: ********************`);
+      }
     };
     logger.info(`Configuration Value: CONFIG_FILE: ${this.CONFIG_FILE}`);
     logger.info(`Configuration Value: VERSION: ${this.VERSION}`);
     setIfSet("AGENT_REGISTRATION_DURATION");
-    setIfSet("JWT_VALIDITY_DURATION");
+    setIfSet("JWT_VALIDIsTY_DURATION");
     setIfSet("CORS_POLICY_ORIGIN");
     setIfSet("DATA_DIR");
-    setIfSet("AGENT_KEY");
+    setIfSet("AGENT_KEY", false);
+    setIfSet("JWT_KEY", false);
   }
 }
 

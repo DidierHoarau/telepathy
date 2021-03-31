@@ -12,14 +12,15 @@
     <button type="button" class="btn btn-primary">
       <router-link to="/tasks/new">Add</router-link>
     </button>
-    <TaskExecution v-if="taskExecution" :taskExecution="taskExecution" />
+    <br />
+    <TaskExecutions v-if="taskIdSelected" :taskId="taskIdSelected" />
   </div>
 </template>
 
 <script>
 import axios from 'axios';
 import Task from '../components/Task.vue';
-import TaskExecution from '../components/TaskExecution.vue';
+import TaskExecutions from '../components/TaskExecutions.vue';
 import Config from '../Config.ts';
 import { EventBus, EventTypes } from '../services/EventBus';
 import { AuthService } from '../services/AuthService';
@@ -28,13 +29,12 @@ export default {
   name: 'Tasks',
   components: {
     Task,
-    TaskExecution,
+    TaskExecutions,
   },
   data() {
     return {
       tasks: [],
-      displayTaskExecution: false,
-      taskExecution: null,
+      taskIdSelected: null,
     };
   },
   created() {
@@ -42,9 +42,6 @@ export default {
     EventBus.on(EventTypes.TASK_UPDATED, (event) => {
       this.load();
     });
-    setInterval(() => {
-      this.load();
-    }, 5 * 1000);
   },
   methods: {
     async load() {
@@ -64,21 +61,7 @@ export default {
         });
     },
     async onTaskClicked(id) {
-      axios
-        .get(
-          `${(await Config.get()).SERVER_URL}/tasks/${id}/executions`,
-          await AuthService.getAuthHeader()
-        )
-        .then((res) => {
-          this.taskExecution = res.data.task_executions[0];
-          this.displaytaskExecution = true;
-        })
-        .catch((error) => {
-          EventBus.emit(EventTypes.ALERT_MESSAGE, {
-            type: 'error',
-            text: error.message,
-          });
-        });
+      this.taskIdSelected = id;
     },
   },
 };
