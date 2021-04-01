@@ -17,11 +17,7 @@ export class WebhookHandler {
     if (!task) {
       stopAndSend(404, { error: "Not Found" });
     }
-    const newTaskExecution = new TaskExecution();
-    newTaskExecution.taskId = task.id;
-    newTaskExecution.script = task.script;
-    newTaskExecution.status = TaskExecutionStatus.queued;
-    await AppContext.getTaskExecutions().add(newTaskExecution);
+    const newTaskExecution = await AppContext.getTaskExecutions().createFromTaskId(req.params.taskId);
     res.status(201).json(newTaskExecution.toJson());
   }
 }

@@ -63,7 +63,7 @@
 import axios from 'axios';
 import Config from '../Config.ts';
 import { AuthService } from '../services/AuthService';
-import { EventBus, EventTypes } from '../services/EventBus';
+import { EventBus, EventTypes, handleError } from '../services/EventBus';
 
 export default {
   name: 'TaskExecutions',
@@ -108,12 +108,7 @@ export default {
         .then((res) => {
           this.task = res.data;
         })
-        .catch((error) => {
-          EventBus.emit(EventTypes.ALERT_MESSAGE, {
-            type: 'error',
-            text: error.message,
-          });
-        });
+        .catch(handleError);
       axios
         .get(
           `${(await Config.get()).SERVER_URL}/tasks/${this.taskId}/executions`,
@@ -124,12 +119,7 @@ export default {
           this.taskExecutions = res.data.task_executions;
           this.selectTaskExecution(0);
         })
-        .catch((error) => {
-          EventBus.emit(EventTypes.ALERT_MESSAGE, {
-            type: 'error',
-            text: error.message,
-          });
-        });
+        .catch(handleError);
     },
     async refreshTastExecutionInfo() {
       if (this.currentTaskExecution) {
@@ -143,12 +133,7 @@ export default {
           .then((res) => {
             this.currentTaskExecution = res.data;
           })
-          .catch((error) => {
-            EventBus.emit(EventTypes.ALERT_MESSAGE, {
-              type: 'error',
-              text: error.message,
-            });
-          });
+          .catch(handleError);
         this.getExecutionLogs(this.taskId, this.currentTaskExecution.id);
       }
     },
@@ -184,12 +169,7 @@ export default {
         .then((res) => {
           this.logs = res.data.logs;
         })
-        .catch((error) => {
-          EventBus.emit(EventTypes.ALERT_MESSAGE, {
-            type: 'error',
-            text: error.message,
-          });
-        });
+        .catch(handleError);
     },
   },
 };

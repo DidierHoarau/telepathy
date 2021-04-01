@@ -1,5 +1,5 @@
+import * as cron from "node-cron";
 import { AppContext } from "../appContext";
-import { Task } from "../common-model/task";
 import { Logger } from "../utils-std-ts/logger";
 
 const logger = new Logger("router/handlers/taskHandler");
@@ -39,11 +39,17 @@ export class TaskHandler {
     if (!req.body.script) {
       stopAndSend(400, { error: "Missing: Script" });
     }
+    if (req.body.schedule && !cron.validate(req.body.schedule)) {
+      stopAndSend(400, { error: "Invalid: Schedule" });
+    }
+
     task.name = req.body.name;
     task.script = req.body.script;
+    task.schedule = req.body.schedule;
     task.webhook = req.body.webhook;
     task.tag = req.body.tag;
     await AppContext.getTasks().update(req.params.taskId, task);
+    AppContext.getScheduler().calculate();
     res.status(201).json(task);
   }
 }

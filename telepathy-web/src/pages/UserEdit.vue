@@ -17,6 +17,7 @@
 import axios from 'axios';
 import Config from '../Config.ts';
 import { AuthService } from '../services/AuthService';
+import { handleError } from '../services/EventBus';
 
 export default {
   name: 'UserEdit',
@@ -39,12 +40,7 @@ export default {
             await AuthService.getAuthHeader()
           )
           .then((res) => {})
-          .catch((error) => {
-            EventBus.emit(EventTypes.ALERT_MESSAGE, {
-              type: 'error',
-              text: error.message,
-            });
-          });
+          .catch(handleError);
       }
     },
   },

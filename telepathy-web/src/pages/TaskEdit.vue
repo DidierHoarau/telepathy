@@ -18,6 +18,26 @@
           ></textarea>
         </div>
       </div>
+      <div class="mb-3 task-schedule">
+        <label class="form-label"
+          >Cron Schedule
+          <span>(minute hour day_of_month month day_of_week)</span>
+        </label>
+        <input v-model="task.schedule" type="text" class="form-control" />
+      </div>
+      <div>
+        <label class="form-label">Tag</label>
+        <select
+          v-model="task.tag"
+          class="form-select"
+          aria-label="Task Tag Selection"
+        >
+          <option value="">Any</option>
+          <option v-for="tag in tags" v-bind:key="tag" :value="tag">
+            {{ tag }}
+          </option>
+        </select>
+      </div>
       <div class="mb-3">
         <label class="form-label">Webhook</label>
         <div class="form-check form-switch">
@@ -39,19 +59,6 @@
           >
         </div>
       </div>
-      <div>
-        <label class="form-label">Tag</label>
-        <select
-          v-model="task.tag"
-          class="form-select"
-          aria-label="Task Tag Selection"
-        >
-          <option value="">Any</option>
-          <option v-for="tag in tags" v-bind:key="tag" :value="tag">
-            {{ tag }}
-          </option>
-        </select>
-      </div>
       <br />
       <button v-if="taskId" v-on:click="saveUpdate()" class="btn btn-primary">
         Save</button
@@ -69,7 +76,7 @@
 <script>
 import axios from 'axios';
 import Config from '../Config.ts';
-import { EventBus, EventTypes } from '../services/EventBus';
+import { EventBus, EventTypes, handleError } from '../services/EventBus';
 import { AuthService } from '../services/AuthService';
 import router from '../router';
 
@@ -95,12 +102,7 @@ export default {
       .then((res) => {
         this.tags = res.data;
       })
-      .catch((error) => {
-        EventBus.emit(EventTypes.ALERT_MESSAGE, {
-          type: 'error',
-          text: error.message,
-        });
-      });
+      .catch(handleError);
     if (this.taskId) {
       axios
         .get(
@@ -115,12 +117,7 @@ export default {
             this.webhookEnabled = false;
           }
         })
-        .catch((error) => {
-          EventBus.emit(EventTypes.ALERT_MESSAGE, {
-            type: 'error',
-            text: error.message,
-          });
-        });
+        .catch(handleError);
     }
   },
   methods: {
@@ -156,12 +153,7 @@ export default {
               text: 'Task created',
             });
           })
-          .catch((error) => {
-            EventBus.emit(EventTypes.ALERT_MESSAGE, {
-              type: 'error',
-              text: error,
-            });
-          });
+          .catch(handleError);
       }
     },
 
@@ -180,12 +172,7 @@ export default {
             });
             router.push({ path: '/tasks' });
           })
-          .catch((error) => {
-            EventBus.emit(EventTypes.ALERT_MESSAGE, {
-              type: 'error',
-              text: error,
-            });
-          });
+          .catch(handleError);
       }
     },
 
@@ -204,12 +191,7 @@ export default {
             });
             router.push({ path: '/tasks' });
           })
-          .catch((error) => {
-            EventBus.emit(EventTypes.ALERT_MESSAGE, {
-              type: 'error',
-              text: error.message,
-            });
-          });
+          .catch(handleError);
       }
     },
   },
@@ -221,5 +203,9 @@ export default {
   font-family: monospace;
   white-space: nowrap;
   overflow: auto;
+}
+.task-schedule span,
+.task-schedule input {
+  font-family: monospace;
 }
 </style>

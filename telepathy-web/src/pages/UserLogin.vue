@@ -29,7 +29,7 @@
 import axios from 'axios';
 import Config from '../Config.ts';
 import { AuthService } from '../services/AuthService';
-import { EventBus, EventTypes } from '../services/EventBus';
+import { EventBus, EventTypes, handleError } from '../services/EventBus';
 import router from '../router';
 
 export default {
@@ -51,12 +51,7 @@ export default {
           router.push({ path: '/users/new' });
         }
       })
-      .catch((error) => {
-        EventBus.emit(EventTypes.ALERT_MESSAGE, {
-          type: 'error',
-          text: error.message,
-        });
-      });
+      .catch(handleError);
     this.isAuthenticated = await AuthService.isAuthenticated();
   },
   setup() {},
@@ -73,12 +68,7 @@ export default {
               text: 'Authentication successful',
             });
           })
-          .catch((error) => {
-            EventBus.emit(EventTypes.ALERT_MESSAGE, {
-              type: 'error',
-              text: error.message,
-            });
-          });
+          .catch(handleError);
       } else {
         EventBus.emit(EventTypes.ALERT_MESSAGE, {
           type: 'error',

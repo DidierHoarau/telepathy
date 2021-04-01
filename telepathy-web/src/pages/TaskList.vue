@@ -22,7 +22,7 @@ import axios from 'axios';
 import Task from '../components/Task.vue';
 import TaskExecutions from '../components/TaskExecutions.vue';
 import Config from '../Config.ts';
-import { EventBus, EventTypes } from '../services/EventBus';
+import { EventBus, EventTypes, handleError } from '../services/EventBus';
 import { AuthService } from '../services/AuthService';
 
 export default {
@@ -53,12 +53,7 @@ export default {
         .then((res) => {
           this.tasks = res.data.tasks;
         })
-        .catch((error) => {
-          EventBus.emit(EventTypes.ALERT_MESSAGE, {
-            type: 'error',
-            text: error.message,
-          });
-        });
+        .catch(handleError);
     },
     async onTaskClicked(id) {
       this.taskIdSelected = id;

@@ -1,4 +1,5 @@
 import { Agents } from "./data/agents";
+import { Scheduler } from "./data/scheduler";
 import { TaskExecutions } from "./data/taskExecutions";
 import { Tasks } from "./data/tasks";
 import { Users } from "./data/users";
@@ -7,6 +8,7 @@ let agents: Agents;
 let tasks: Tasks;
 let users: Users;
 let taskExecutions: TaskExecutions;
+let scheduler: Scheduler;
 
 export class AppContext {
   //
@@ -36,5 +38,12 @@ export class AppContext {
   }
   public static getTaskExecutions(): TaskExecutions {
     return taskExecutions;
+  }
+
+  public static setScheduler(reference: Scheduler): void {
+    scheduler = reference;
+  }
+  public static getScheduler(): Scheduler {
+    return scheduler;
   }
 }

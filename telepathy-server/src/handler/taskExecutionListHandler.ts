@@ -30,14 +30,7 @@ export class TaskExecutionListHandler {
     if (!req.user.authenticated) {
       stopAndSend(403, { error: "Access Denied" });
     }
-    AppContext.getTaskExecutions();
-    const task = await AppContext.getTasks().get(req.params.taskId);
-    const newTaskExecution = new TaskExecution();
-    newTaskExecution.taskId = req.params.taskId;
-    newTaskExecution.script = task.script;
-    newTaskExecution.tag = task.tag;
-    newTaskExecution.status = TaskExecutionStatus.queued;
-    await AppContext.getTaskExecutions().add(newTaskExecution);
-    res.status(201).json(newTaskExecution);
+    const newTaskExecution = await AppContext.getTaskExecutions().createFromTaskId(req.params.taskId);
+    res.status(201).json(newTaskExecution.toJson());
   }
 }

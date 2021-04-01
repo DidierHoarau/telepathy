@@ -22,7 +22,7 @@
 <script>
 import axios from 'axios';
 import Config from '../Config.ts';
-import { EventBus, EventTypes } from '../services/EventBus';
+import { EventBus, EventTypes, handleError } from '../services/EventBus';
 import { AuthService } from '../services/AuthService';
 import router from '../router';
 
@@ -60,12 +60,7 @@ export default {
             taskId: this.task.id,
           });
         })
-        .catch((error) => {
-          EventBus.emit(EventTypes.ALERT_MESSAGE, {
-            type: 'error',
-            text: error.message,
-          });
-        });
+        .catch(handleError);
     },
     async checkExecutions() {
       axios
@@ -76,12 +71,7 @@ export default {
         .then((res) => {
           this.taskExecutions = res.data.task_executions;
         })
-        .catch((error) => {
-          EventBus.emit(EventTypes.ALERT_MESSAGE, {
-            type: 'error',
-            text: error.message,
-          });
-        });
+        .catch(handleError);
     },
   },
 };

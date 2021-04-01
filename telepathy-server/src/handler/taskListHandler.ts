@@ -1,3 +1,4 @@
+import * as cron from "node-cron";
 import { AppContext } from "../appContext";
 import { Task } from "../common-model/task";
 import { Logger } from "../utils-std-ts/logger";
@@ -28,8 +29,13 @@ export class TaskListHandler {
     if (!req.body.script) {
       stopAndSend(400, { error: "Missing: Script" });
     }
+    if (req.body.schedule && !cron.validate(req.body.schedule)) {
+      stopAndSend(400, { error: "Invalid: Schedule" });
+    }
+
     const newTask = Task.fromJson(req.body);
     await AppContext.getTasks().add(newTask);
+    AppContext.getScheduler().calculate();
     res.status(201).json(newTask.toJson());
   }
 }

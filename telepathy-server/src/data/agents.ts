@@ -4,7 +4,7 @@ import { config } from "../config";
 import { Logger } from "../utils-std-ts/logger";
 import { Timeout } from "../utils-std-ts/timeout";
 
-const logger = new Logger("agents/agentregistration");
+const logger = new Logger("data/agentregistration");
 
 export class Agents {
   //
@@ -32,9 +32,7 @@ export class Agents {
       knownAgent.lastSyncDate = new Date();
       knownAgent.tags = newAgent.tags;
     } else {
-      logger.info(
-        `New agent registered: ${newAgent.id} (tags: ${newAgent.tags})`
-      );
+      logger.info(`New agent registered: ${newAgent.id} (tags: ${newAgent.tags})`);
       newAgent.lastSyncDate = new Date();
       this.agents.push(newAgent);
     }

@@ -5,6 +5,7 @@ export class Task {
   public id: string;
   public name: string;
   public script: string;
+  public schedule: string;
   public tag: string;
   public webhook: string;
 
@@ -25,6 +26,7 @@ export class Task {
     }
     task.name = json.name;
     task.script = json.script;
+    task.schedule = json.schedule;
     task.webhook = json.webhook;
 
     return task;
@@ -35,6 +37,7 @@ export class Task {
       id: this.id,
       name: this.name,
       script: this.script,
+      schedule: this.schedule,
       tag: this.tag,
       webhook: this.webhook,
     };

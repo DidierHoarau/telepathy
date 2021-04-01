@@ -7,3 +7,14 @@ export enum EventTypes {
   ALERT_MESSAGE = 'ALERT_MESSAGE',
   TASK_EXECUTION_TRIGGERED = 'TASK_EXECUTION_TRIGGERED',
 }
+
+export function handleError(error: any): void {
+  let text = error.response;
+  if (error.response && error.response.data && error.response.data.error) {
+    text = error.response.data.error;
+  }
+  EventBus.emit(EventTypes.ALERT_MESSAGE, {
+    type: 'error',
+    text,
+  });
+}

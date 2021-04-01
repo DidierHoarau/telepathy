@@ -12,6 +12,7 @@ import axios from 'axios';
 import Agent from '../components/Agent.vue';
 import Config from '../Config.ts';
 import { AuthService } from '../services/AuthService';
+import { handleError } from '../services/EventBus';
 
 export default {
   name: 'Agents',
@@ -36,12 +37,7 @@ export default {
         .then((res) => {
           this.agents = res.data.agents;
         })
-        .catch((error) => {
-          EventBus.emit(EventTypes.ALERT_MESSAGE, {
-            type: 'error',
-            text: error.message,
-          });
-        });
+        .catch(handleError);
     },
   },
 };
