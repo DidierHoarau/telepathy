@@ -8,6 +8,7 @@ import { config } from "./config";
 import { Agents } from "./data/agents";
 import { Auth } from "./data/auth";
 import { Scheduler } from "./data/scheduler";
+import { TaskCleanup } from "./data/taskCleanup";
 import { TaskExecutions } from "./data/taskExecutions";
 import { Tasks } from "./data/tasks";
 import { Users } from "./data/users";
@@ -44,6 +45,10 @@ Promise.resolve().then(async () => {
     setTimeout(() => {
       scheduler.calculate();
     }, 500);
+
+    setTimeout(() => {
+      TaskCleanup.start();
+    }, 1000);
 
     const app = express();
     if (config.CORS_POLICY_ORIGIN) {

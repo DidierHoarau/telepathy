@@ -12,9 +12,7 @@ export class TaskExecutionHandler {
     if (!req.user.authenticated) {
       stopAndSend(403, { error: "Access Denied" });
     }
-    const taskExecution = await AppContext.getTaskExecutions().get(
-      req.params.taskExecutionId
-    );
+    const taskExecution = await AppContext.getTaskExecutions().get(req.params.taskExecutionId);
     res.status(200).json(taskExecution.toJson());
   }
 
@@ -24,10 +22,7 @@ export class TaskExecutionHandler {
       stopAndSend(403, { error: "Access Denied" });
     }
     const taskExecutionUpdate = TaskExecution.fromJson(req.body);
-    await AppContext.getTaskExecutions().update(
-      req.params.taskExecutionId,
-      taskExecutionUpdate
-    );
+    await AppContext.getTaskExecutions().update(req.params.taskExecutionId, taskExecutionUpdate);
     res.status(200).json({});
   }
 }

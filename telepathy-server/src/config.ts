@@ -15,6 +15,8 @@ class Config {
   public DATA_DIR: string = ".";
   public AGENT_KEY: string = uuidv4();
   public JWT_KEY: string = uuidv4();
+  public TASK_HISTORY_MAX_COUNT: number = 100;
+  public TASK_HISTORY_MAX_AGE_DAYS: 30;
 
   public constructor() {
     this.reload();
@@ -38,6 +40,8 @@ class Config {
     setIfSet("JWT_VALIDIsTY_DURATION");
     setIfSet("CORS_POLICY_ORIGIN");
     setIfSet("DATA_DIR");
+    setIfSet("TASK_HISTORY_MAX_COUNT");
+    setIfSet("TASK_HISTORY_MAX_AGE_DAYS");
     setIfSet("AGENT_KEY", false);
     setIfSet("JWT_KEY", false);
   }

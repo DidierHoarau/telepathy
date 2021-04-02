@@ -28,6 +28,17 @@ export class TaskExecutions {
     );
   }
 
+  public async delete(id: string): Promise<void> {
+    const position = _.findIndex(this.taskExecutions, {
+      id,
+    });
+    if (position >= 0) {
+      await this.deleteLogs(this.taskExecutions[position].taskId, id);
+      this.taskExecutions.splice(position, 1);
+    }
+    await this.save();
+  }
+
   public async list(): Promise<TaskExecution[]> {
     return this.taskExecutions;
   }
@@ -52,16 +63,23 @@ export class TaskExecutions {
     newTaskExecution.script = task.script;
     newTaskExecution.tag = task.tag;
     newTaskExecution.status = TaskExecutionStatus.queued;
+    newTaskExecution.dateQueued = new Date();
     this.taskExecutions.push(newTaskExecution);
     await this.save();
     return newTaskExecution;
   }
 
-  public async getLogs(id: string, taskId: TaskExecution): Promise<Buffer> {
+  public async getLogs(id: string, taskId: string): Promise<Buffer> {
     if (fs.existsSync(`${config.DATA_DIR}/logs/${taskId}_${id}.log`)) {
       return await fs.readFile(`${config.DATA_DIR}/logs/${taskId}_${id}.log`);
     } else {
       return Buffer.from("");
+    }
+  }
+
+  public async deleteLogs(id: string, taskId: string): Promise<void> {
+    if (fs.existsSync(`${config.DATA_DIR}/logs/${taskId}_${id}.log`)) {
+      await fs.remove(`${config.DATA_DIR}/logs/${taskId}_${id}.log`);
     }
   }
 

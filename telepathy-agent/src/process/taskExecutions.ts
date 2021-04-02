@@ -17,17 +17,10 @@ export class TaskExecutions {
       while (true) {
         logger.debug(`Contacting server(s)`);
         await axios
-          .get(
-            `${config.SERVER}/agents/${config.AGENT_ID}/tasks/executions`,
-            await Auth.getAuthHeader()
-          )
+          .get(`${config.SERVER}/agents/${config.AGENT_ID}/tasks/executions`, await Auth.getAuthHeader())
           .then(async (res) => {
-            if (
-              _.isArray(res.data.task_executions) &&
-              res.data.task_executions.length > 0
-            ) {
-              for (const taskExecution of res.data
-                .task_executions as TaskExecution[]) {
+            if (_.isArray(res.data.task_executions) && res.data.task_executions.length > 0) {
+              for (const taskExecution of res.data.task_executions as TaskExecution[]) {
                 if (taskExecution.status === TaskExecutionStatus.queued) {
                   logger.info(`New task queued: ${taskExecution.id}`);
                   await TaskExecutions.processQueued(taskExecution);
@@ -43,10 +36,9 @@ export class TaskExecutions {
     });
   }
 
-  private static async processQueued(
-    taskExecution: TaskExecution
-  ): Promise<void> {
+  private static async processQueued(taskExecution: TaskExecution): Promise<void> {
     taskExecution.status = TaskExecutionStatus.executing;
+    taskExecution.agentId = config.AGENT_ID;
     taskExecution.dateExecuting = new Date();
     await axios.put(
       `${config.SERVER}/tasks/${taskExecution.taskId}/executions/${taskExecution.id}`,
