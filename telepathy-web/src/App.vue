@@ -6,17 +6,14 @@
       <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">Telepathy</a>
     </header>
 
-    <Navigation />
-
-    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-      <div
-        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
-      >
-        <router-view />
+    <div class="p-0 m-0 main-content">
+      <div class="row">
+        <div class="col-12 col-md-3 col-lg-2 p-0 m-0">
+          <Navigation />
+        </div>
+        <div class="col-12 col-md-9 col-lg-10 p-4"><router-view /></div>
+        <div class="col-12"><AlertMessages /></div>
       </div>
-    </main>
-    <div id="alerts-messages">
-      <AlertMessages />
     </div>
   </div>
 </template>
@@ -41,5 +38,8 @@ export default {
 <style scoped>
 #content {
   margin: 2rem;
+}
+.main-content {
+  width: 100vw !important;
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div>
     <h1>Agents</h1>
     <div class="agent-list row">
       <Agent v-for="agent in agents" v-bind:key="agent.id" :agent="agent" />

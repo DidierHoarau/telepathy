@@ -1,19 +1,33 @@
 <template>
   <div class="card-container col-sm-12 col-md-6 col-lg-4">
-    <div class="card">
+    <div class="card text-dark bg-light mb-3">
       <div class="card-body">
-        <h5 class="card-title">{{ task.name }}</h5>
-        <p v-if="taskExecutions.length > 0">
-          {{ taskExecutions[0].status }}
-          <span v-if="taskExecutions[0].dateExecuted">{{
-            new Date(taskExecutions[0].dateExecuted).toLocaleString()
-          }}</span>
-        </p>
-        <button v-on:click="edit()" class="btn btn-primary btn-sm">Edit</button
-        >&nbsp;
-        <button v-on:click="execute()" class="btn btn-primary btn-sm">
-          Execute
-        </button>
+        <div class="container m-0 p-0">
+          <div class="row">
+            <div class="col-11">
+              <h5 class="card-title">{{ task.name }}</h5>
+              <p v-if="taskExecutions.length > 0">
+                {{ taskExecutions[0].status }}
+                <span v-if="taskExecutions[0].dateExecuted">{{
+                  new Date(taskExecutions[0].dateExecuted).toLocaleString()
+                }}</span>
+              </p>
+            </div>
+            <div class="col-1 m-0 p-0">
+              <p class="text-end">
+                <i
+                  v-on:click="edit()"
+                  class="bi bi-pencil-square icon-button"
+                ></i>
+                <br /><br />
+                <i
+                  v-on:click="execute()"
+                  class="bi bi-play-circle icon-button"
+                ></i>
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

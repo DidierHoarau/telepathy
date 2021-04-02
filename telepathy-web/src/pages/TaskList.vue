@@ -1,6 +1,17 @@
 <template>
-  <div class="container">
-    <h1>Tasks</h1>
+  <div class="page-content">
+    <div class="m-0 p-0">
+      <div class="row">
+        <div class="col-11">
+          <h1>Tasks</h1>
+        </div>
+        <div class="col-1 p-3 text-end">
+          <router-link to="/tasks/new"
+            ><i class="bi bi-plus-square icon-button"></i
+          ></router-link>
+        </div>
+      </div>
+    </div>
     <div class="task-list row">
       <Task
         v-on:click="onTaskClicked(task.id)"
@@ -9,9 +20,7 @@
         :task="task"
       />
     </div>
-    <button type="button" class="btn btn-primary">
-      <router-link to="/tasks/new">Add</router-link>
-    </button>
+
     <br />
     <TaskExecutions v-if="taskIdSelected" :taskId="taskIdSelected" />
   </div>

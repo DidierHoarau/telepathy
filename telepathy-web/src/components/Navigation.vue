@@ -1,27 +1,31 @@
 <template>
-  <nav id="sidebarMenu" class="col-sm-12 col-md-3 col-lg-2 bg-light">
-    <div v-if="isAuthenticated" class="position-sticky pt-3">
-      <ul class="nav flex-column">
-        <li class="nav-item">
-          <router-link to="/tasks">Tasks</router-link>
-        </li>
-        <li class="nav-item">
-          <router-link to="/agents">Agents</router-link>
-        </li>
-        <li class="nav-item">
-          <router-link to="/users">Users</router-link>
-        </li>
-        <li class="nav-item">
-          <router-link to="/users/login">Logout</router-link>
-        </li>
-      </ul>
+  <nav>
+    <div v-if="isAuthenticated">
+      <div class="p-0">
+        <div class="row p-0 m-0">
+          <div class="col-3 col-md-12 nav-item p-2 text-center">
+            <router-link to="/tasks">Tasks</router-link>
+          </div>
+          <div class="col-3 col-md-12 nav-item p-2 text-center">
+            <router-link to="/agents">Agents</router-link>
+          </div>
+          <div class="col-3 col-md-12 nav-item p-2 text-center">
+            <router-link to="/users">Users</router-link>
+          </div>
+          <div class="col-3 col-md-12 nav-item p-2 text-center">
+            <router-link to="/users/login">Logout</router-link>
+          </div>
+        </div>
+      </div>
     </div>
-    <div v-if="!isAuthenticated" class="position-sticky pt-3">
-      <ul class="nav flex-column">
-        <li class="nav-item">
-          <router-link to="/users/login">Login</router-link>
-        </li>
-      </ul>
+    <div v-if="!isAuthenticated">
+      <div class="container">
+        <div class="row">
+          <div class="col-12 nav-item p-2 text-center">
+            <router-link to="/users/login">Login</router-link>
+          </div>
+        </div>
+      </div>
     </div>
   </nav>
 </template>
@@ -51,4 +55,14 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.nav-item {
+  background-color: #333;
+}
+.nav-item a {
+  color: #eee;
+  font-weight: bold;
+  text-decoration: none;
+  font-size: 0.8rem;
+}
+</style>
