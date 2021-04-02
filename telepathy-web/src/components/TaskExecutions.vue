@@ -1,58 +1,54 @@
 <template>
   <div>
     <hr />
-    <div class="card-container col-sm-12 col-md-12 col-lg-12">
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">Executions (task: {{ task.name }})</h5>
-          <div class="container">
-            <div class="row">
-              <div class="col-1">
-                <i
-                  v-if="taskExecutionHasNewer"
-                  v-on:click="selectTaskExecution(taskExecutionPosition - 1)"
-                  class="bi bi-arrow-left-circle icon-button"
-                ></i>
-              </div>
-              <div class="col">
-                <div class="execution-header" v-if="currentTaskExecution">
-                  <h6>
-                    <span v-if="currentTaskExecution.dateExecuted">
-                      ({{
-                        new Date(
-                          currentTaskExecution.dateExecuted
-                        ).toLocaleString()
-                      }})
-                    </span>
-                    <span v-else-if="currentTaskExecution.dateExecuting">
-                      ({{
-                        new Date(
-                          currentTaskExecution.dateExecuting
-                        ).toLocaleString()
-                      }})
-                    </span>
-                    <span v-else-if="currentTaskExecution.dateQueued">
-                      ({{
-                        new Date(
-                          currentTaskExecution.dateQueued
-                        ).toLocaleString()
-                      }})
-                    </span>
-                    {{ currentTaskExecution.status }}
-                  </h6>
-                </div>
-              </div>
-              <div class="col-1 text-end">
-                <i
-                  v-if="taskExecutionHasOlder"
-                  v-on:click="selectTaskExecution(taskExecutionPosition + 1)"
-                  class="bi bi-arrow-right-circle icon-button"
-                ></i>
-              </div>
+    <div class="card">
+      <div class="card-body p-4">
+        <h5 class="card-title">Executions (task: {{ task.name }})</h5>
+        <div class="row p-0 m-0">
+          <div class="col-1 p-0 m-0">
+            <i
+              v-if="taskExecutionHasNewer"
+              v-on:click="selectTaskExecution(taskExecutionPosition - 1)"
+              class="bi bi-arrow-left-circle icon-button"
+            ></i>
+          </div>
+          <div class="col p-0 m-0 text-center">
+            <div class="execution-header" v-if="currentTaskExecution">
+              <h6>
+                <span v-if="currentTaskExecution.dateExecuted">
+                  ({{
+                    new Date(
+                      currentTaskExecution.dateExecuted
+                    ).toLocaleString()
+                  }})
+                </span>
+                <span v-else-if="currentTaskExecution.dateExecuting">
+                  ({{
+                    new Date(
+                      currentTaskExecution.dateExecuting
+                    ).toLocaleString()
+                  }})
+                </span>
+                <span v-else-if="currentTaskExecution.dateQueued">
+                  ({{
+                    new Date(currentTaskExecution.dateQueued).toLocaleString()
+                  }})
+                </span>
+                {{ currentTaskExecution.status }}
+              </h6>
             </div>
           </div>
-          <br />
-          <pre>{{ logs }}</pre>
+          <div class="col-1 p-0 m-0 text-end">
+            <i
+              v-if="taskExecutionHasOlder"
+              v-on:click="selectTaskExecution(taskExecutionPosition + 1)"
+              class="bi bi-arrow-right-circle icon-button"
+            ></i>
+          </div>
+          <div class="col-12 p-0 m-0">
+            <br />
+            <pre>{{ logs }}</pre>
+          </div>
         </div>
       </div>
     </div>

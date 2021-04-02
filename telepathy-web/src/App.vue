@@ -7,7 +7,7 @@
     </header>
 
     <div class="p-0 m-0 main-content">
-      <div class="row">
+      <div class="row p-0 m-0">
         <div class="col-12 col-md-3 col-lg-2 p-0 m-0">
           <Navigation />
         </div>
@@ -40,6 +40,9 @@ export default {
   margin: 2rem;
 }
 .main-content {
-  width: 100vw !important;
+  width: 100% !important;
+}
+.navbar {
+  width: 100% !important;
 }
 </style>
