@@ -9,24 +9,25 @@
             new Date(taskExecutions[0].dateExecuted).toLocaleString()
           }}</span>
         </p>
-        <button v-on:click="edit()" class="btn btn-primary btn-sm">Edit</button>&nbsp;
-        <button v-on:click="execute()" class="btn btn-primary btn-sm">Execute</button>
+        <button v-on:click="edit()" class="btn btn-primary btn-sm">Edit</button
+        >&nbsp;
+        <button v-on:click="execute()" class="btn btn-primary btn-sm">
+          Execute
+        </button>
       </div>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import { Options, Vue } from "vue-class-component";
-
-import axios from "axios";
-import Config from "../Config.ts";
-import { EventBus, EventTypes, handleError } from "../services/EventBus";
-import { AuthService } from "../services/AuthService";
-import router from "../router";
+<script>
+import axios from 'axios';
+import Config from '../Config.ts';
+import { EventBus, EventTypes, handleError } from '../services/EventBus';
+import { AuthService } from '../services/AuthService';
+import router from '../router';
 
 export default {
-  name: "Task",
+  name: 'Task',
   props: {
     task: Object,
   },
@@ -63,7 +64,10 @@ export default {
     },
     async checkExecutions() {
       axios
-        .get(`${(await Config.get()).SERVER_URL}/tasks/${this.task.id}/executions`, await AuthService.getAuthHeader())
+        .get(
+          `${(await Config.get()).SERVER_URL}/tasks/${this.task.id}/executions`,
+          await AuthService.getAuthHeader()
+        )
         .then((res) => {
           this.taskExecutions = res.data.task_executions;
         })

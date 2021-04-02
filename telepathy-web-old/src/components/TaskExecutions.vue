@@ -18,13 +18,25 @@
                 <div class="execution-header" v-if="currentTaskExecution">
                   <h6>
                     <span v-if="currentTaskExecution.dateExecuted">
-                      ({{ new Date(currentTaskExecution.dateExecuted).toLocaleString() }})
+                      ({{
+                        new Date(
+                          currentTaskExecution.dateExecuted
+                        ).toLocaleString()
+                      }})
                     </span>
                     <span v-else-if="currentTaskExecution.dateExecuting">
-                      ({{ new Date(currentTaskExecution.dateExecuting).toLocaleString() }})
+                      ({{
+                        new Date(
+                          currentTaskExecution.dateExecuting
+                        ).toLocaleString()
+                      }})
                     </span>
                     <span v-else-if="currentTaskExecution.dateQueued">
-                      ({{ new Date(currentTaskExecution.dateQueued).toLocaleString() }})
+                      ({{
+                        new Date(
+                          currentTaskExecution.dateQueued
+                        ).toLocaleString()
+                      }})
                     </span>
                     {{ currentTaskExecution.status }}
                   </h6>
@@ -47,16 +59,14 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Options, Vue } from "vue-class-component";
-
-import axios from "axios";
-import Config from "../Config.ts";
-import { AuthService } from "../services/AuthService";
-import { EventBus, EventTypes, handleError } from "../services/EventBus";
+<script>
+import axios from 'axios';
+import Config from '../Config.ts';
+import { AuthService } from '../services/AuthService';
+import { EventBus, EventTypes, handleError } from '../services/EventBus';
 
 export default {
-  name: "TaskExecutions",
+  name: 'TaskExecutions',
   props: {
     taskId: String,
   },
@@ -73,7 +83,7 @@ export default {
       currentTaskExecution: null,
       taskExecutionHasOlder: false,
       taskExecutionHasNewer: false,
-      logs: "",
+      logs: '',
     };
   },
   setup() {},
@@ -91,13 +101,19 @@ export default {
   methods: {
     async loadTaskExecutionHistory() {
       axios
-        .get(`${(await Config.get()).SERVER_URL}/tasks/${this.taskId}`, await AuthService.getAuthHeader())
+        .get(
+          `${(await Config.get()).SERVER_URL}/tasks/${this.taskId}`,
+          await AuthService.getAuthHeader()
+        )
         .then((res) => {
           this.task = res.data;
         })
         .catch(handleError);
       axios
-        .get(`${(await Config.get()).SERVER_URL}/tasks/${this.taskId}/executions`, await AuthService.getAuthHeader())
+        .get(
+          `${(await Config.get()).SERVER_URL}/tasks/${this.taskId}/executions`,
+          await AuthService.getAuthHeader()
+        )
         .then((res) => {
           this.taskExecutionPosition = 0;
           this.taskExecutions = res.data.task_executions;
@@ -109,7 +125,9 @@ export default {
       if (this.currentTaskExecution) {
         axios
           .get(
-            `${(await Config.get()).SERVER_URL}/tasks/${this.taskId}/executions/${this.currentTaskExecution.id}`,
+            `${(await Config.get()).SERVER_URL}/tasks/${
+              this.taskId
+            }/executions/${this.currentTaskExecution.id}`,
             await AuthService.getAuthHeader()
           )
           .then((res) => {
@@ -143,7 +161,9 @@ export default {
     async getExecutionLogs(taskId, executionId) {
       axios
         .get(
-          `${(await Config.get()).SERVER_URL}/tasks/${taskId}/executions/${executionId}/logs`,
+          `${
+            (await Config.get()).SERVER_URL
+          }/tasks/${taskId}/executions/${executionId}/logs`,
           await AuthService.getAuthHeader()
         )
         .then((res) => {

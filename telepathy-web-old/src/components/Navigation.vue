@@ -26,15 +26,13 @@
   </nav>
 </template>
 
-<script lang="ts">
-import { Options, Vue } from "vue-class-component";
-
-import { EventBus, EventTypes } from "../services/EventBus";
-import { AuthService } from "../services/AuthService";
-import router from "../router";
+<script>
+import { EventBus, EventTypes } from '../services/EventBus';
+import { AuthService } from '../services/AuthService';
+import router from '../router';
 
 export default {
-  name: "Navigation",
+  name: 'Navigation',
   data() {
     return {
       isAuthenticated: false,
@@ -46,7 +44,7 @@ export default {
     });
     this.isAuthenticated = await AuthService.isAuthenticated();
     if (!this.isAuthenticated) {
-      router.push({ path: "/users/login" });
+      router.push({ path: '/users/login' });
     }
   },
   methods: {},

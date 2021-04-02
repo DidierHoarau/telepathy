@@ -1,45 +1,30 @@
 <template>
-  <div>
-    <header
-      class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow"
-    >
-      <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">Telepathy</a>
-    </header>
-
-    <Navigation />
-
-    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-      <div
-        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
-      >
-        <router-view />
-      </div>
-    </main>
-    <div id="alerts-messages">
-      <AlertMessages />
-    </div>
+  <div id="nav">
+    <router-link to="/">Home</router-link> |
+    <router-link to="/about">About</router-link>
   </div>
+  <router-view />
 </template>
 
-<script>
-import Navigation from './components/Navigation.vue';
-import AlertMessages from './components/AlertMessages.vue';
-import Config from './Config.ts';
+<style lang="scss">
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+}
 
-export default {
-  name: 'App',
-  components: {
-    Navigation,
-    AlertMessages,
-  },
-  created() {
-    Config.get();
-  },
-};
-</script>
+#nav {
+  padding: 30px;
 
-<style scoped>
-#content {
-  margin: 2rem;
+  a {
+    font-weight: bold;
+    color: #2c3e50;
+
+    &.router-link-exact-active {
+      color: #42b983;
+    }
+  }
 }
 </style>

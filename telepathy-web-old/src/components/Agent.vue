@@ -14,11 +14,9 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Options, Vue } from "vue-class-component";
-
+<script>
 export default {
-  name: "Agent",
+  name: 'Agent',
   props: {
     agent: Object,
   },

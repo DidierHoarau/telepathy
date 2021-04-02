@@ -9,14 +9,12 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Options, Vue } from "vue-class-component";
-
-import { EventBus, EventTypes } from "../services/EventBus";
-import * as _ from "lodash";
+<script>
+import { EventBus, EventTypes } from '../services/EventBus';
+import * as _ from 'lodash';
 
 export default {
-  name: "AlertMessages",
+  name: 'AlertMessages',
   data() {
     return {
       messages: [],
