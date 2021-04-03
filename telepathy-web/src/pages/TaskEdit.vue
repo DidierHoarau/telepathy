@@ -25,7 +25,7 @@
         </label>
         <input v-model="task.schedule" type="text" class="form-control" />
       </div>
-      <div>
+      <div class="mb-3">
         <label class="form-label">Tag</label>
         <select
           v-model="task.tag"
@@ -37,6 +37,26 @@
             {{ tag }}
           </option>
         </select>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Outputs</label>
+        <div v-if="task.outputDefinitions.length > 0" class="row">
+          <div class="col-6 text-center">Name</div>
+          <div class="col-6 text-center">Pattern (RegEx)</div>
+        </div>
+        <div
+          v-for="output in task.outputDefinitions"
+          v-bind:key="output.id"
+          class="row p-0 m-0 mb-1"
+        >
+          <div class="col-6">
+            <input v-model="output.name" type="text" class="form-control" />
+          </div>
+          <div class="col-6">
+            <input v-model="output.pattern" type="text" class="form-control" />
+          </div>
+        </div>
+        <p><i class="bi bi-plus-square" v-on:click="addOutput()"></i></p>
       </div>
       <div class="mb-3">
         <label class="form-label">Webhook</label>
@@ -87,7 +107,7 @@ export default {
   },
   data() {
     return {
-      task: { name: '', script: '' },
+      task: { name: '', script: '', outputDefinitions: [] },
       webhookEnabled: false,
       tags: [],
     };
@@ -193,6 +213,10 @@ export default {
           })
           .catch(handleError);
       }
+    },
+
+    addOutput() {
+      this.task.outputDefinitions.push({ name: '', pattern: '' });
     },
   },
 };

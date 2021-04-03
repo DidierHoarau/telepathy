@@ -48,6 +48,7 @@ export class TaskHandler {
     task.schedule = req.body.schedule;
     task.webhook = req.body.webhook;
     task.tag = req.body.tag;
+    task.outputDefinitions = req.body.outputDefinitions;
     await AppContext.getTasks().update(req.params.taskId, task);
     AppContext.getScheduler().calculate();
     res.status(201).json(task);

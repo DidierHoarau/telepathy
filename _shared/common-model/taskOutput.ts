@@ -1,11 +1,9 @@
 export class TaskOutput {
   //
-  public matchingPattern: string;
+  public id: string;
+  public name: string;
   public value: string;
-  public computed: boolean = false;
+  public taskOutputDefinitionId: string;
 
-  constructor() {
-    this.matchingPattern = "";
-    this.value = "";
-  }
+  constructor() {}
 }

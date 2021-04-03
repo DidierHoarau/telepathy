@@ -45,6 +45,19 @@
               class="bi bi-arrow-right-circle icon-button"
             ></i>
           </div>
+
+          <div v-if="currentTaskExecution" class="col-12 p-0 m-0 mt-3 mb-1">
+            <div
+              v-for="output in currentTaskExecution.outputs"
+              v-bind:key="output.id"
+              class="row mt-2 task-output"
+            >
+              <div class="col-6">{{ output.name }}:</div>
+              <div class="col-6">
+                {{ output.value }}
+              </div>
+            </div>
+          </div>
           <div class="col-12 p-0 m-0">
             <br />
             <pre>{{ logs }}</pre>

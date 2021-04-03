@@ -34,6 +34,7 @@ export class Tasks {
     task.schedule = taskUpdate.schedule;
     task.tag = taskUpdate.tag;
     task.webhook = taskUpdate.webhook;
+    task.outputDefinitions = taskUpdate.outputDefinitions;
     await this.save();
   }
 

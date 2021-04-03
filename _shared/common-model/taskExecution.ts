@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
+import { TaskOutput } from "./taskOutput";
 
 export class TaskExecution {
   //
@@ -12,9 +13,11 @@ export class TaskExecution {
   public dateQueued: Date;
   public dateExecuting: Date;
   public dateExecuted: Date;
+  public outputs: TaskOutput[];
 
   constructor() {
     this.id = uuidv4();
+    this.outputs = [];
   }
 
   public static fromJson(json: any): TaskExecution {
@@ -27,6 +30,9 @@ export class TaskExecution {
     }
     if (json.tag) {
       taskExecution.tag = json.tag;
+    }
+    if (json.outputs) {
+      taskExecution.outputs = json.outputs;
     }
     taskExecution.taskId = json.taskId;
     taskExecution.script = json.script;
@@ -51,6 +57,7 @@ export class TaskExecution {
       dateQueued: this.dateQueued,
       dateExecuting: this.dateExecuting,
       dateExecuted: this.dateExecuted,
+      outputs: this.outputs,
     };
   }
 }

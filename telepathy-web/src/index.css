@@ -10,3 +10,10 @@ div {
 .page-content {
   width: 100%;
 }
+
+.task-output {
+  border: 2px dashed #9f9f9f;
+  color: #9f9f9f;
+  border-radius: 100px;
+  font-size: 90%;
+}

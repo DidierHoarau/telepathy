@@ -4,12 +4,24 @@
       <div class="row m-0 p-4">
         <div class="col-11 m-0 p-0">
           <h5 class="card-title">{{ task.name }}</h5>
-          <p v-if="taskExecutions.length > 0">
-            {{ taskExecutions[0].status }}
-            <span v-if="taskExecutions[0].dateExecuted">{{
-              new Date(taskExecutions[0].dateExecuted).toLocaleString()
-            }}</span>
-          </p>
+          <div v-if="lastExecution">
+            <p>
+              {{ lastExecution.status }}
+              <span v-if="lastExecution.dateExecuted">{{
+                new Date(lastExecution.dateExecuted).toLocaleString()
+              }}</span>
+            </p>
+            <div
+              v-for="output in lastExecution.outputs"
+              v-bind:key="output.id"
+              class="row mt-2 task-output"
+            >
+              <div class="col-6">{{ output.name }}:</div>
+              <div class="col-6">
+                {{ output.value }}
+              </div>
+            </div>
+          </div>
         </div>
         <div class="col-1 m-0 p-0">
           <p class="text-end">
@@ -37,7 +49,7 @@ export default {
   },
   data() {
     return {
-      taskExecutions: [],
+      lastExecution: null,
     };
   },
   setup() {},
@@ -73,7 +85,11 @@ export default {
           await AuthService.getAuthHeader()
         )
         .then((res) => {
-          this.taskExecutions = res.data.task_executions;
+          if (res.data.task_executions.length > 0) {
+            this.lastExecution = res.data.task_executions[0];
+          } else {
+            this.lastExecution = null;
+          }
         })
         .catch(handleError);
     },

@@ -3,7 +3,11 @@ import * as _ from "lodash";
 import { AppContext } from "../appContext";
 import { TaskExecution } from "../common-model/taskExecution";
 import { TaskExecutionStatus } from "../common-model/taskExecutionStatus";
+import { TaskOutput } from "../common-model/taskOutput";
 import { config } from "../config";
+import { Logger } from "../utils-std-ts/logger";
+
+const logger = new Logger("data/taskExecution");
 
 export class TaskExecutions {
   //
@@ -53,7 +57,31 @@ export class TaskExecutions {
     taskExecution.dateQueued = taskExecutionUpdate.dateQueued;
     taskExecution.dateExecuting = taskExecutionUpdate.dateExecuting;
     taskExecution.dateExecuted = taskExecutionUpdate.dateExecuted;
+    taskExecution.outputs = taskExecutionUpdate.outputs;
     await this.save();
+    if (taskExecution.status === TaskExecutionStatus.executed) {
+      // Delay to wait for the log to be stable
+      setTimeout(async () => {
+        const task = await AppContext.getTasks().get(taskExecution.taskId);
+        const logs = await this.getLogs(taskExecution.id, taskExecution.taskId);
+        for (const outputDefinition of task.outputDefinitions) {
+          try {
+            const regex = new RegExp(outputDefinition.pattern);
+            const match = regex.exec(logs.toString());
+            if (match && match.length > 1) {
+              const taskOutput = new TaskOutput();
+              taskOutput.name = outputDefinition.name;
+              taskOutput.value = match[1];
+              taskOutput.taskOutputDefinitionId = outputDefinition.id;
+              taskExecution.outputs.push(taskOutput);
+            }
+            this.save();
+          } catch (error) {
+            logger.error(`Output Pattern Matching Failed: ${error}`);
+          }
+        }
+      }, 1000);
+    }
   }
 
   public async createFromTaskId(taskId: string): Promise<TaskExecution> {
