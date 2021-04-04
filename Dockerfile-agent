@@ -9,7 +9,7 @@ COPY . .
 
 RUN cd telepathy-agent && \
     npm ci && \
-    npm run build
+    npm run binary:linux:x64
 
 
 # RUN
