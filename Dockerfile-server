@@ -9,6 +9,7 @@ COPY . .
 
 RUN cd telepathy-server && \
     npm ci && \
+    npm rebuild bcrypt --build-from-source && \
     npm run binary:linux:alpine
 
 
