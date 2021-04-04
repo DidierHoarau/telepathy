@@ -20,4 +20,4 @@ COPY --from=builder /opt/app/telepathy-agent/dist/telepathy-agent-linux-x64 /usr
 RUN mkdir /workspace
 WORKDIR /workspace
 
-CMD [ "telepathy-agent" ]
+CMD [ "/usr/bin/telepathy-agent" ]

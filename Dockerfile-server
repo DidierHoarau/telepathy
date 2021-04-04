@@ -20,4 +20,4 @@ COPY --from=builder /opt/app/telepathy-server/dist/telepathy-server-linux-x64 /u
 RUN mkdir /workspace
 WORKDIR /workspace
 
-CMD [ "telepathy-server" ]
+CMD [ "/usr/bin/telepathy-server" ]
