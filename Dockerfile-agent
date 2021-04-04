@@ -13,11 +13,11 @@ RUN cd telepathy-agent && \
 
 
 # RUN
-FROM node:14-alpine
+FROM alpine
 
-COPY --from=builder /opt/app/telepathy-agent/dist /opt/app/dist
-COPY --from=builder /opt/app/telepathy-agent/node_modules /opt/app/node_modules
+COPY --from=builder /opt/app/telepathy-agent/dist/telepathy-agent-linux-x64 /usr/bin/telepathy-agent
 
-WORKDIR /opt/app
+RUN mkdir /workspace
+WORKDIR /workspace
 
-CMD [ "node", "dist/app.js" ]
+CMD [ "telepathy-agent" ]

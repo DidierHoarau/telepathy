@@ -9,15 +9,15 @@ COPY . .
 
 RUN cd telepathy-server && \
     npm ci && \
-    npm run build
+    npm run binary:linux:x64
 
 
 # RUN
-FROM node:14-alpine
+FROM alpine
 
-COPY --from=builder /opt/app/telepathy-server/dist /opt/app/dist
-COPY --from=builder /opt/app/telepathy-server/node_modules /opt/app/node_modules
+COPY --from=builder /opt/app/telepathy-server/dist/telepathy-server-linux-x64 /usr/bin/telepathy-server
 
-WORKDIR /opt/app
+RUN mkdir /workspace
+WORKDIR /workspace
 
-CMD [ "node", "dist/app.js" ]
+CMD [ "telepathy-server" ]
