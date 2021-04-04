@@ -9,17 +9,16 @@ COPY . .
 
 RUN cd telepathy-server && \
     npm ci && \
-    npm rebuild bcrypt --build-from-source && \
-    npm run binary:linux:alpine
+    npm run binary:linux:x64
 
 
 # RUN
-FROM alpine
+FROM ubuntu
 
-COPY --from=builder /opt/app/telepathy-server/dist/telepathy-server-linux-alpine /usr/bin/telepathy-server
+COPY --from=builder /opt/app/telepathy-server/dist/telepathy-server-linux-x64 /usr/bin/telepathy-server
 
-RUN apk add libstdc++ libgcc && \
-    mkdir /workspace
+RUN apt-get install build-essential g++ && \
+mkdir /workspace
 
 WORKDIR /workspace
 
