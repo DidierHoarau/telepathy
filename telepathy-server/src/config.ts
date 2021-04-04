@@ -37,7 +37,7 @@ class Config {
     logger.info(`Configuration Value: CONFIG_FILE: ${this.CONFIG_FILE}`);
     logger.info(`Configuration Value: VERSION: ${this.VERSION}`);
     setIfSet("AGENT_REGISTRATION_DURATION");
-    setIfSet("JWT_VALIDIsTY_DURATION");
+    setIfSet("JWT_VALIDITY_DURATION");
     setIfSet("CORS_POLICY_ORIGIN");
     setIfSet("DATA_DIR");
     setIfSet("TASK_HISTORY_MAX_COUNT");
