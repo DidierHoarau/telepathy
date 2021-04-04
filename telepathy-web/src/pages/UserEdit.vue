@@ -1,15 +1,40 @@
 <template>
   <div>
-    <h1>New User</h1>
+    <h1 v-if="userId">Update User</h1>
+    <h1 v-else>New User</h1>
     <div class="mb-3">
       <label class="form-label">Name</label>
       <input v-model="user.name" type="text" class="form-control" />
     </div>
     <div class="mb-3">
-      <label class="form-label">Password</label>
-      <input v-model="user.password" type="password" class="form-control" />
+      <div v-if="userId" class="form-check form-switch">
+        <input
+          class="form-check-input"
+          type="checkbox"
+          v-model="passwordEnabled"
+          v-on:click="passwordSwitch()"
+          id="flexSwitchCheckDefault"
+        />
+        <label class="form-label">Password</label>
+      </div>
+      <label v-if="!userId" class="form-label">Password</label>
+      <input
+        v-model="user.password"
+        type="password"
+        class="form-control"
+        :disabled="!passwordEnabled"
+      />
     </div>
-    <button v-on:click="save()" class="btn btn-primary">Save</button>
+    <br />
+    <button v-if="userId" v-on:click="saveUpdate()" class="btn btn-primary">
+      Save</button
+    >&nbsp;
+    <button v-if="userId" v-on:click="remove()" class="btn btn-primary">
+      Delete
+    </button>
+    <button v-if="!userId" v-on:click="saveNew()" class="btn btn-primary">
+      Save
+    </button>
   </div>
 </template>
 
@@ -17,29 +42,103 @@
 import axios from 'axios';
 import Config from '../Config.ts';
 import { AuthService } from '../services/AuthService';
-import { handleError } from '../services/EventBus';
+import { handleError, EventBus, EventTypes } from '../services/EventBus';
+import router from '../router';
 
 export default {
   name: 'UserEdit',
   props: {
-    msg: String,
+    userId: String,
   },
   data() {
     return {
-      user: { name: '', script: '' },
+      user: {},
+      passwordEnabled: false,
     };
   },
-  setup() {},
+  async created() {
+    if (this.userId) {
+      axios
+        .get(
+          `${(await Config.get()).SERVER_URL}/users/${this.userId}`,
+          await AuthService.getAuthHeader()
+        )
+        .then((res) => {
+          this.user = res.data;
+        })
+        .catch(handleError);
+    }
+  },
   methods: {
-    async save() {
+    async saveNew() {
       if (this.user.name && this.user.password) {
-        axios
+        await axios
           .post(
             `${(await Config.get()).SERVER_URL}/users`,
             this.user,
             await AuthService.getAuthHeader()
           )
-          .then((res) => {})
+          .then((res) => {
+            EventBus.emit(EventTypes.ALERT_MESSAGE, {
+              type: 'info',
+              text: 'User created',
+            });
+            router.push({ path: '/users' });
+          })
+          .catch(handleError);
+      } else {
+        EventBus.emit(EventTypes.ALERT_MESSAGE, {
+          type: 'error',
+          text: 'Username or password missing',
+        });
+      }
+    },
+
+    async saveUpdate() {
+      if (!this.user.name) {
+        EventBus.emit(EventTypes.ALERT_MESSAGE, {
+          type: 'error',
+          text: 'Username missing',
+        });
+      } else if (this.passwordEnabled && !this.user.password) {
+        EventBus.emit(EventTypes.ALERT_MESSAGE, {
+          type: 'error',
+          text: 'Username missing',
+        });
+      } else {
+        axios
+          .put(
+            `${(await Config.get()).SERVER_URL}/users/${this.userId}`,
+            this.user,
+            await AuthService.getAuthHeader()
+          )
+          .then((res) => {
+            EventBus.emit(EventTypes.ALERT_MESSAGE, {
+              type: 'info',
+              text: 'User updated',
+            });
+          })
+          .catch(handleError);
+      }
+    },
+
+    async passwordSwitch() {},
+
+    async remove() {
+      const confirmation = confirm('Delete the user?');
+      if (confirmation == true) {
+        axios
+          .delete(
+            `${(await Config.get()).SERVER_URL}/users/${this.userId}`,
+            await AuthService.getAuthHeader()
+          )
+          .then((res) => {
+            EventBus.emit(EventTypes.ALERT_MESSAGE, {
+              type: 'info',
+              text: 'Users Deleted',
+            });
+            router.push({ path: '/users' });
+          })
           .catch(handleError);
       }
     },

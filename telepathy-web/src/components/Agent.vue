@@ -1,6 +1,6 @@
 <template>
   <div class="card-container col-sm-12 col-md-6 col-lg-4">
-    <div class="card">
+    <div class="card text-dark bg-light mb-3">
       <div class="card-body">
         <h5 class="card-title">{{ agent.id }}</h5>
         <p>

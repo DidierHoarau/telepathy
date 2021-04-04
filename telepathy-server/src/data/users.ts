@@ -42,7 +42,26 @@ export class Users {
     await this.save();
   }
 
+  public async update(id: string, userUpdate: User): Promise<void> {
+    const user = _.find(this.users, {
+      id,
+    }) as User;
+    user.name = userUpdate.name;
+    user.passwordEncrypted = userUpdate.passwordEncrypted;
+    await this.save();
+  }
+
   public async save(): Promise<void> {
     await fs.writeJSON(`${config.DATA_DIR}/users.json`, this.users);
+  }
+
+  public async delete(id: string): Promise<void> {
+    const position = _.findIndex(this.users, {
+      id,
+    });
+    if (position >= 0) {
+      this.users.splice(position, 1);
+    }
+    await this.save();
   }
 }

@@ -50,14 +50,20 @@ export default {
   data() {
     return {
       lastExecution: null,
+      updateLoop: null,
     };
   },
   setup() {},
   created() {
-    setInterval(() => {
+    this.updateLoop = setInterval(() => {
       this.checkExecutions();
     }, 10 * 1000);
     this.checkExecutions();
+  },
+  unmounted() {
+    if (this.updateLoop) {
+      clearInterval(this.updateLoop);
+    }
   },
   methods: {
     edit() {

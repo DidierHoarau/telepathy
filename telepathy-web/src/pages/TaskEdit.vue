@@ -170,7 +170,7 @@ export default {
           .then((res) => {
             EventBus.emit(EventTypes.ALERT_MESSAGE, {
               type: 'info',
-              text: 'Task created',
+              text: 'Task updated',
             });
           })
           .catch(handleError);

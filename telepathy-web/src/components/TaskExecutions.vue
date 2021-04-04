@@ -93,12 +93,13 @@ export default {
       taskExecutionHasOlder: false,
       taskExecutionHasNewer: false,
       logs: '',
+      updateLoop: null,
     };
   },
   setup() {},
   created() {
     this.loadTaskExecutionHistory();
-    setInterval(() => {
+    this.updateLoop = setInterval(() => {
       this.refreshTastExecutionInfo();
     }, 5000);
     EventBus.on(EventTypes.TASK_EXECUTION_TRIGGERED, async (event) => {
@@ -106,6 +107,11 @@ export default {
         this.loadTaskExecutionHistory();
       }
     });
+  },
+  unmounted() {
+    if (this.updateLoop) {
+      clearInterval(this.updateLoop);
+    }
   },
   methods: {
     async loadTaskExecutionHistory() {

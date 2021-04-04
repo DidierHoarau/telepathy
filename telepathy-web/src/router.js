@@ -22,6 +22,13 @@ const routes = [
   { path: '/agents', component: AgentList },
   { path: '/users', component: UserList },
   { path: '/users/login', component: UserLogin },
+  {
+    path: '/users/:userId/edit',
+    component: UserEdit,
+    props: (route) => ({
+      userId: route.params.userId,
+    }),
+  },
   { path: '/users/new', component: UserEdit },
 ];
 

@@ -12,9 +12,9 @@
           <Navigation />
         </div>
         <div class="col-12 col-md-9 col-lg-10 p-4"><router-view /></div>
-        <div class="col-12"><AlertMessages /></div>
       </div>
     </div>
+    <div class="alert-messages"><AlertMessages /></div>
   </div>
 </template>
 
@@ -44,5 +44,12 @@ export default {
 }
 .navbar {
   width: 100% !important;
+}
+
+.alert-messages {
+  position: fixed;
+  right: 3rem;
+  bottom: 3rem;
+  max-width: 80vw;
 }
 </style>
