@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: telepathy-agent
+  labels:
+    app: telepathy-agent
+spec:
+  replicas: 2
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+      app: telepathy-agent
+  template:
+    metadata:
+      labels:
+        app: telepathy-agent
+    spec:
+      containers:
+        - image: didierhoarau/telepathy-agent
+          name: telepathy-agent
+          env:
+            - name: TELEPATHY_CONFIG
+              value: /etc/telepathy/config.json
+          volumeMounts:
+            - name: config
+              mountPath: /etc/telepathy
+      volumes:
+        - name: config
+          configMap:
+            name: telepathy-agent-config

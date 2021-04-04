@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: telepathy-web
+  labels:
+    app: telepathy-web
+spec:
+  replicas: 1
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+      app: telepathy-web
+  template:
+    metadata:
+      labels:
+        app: telepathy-web
+    spec:
+      containers:
+        - image: didierhoarau/telepathy-web
+          name: telepathy-web
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: config
+              mountPath: /usr/share/nginx/html/config/
+      volumes:
+        - name: config
+          configMap:
+            name: telepathy-web-config

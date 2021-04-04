@@ -13,7 +13,7 @@ RUN cd telepathy-agent && \
 
 
 # RUN
-FROM alpine
+FROM node:14-alpine
 
 COPY --from=builder /opt/app/telepathy-agent/dist/telepathy-agent-linux-x64 /usr/bin/telepathy-agent
 

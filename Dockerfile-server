@@ -13,7 +13,7 @@ RUN cd telepathy-server && \
 
 
 # RUN
-FROM alpine
+FROM node:14-alpine
 
 COPY --from=builder /opt/app/telepathy-server/dist/telepathy-server-linux-x64 /usr/bin/telepathy-server
 
