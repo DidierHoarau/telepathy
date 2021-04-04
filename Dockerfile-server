@@ -9,15 +9,17 @@ COPY . .
 
 RUN cd telepathy-server && \
     npm ci && \
-    npm run binary:linux:x64
+    npm run binary:linux:alpine
 
 
 # RUN
-FROM node:14-alpine
+FROM alpine
 
-COPY --from=builder /opt/app/telepathy-server/dist/telepathy-server-linux-x64 /usr/bin/telepathy-server
+COPY --from=builder /opt/app/telepathy-server/dist/telepathy-server-linux-alpine /usr/bin/telepathy-server
 
-RUN mkdir /workspace
+RUN apk add libstdc++ libgcc && \
+    mkdir /workspace
+
 WORKDIR /workspace
 
 CMD [ "/usr/bin/telepathy-server" ]
