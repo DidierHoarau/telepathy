@@ -1,6 +1,7 @@
 import { AppContext } from "../appContext";
 import { User } from "../common-model/user";
 import { Auth } from "../data/auth";
+import { UserPassword } from "../data/userPassword";
 import { Logger } from "../utils-std-ts/logger";
 
 const logger = new Logger("router/handlers/userListHandler");
@@ -18,7 +19,7 @@ export class UserListHandler {
     const user = await AppContext.getUsers().getByName(req.body.name);
     if (!user) {
       stopAndSend(403, { error: "Authentication Failed" });
-    } else if (await user.checkPassword(req.body.password)) {
+    } else if (await UserPassword.checkPassword(user, req.body.password)) {
       res.status(201).json({ success: true, token: await Auth.generateJWT(user) });
     } else {
       stopAndSend(403, { error: "Authentication Failed" });
@@ -57,7 +58,7 @@ export class UserListHandler {
       stopAndSend(400, { error: "Username Already Exists" });
     }
     newUser.name = req.body.name;
-    await newUser.setPassword(req.body.password);
+    await UserPassword.setPassword(newUser, req.body.password);
     await AppContext.getUsers().add(newUser);
     res.status(201).json({});
   }

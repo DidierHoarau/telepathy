@@ -1,5 +1,6 @@
 import { AppContext } from "../appContext";
 import { User } from "../common-model/user";
+import { UserPassword } from "../data/userPassword";
 import { Logger } from "../utils-std-ts/logger";
 
 const logger = new Logger("router/handlers/userListHandler");
@@ -34,7 +35,7 @@ export class UserHandler {
     }
     userUpddate.name = req.body.name;
     if (req.body.password) {
-      await userUpddate.setPassword(req.body.password);
+      await UserPassword.setPassword(userUpddate, req.body.password);
     }
     await AppContext.getUsers().update(user.id, userUpddate);
     res.status(201).json({});
