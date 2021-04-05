@@ -9,17 +9,15 @@ COPY . .
 
 RUN cd telepathy-server && \
     npm ci && \
-    npm run binary:linux:x64
+    npm run build
 
 
 # RUN
-FROM ubuntu
+FROM node:14-alpine
 
-COPY --from=builder /opt/app/telepathy-server/dist/telepathy-server-linux-x64 /usr/bin/telepathy-server
+COPY --from=builder /opt/app/telepathy-server/dist /opt/app/dist
+COPY --from=builder /opt/app/telepathy-server/node_modules /opt/app/node_modules
 
-RUN apt-get install build-essential g++ && \
-mkdir /workspace
+WORKDIR /opt/app
 
-WORKDIR /workspace
-
-CMD [ "/usr/bin/telepathy-server" ]
+CMD [ "node", "dist/app.js" ]
