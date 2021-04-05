@@ -17,7 +17,7 @@
     "binary:linux:alpine": "npm run build && pkg dist/app.js --target alpine --output ./dist/telepathy-server-linux-alpine",
     "binary:linux:x64": "npm run build && pkg dist/app.js --target node14-linux-x64 --output ./dist/telepathy-server-linux-x64",
     "binary:linux:armv6": "npm run build && pkg dist/app.js --target node14-linux-armv6 --output ./dist/telepathy-server-linux-armv6",
-    "binary:linux:armv7": "npm run build && pkg dist/app.js --target node14-linux-armv7 --output ./dist/telepathy-server-linux-armv7"
+    "binary:linux:arm64": "npm run build && pkg dist/app.js --target arm64 --output ./dist/telepathy-server-linux-armv7"
   },
   "dependencies": {
     "bcrypt": "^5.0.1",
