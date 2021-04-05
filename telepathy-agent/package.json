@@ -17,7 +17,7 @@
     "binary:linux:alpine": "npm run build && pkg dist/app.js --target alpine --output ./dist/telepathy-agent-linux-alpine",
     "binary:linux:x64": "npm run build && pkg dist/app.js --target node14-linux-x64 --output ./dist/telepathy-agent-linux-x64",
     "binary:linux:armv6": "npm run build && pkg dist/app.js --target node14-linux-armv6 --output ./dist/telepathy-agent-linux-armv6",
-    "binary:linux:armv7": "npm run build && pkg dist/app.js --target node14-linux-armv7 --output ./dist/telepathy-agent-linux-armv7"
+    "binary:linux:arm64": "npm run build && pkg dist/app.js --target arm64 --output ./dist/telepathy-agent-linux-arm64"
   },
   "dependencies": {
     "axios": "^0.21.1",
