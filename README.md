@@ -1,5 +1,9 @@
 Telepathy is a lightweight automation tool.
 
+![](docs/images/telepathy_task_list.png?raw=true)
+
+![](docs/images/telepathy_task_edit.png?raw=true)
+
 # Philosophy
 
 The key aspects that this tool has been designed for:
