@@ -39,16 +39,16 @@ Server, Agents and Web Interface need a configuration file.
 
 config.json:
 
-```json
+```
 {
-  "CORS_POLICY_ORIGIN": "a_domain", // Authorized domain for the user interface. Default: same as Server
-  "DATA_DIR": "/data", // Directory where data are saved. Default: Current directory
-  "AGENT_KEY": "TO_CHANGE", // Key needed for Agents to connect to Server
-  "JWT_KEY": "TO_CHANGE", // Key use to encode JWT tokent. Default: random
-  "JWT_VALIDITY_DURATION": 604800, // Validity duration (in seconds) of the JWT token. Default: 604800 (1 week)
-  "TASK_HISTORY_MAX_COUNT": 100, // Maximium number of execution kept. Detault: 100
-  "TASK_HISTORY_MAX_AGE_DAYS": 30, // Maximum age (in days) of execution kept. Default: 30 days
-  "AGENT_REGISTRATION_DURATION": 1800 // Durration (in seconds) that agent are considered as connected. Default: 1800 (30 min)
+  "CORS_POLICY_ORIGIN": "a_domain",     // Authorized domain for the user interface. Default: same as Server
+  "DATA_DIR": "/data",                  // Directory where data are saved. Default: Current directory
+  "AGENT_KEY": "TO_CHANGE",             // Key needed for Agents to connect to Server
+  "JWT_KEY": "TO_CHANGE",               // Key use to encode JWT tokent. Default: random
+  "JWT_VALIDITY_DURATION": 604800,      // Validity duration (in seconds) of the JWT token. Default: 604800 (1 week)
+  "TASK_HISTORY_MAX_COUNT": 100,        // Maximium number of execution kept. Detault: 100
+  "TASK_HISTORY_MAX_AGE_DAYS": 30,      // Maximum age (in days) of execution kept. Default: 30 days
+  "AGENT_REGISTRATION_DURATION": 1800   // Durration (in seconds) that agent are considered as connected. Default: 1800 (30 min)
 }
 ```
 
@@ -58,13 +58,13 @@ The path of the configuration file must be given with the environment vairiable:
 
 config.json:
 
-```json
+```
 {
-  "AGENT_ID": "agent_name", // Name of the agent. Default: hostname
-  "SERVER": "http://localhost:8080", // Url of the server
-  "HEARTBEAT_CYCLE": 60, // Frequency (in seconds) at which the agent will connect to the server. Default: 60
-  "AGENT_KEY": "TO_CHANGE", // Key needed for Agents to connect to Server (must be same as the one defined on the Server)
-  "TAGS": ["linux_x86", "cloud"] // Tags associated to this agent. Default: [] (no tag)
+  "AGENT_ID": "agent_name",            // Name of the agent. Default: hostname
+  "SERVER": "http://localhost:8080",   // Url of the server
+  "HEARTBEAT_CYCLE": 60,               // Frequency (in seconds) at which the agent will connect to the server. Default: 60
+  "AGENT_KEY": "TO_CHANGE",            // Key needed for Agents to connect to Server (must be same as the one defined on the Server)
+  "TAGS": ["linux_x86", "cloud"]       // Tags associated to this agent. Default: [] (no tag)
 }
 ```
 
@@ -74,9 +74,9 @@ The path of the configuration file must be given with the environment vairiable:
 
 config.json:
 
-```json
+```
 {
-  "SERVER_URL": "http://localhost:30000" // Url of the server
+  "SERVER_URL": "http://localhost:30000"   // Url of the server
 }
 ```
 
