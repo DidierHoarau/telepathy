@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="page_content_container">
     <h1 v-if="taskId">Edit Task</h1>
     <h1 v-if="!taskId">New Task</h1>
     <div>

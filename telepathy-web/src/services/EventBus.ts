@@ -6,6 +6,7 @@ export enum EventTypes {
   TASK_UPDATED = 'TASK_UPDATED',
   ALERT_MESSAGE = 'ALERT_MESSAGE',
   TASK_EXECUTION_TRIGGERED = 'TASK_EXECUTION_TRIGGERED',
+  TASK_EXECUTION_CLOSED = 'TASK_EXECUTION_CLOSED',
 }
 
 export function handleError(error: any): void {

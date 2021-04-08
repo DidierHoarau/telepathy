@@ -1,8 +1,14 @@
 <template>
-  <div>
+  <div class="page_content_container">
     <h1>Agents</h1>
     <div class="agent-list row">
-      <Agent v-for="agent in agents" v-bind:key="agent.id" :agent="agent" />
+      <div
+        v-for="agent in agents"
+        v-bind:key="agent.id"
+        class="col-sm-12 col-md-6 col-lg-4"
+      >
+        <Agent :agent="agent" />
+      </div>
     </div>
   </div>
 </template>

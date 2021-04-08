@@ -1,68 +1,64 @@
 <template>
-  <div>
-    <hr />
-    <div class="card">
-      <div class="card-body p-4">
-        <h5 class="card-title">Executions (task: {{ task.name }})</h5>
-        <div class="row p-0 m-0">
-          <div class="col-1 p-0 m-0">
-            <i
-              v-if="taskExecutionHasNewer"
-              v-on:click="selectTaskExecution(taskExecutionPosition - 1)"
-              class="bi bi-arrow-left-circle icon-button"
-            ></i>
-          </div>
-          <div class="col p-0 m-0 text-center">
-            <div class="execution-header" v-if="currentTaskExecution">
-              <h6>
-                <span v-if="currentTaskExecution.dateExecuted">
-                  ({{
-                    new Date(
-                      currentTaskExecution.dateExecuted
-                    ).toLocaleString()
-                  }})
-                </span>
-                <span v-else-if="currentTaskExecution.dateExecuting">
-                  ({{
-                    new Date(
-                      currentTaskExecution.dateExecuting
-                    ).toLocaleString()
-                  }})
-                </span>
-                <span v-else-if="currentTaskExecution.dateQueued">
-                  ({{
-                    new Date(currentTaskExecution.dateQueued).toLocaleString()
-                  }})
-                </span>
-                {{ currentTaskExecution.status }}
-              </h6>
-            </div>
-          </div>
-          <div class="col-1 p-0 m-0 text-end">
-            <i
-              v-if="taskExecutionHasOlder"
-              v-on:click="selectTaskExecution(taskExecutionPosition + 1)"
-              class="bi bi-arrow-right-circle icon-button"
-            ></i>
-          </div>
+  <div class="taskexec_layout">
+    <div class="taskexec_layout_title">
+      <h2 class="card-title">
+        <span class="title-type">Task:</span> {{ task.name }}
+      </h2>
+    </div>
+    <div class="taskexec_layout_close">
+      <i v-on:click="closeTaskExecution()" class="bi bi-x icon-button"></i>
+    </div>
+    <div class="taskexec_layout_exec_newer">
+      <i
+        v-if="taskExecutionHasNewer"
+        v-on:click="selectTaskExecution(taskExecutionPosition - 1)"
+        class="bi bi-arrow-left-circle icon-button"
+      ></i>
+    </div>
+    <div class="taskexec_layout_exec_current text-center">
+      <div class="execution-header" v-if="currentTaskExecution">
+        <h3>
+          <span v-if="currentTaskExecution.dateExecuted">
+            ({{ new Date(currentTaskExecution.dateExecuted).toLocaleString() }})
+          </span>
+          <span v-else-if="currentTaskExecution.dateExecuting">
+            ({{
+              new Date(currentTaskExecution.dateExecuting).toLocaleString()
+            }})
+          </span>
+          <span v-else-if="currentTaskExecution.dateQueued">
+            ({{ new Date(currentTaskExecution.dateQueued).toLocaleString() }})
+          </span>
+          {{ currentTaskExecution.status }}
+        </h3>
+      </div>
+    </div>
+    <div class="taskexec_layout_exec_older text-end">
+      <i
+        v-if="taskExecutionHasOlder"
+        v-on:click="selectTaskExecution(taskExecutionPosition + 1)"
+        class="bi bi-arrow-right-circle icon-button"
+      ></i>
+    </div>
 
-          <div v-if="currentTaskExecution" class="col-12 p-0 m-0 mt-3 mb-1">
-            <div
-              v-for="output in currentTaskExecution.outputs"
-              v-bind:key="output.id"
-              class="row mt-2 task-output"
-            >
-              <div class="col-6">{{ output.name }}:</div>
-              <div class="col-6">
-                {{ output.value }}
-              </div>
-            </div>
-          </div>
-          <div class="col-12 p-0 m-0">
-            <br />
-            <pre>{{ logs }}</pre>
+    <div class="taskexec_layout_exec_details">
+      <div v-if="currentTaskExecution">
+        <div
+          v-for="output in currentTaskExecution.outputs"
+          v-bind:key="output.id"
+          class="row mt-2 task-output"
+        >
+          <div class="col-6">{{ output.name }}:</div>
+          <div class="col-6">
+            {{ output.value }}
           </div>
         </div>
+      </div>
+      <div v-if="currentTaskExecution" class="col-12 p-0 m-0">
+        <pre>{{ logs }}</pre>
+      </div>
+      <div v-else class="col-12 p-0 m-0">
+        <p>No execution yet</p>
       </div>
     </div>
   </div>
@@ -186,6 +182,9 @@ export default {
         })
         .catch(handleError);
     },
+    closeTaskExecution() {
+      EventBus.emit(EventTypes.TASK_EXECUTION_CLOSED, { taskId: this.taskId });
+    },
   },
 };
 </script>
@@ -193,5 +192,54 @@ export default {
 <style scoped>
 .execution-header {
   margin-top: 0.6rem;
+}
+
+.taskexec_layout {
+  display: grid;
+  grid-template-columns: 2rem 1fr 2rem;
+  grid-template-rows: 2.5rem 2.5rem 1fr;
+  width: 100%;
+  height: auto;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+.taskexec_layout_title {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.taskexec_layout_close {
+  grid-column: 3;
+  grid-row: 1;
+  margin-top: -0.4rem;
+}
+
+.taskexec_layout_exec_newer {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.taskexec_layout_exec_current {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.taskexec_layout_exec_older {
+  grid-column: 3;
+  grid-row: 2;
+}
+
+.taskexec_layout_exec_details {
+  grid-column: 1 / span 3;
+  grid-row: 3;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding-top: 0.5rem;
+}
+
+.title-type {
+  color: #aaa;
 }
 </style>

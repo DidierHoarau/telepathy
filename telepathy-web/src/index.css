@@ -1,5 +1,5 @@
 .icon-button {
-  font-size: 1.6rem;
+  font-size: 1.4rem;
   color: #333;
 }
 
@@ -16,4 +16,60 @@ div {
   color: #9f9f9f;
   border-radius: 100px;
   font-size: 90%;
+}
+
+.page_content_container {
+  padding: 1.4rem;
+}
+
+h1 {
+  font-size: 1.4rem;
+}
+
+h2 {
+  font-size: 1.2rem;
+}
+
+h3 {
+  font-size: 1rem;
+}
+
+h4 {
+  font-size: 0.9rem;
+}
+
+h5 {
+  font-size: 0.8rem;
+}
+
+.card-body {
+  padding: 0.6rem;
+}
+
+.cardlayout {
+  display: grid;
+  grid-template-columns: 1fr 2rem;
+  grid-template-rows: 1fr;
+  box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.2);
+  background-color: #f5f5f5;
+  transition: 0.3s;
+  border: 1px solid #e0e0e0;
+  margin: 0.6rem;
+}
+
+.cardlayout_content {
+  grid-column: 1;
+  grid-row: 1;
+  padding: 0.8rem;
+}
+
+.cardlayout_actions {
+  grid-column: 2;
+  grid-row: 1;
+  padding: 0.8rem;
+  padding-left: 0rem;
+}
+
+div {
+  /* border: 1px solid red; */
 }

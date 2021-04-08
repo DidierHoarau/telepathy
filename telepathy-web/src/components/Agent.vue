@@ -1,15 +1,13 @@
 <template>
-  <div class="card-container col-sm-12 col-md-6 col-lg-4">
-    <div class="card text-dark bg-light mb-3">
-      <div class="card-body">
-        <h5 class="card-title">{{ agent.id }}</h5>
-        <p>
-          <span v-for="tag in agent.tags" v-bind:key="tag">
-            <span class="badge bg-secondary">{{ tag }}</span
-            >&nbsp;
-          </span>
-        </p>
-      </div>
+  <div class="cardlayout">
+    <div class="cardlayout_content">
+      <h2 class="card-title">{{ agent.id }}</h2>
+      <p>
+        <span v-for="tag in agent.tags" v-bind:key="tag">
+          <span class="badge bg-secondary">{{ tag }}</span
+          >&nbsp;
+        </span>
+      </p>
     </div>
   </div>
 </template>

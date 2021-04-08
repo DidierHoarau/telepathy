@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="page_content_container">
     <div v-if="!isAuthenticated">
       <h1>Login</h1>
       <div class="mb-3">

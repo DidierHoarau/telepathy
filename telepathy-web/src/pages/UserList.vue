@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="page_content_container">
     <div class="m-0 p-0">
       <div class="row">
         <div class="col-8">
@@ -13,7 +13,13 @@
       </div>
     </div>
     <div class="task-list row">
-      <User v-for="user in users" v-bind:key="user.id" :user="user" />
+      <div
+        v-for="user in users"
+        v-bind:key="user.id"
+        class="col-sm-12 col-md-6 col-lg-4"
+      >
+        <User :user="user" />
+      </div>
     </div>
   </div>
 </template>

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="page_content_container">
     <h1 v-if="userId">Update User</h1>
     <h1 v-else>New User</h1>
     <div class="mb-3">
