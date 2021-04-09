@@ -2,8 +2,15 @@
   "name": "Telepathy",
   "short_name": "Telepathy",
   "lang": "en-US",
-  "start_url": "/index.html",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "white",
-  "theme_color": "white"
+  "theme_color": "white",
+  "icons": [
+    {
+      "src": "images/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
 }

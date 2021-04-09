@@ -56,9 +56,6 @@ export default {
 </script>
 
 <style scoped>
-.nav-item {
-  background-color: #333;
-}
 .nav-item a {
   color: #eee;
   font-weight: bold;

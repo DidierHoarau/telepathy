@@ -1,10 +1,8 @@
 <template>
   <div>
     <div class="page_container">
-      <header class="page_header navbar navbar-dark bg-dark flex-md-nowrap">
-        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#"
-          >Telepathy</a
-        >
+      <header class="page_header">
+        <a href="/"><h1>Telepathy</h1></a>
       </header>
       <Navigation class="page_menu" />
       <router-view class="page_content" />
@@ -48,7 +46,6 @@ export default {
   .page_menu {
     grid-column: 1;
     grid-row: 2;
-    background-color: #333;
   }
 
   .page_content {
@@ -63,7 +60,6 @@ export default {
   .page_footer {
     grid-column: 1;
     grid-row: 4;
-    background-color: #2a2a2a;
   }
 }
 @media (min-width: 700px) {
@@ -82,7 +78,6 @@ export default {
   .page_menu {
     grid-column: 1;
     grid-row: 2;
-    background-color: #333;
   }
 
   .page_content {
@@ -97,8 +92,35 @@ export default {
   .page_footer {
     grid-column: 1 / span 2;
     grid-row: 3;
-    background-color: #2a2a2a;
   }
+}
+
+.page_container {
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+.page_header,
+.page_footer {
+  background-color: #212121;
+}
+
+.page_header a {
+  text-decoration: none;
+  color: #fff;
+}
+
+.page_header {
+  padding-left: 2rem;
+  padding-top: 0.5rem;
+}
+
+.page_header h1 {
+  width: 90%;
+}
+
+.page_menu {
+  background-color: #424242;
 }
 
 .alert-messages {

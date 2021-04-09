@@ -46,15 +46,16 @@
         <div
           v-for="output in currentTaskExecution.outputs"
           v-bind:key="output.id"
-          class="row mt-2 task-output"
+          class="taskoutput"
         >
-          <div class="col-6">{{ output.name }}:</div>
-          <div class="col-6">
+          <div class="taskoutput_name">{{ output.name }}:</div>
+          <div class="taskoutput_value">
             {{ output.value }}
           </div>
         </div>
       </div>
       <div v-if="currentTaskExecution" class="col-12 p-0 m-0">
+        <br />
         <pre>{{ logs }}</pre>
       </div>
       <div v-else class="col-12 p-0 m-0">

@@ -12,10 +12,10 @@
         <div
           v-for="output in lastExecution.outputs"
           v-bind:key="output.id"
-          class="row mt-2 task-output"
+          class="taskoutput"
         >
-          <div class="col-6">{{ output.name }}:</div>
-          <div class="col-6">
+          <div class="taskoutput_name">{{ output.name }}:</div>
+          <div class="taskoutput_value">
             {{ output.value }}
           </div>
         </div>

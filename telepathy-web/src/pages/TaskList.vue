@@ -111,10 +111,10 @@ export default {
   grid-row: 2;
   overflow-x: hidden;
   overflow-y: auto;
-  background-color: #e8eaf6;
+  background-color: #efebe9;
   border-top-style: solid;
-  border-top-color: #c5cae9;
-  border-top-width: 2px;
+  border-top-color: #bcaaa4;
+  border-top-width: 1px;
   border-top-left-radius: 20px;
   border-top-right-radius: 10px;
   transition: grid-row 2s;
