@@ -2,7 +2,7 @@
   "name": "Telepathy",
   "short_name": "Telepathy",
   "lang": "en-US",
-  "start_url": "/",
+  "start_url": "/tasks",
   "display": "standalone",
   "background_color": "white",
   "theme_color": "white",
