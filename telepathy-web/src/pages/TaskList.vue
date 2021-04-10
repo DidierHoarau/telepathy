@@ -37,6 +37,7 @@
 
 <script>
 import axios from 'axios';
+import * as _ from 'lodash';
 import Task from '../components/Task.vue';
 import TaskExecutions from '../components/TaskExecutions.vue';
 import Config from '../Config.ts';
@@ -74,7 +75,7 @@ export default {
           await AuthService.getAuthHeader()
         )
         .then((res) => {
-          this.tasks = res.data.tasks;
+          this.tasks = _.sortBy(res.data.tasks, 'name');
         })
         .catch(handleError);
     },
