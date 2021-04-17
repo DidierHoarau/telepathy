@@ -1,0 +1,27 @@
+# BUILD
+FROM node:14-alpine as builder
+
+RUN apk add --no-cache bash git python perl alpine-sdk
+
+WORKDIR /opt/app
+
+COPY . .
+
+RUN cd telepathy-server && \
+    npm install && \
+    npm run build
+
+
+# RUN
+FROM node:14-alpine
+
+COPY --from=builder /opt/app/telepathy-server/node_modules /opt/app/telepathy-server/node_modules
+COPY --from=builder /opt/app/telepathy-server/dist /opt/app/telepathy-server/dist
+COPY _shared/docker_entrypoint_server.sh /docker_entrypoint_server.sh
+
+RUN chmod +x /docker_entrypoint_server.sh && \
+    mkdir /workspace
+
+WORKDIR /workspace
+
+CMD [ "/docker_entrypoint_server.sh" ]

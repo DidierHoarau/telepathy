@@ -3,7 +3,7 @@ import { User } from "../common-model/user";
 import { UserPassword } from "../data/userPassword";
 import { Logger } from "../utils-std-ts/logger";
 
-const logger = new Logger("router/handlers/userListHandler");
+const logger = new Logger("router/handlers/userHandler");
 
 export class UserHandler {
   //

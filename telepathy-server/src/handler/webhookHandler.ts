@@ -4,7 +4,7 @@ import { TaskExecution } from "../common-model/taskExecution";
 import { TaskExecutionStatus } from "../common-model/taskExecutionStatus";
 import { Logger } from "../utils-std-ts/logger";
 
-const logger = new Logger("router/handlers/taskListHandler");
+const logger = new Logger("router/handlers/webhookHandler");
 
 export class WebhookHandler {
   //
