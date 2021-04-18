@@ -17,13 +17,19 @@
         </div>
       </div>
       <div class="task-list">
-        <div class="row">
-          <div
-            v-for="task in tasks"
-            v-bind:key="task.id"
-            class="col-sm-12 col-md-6 col-lg-4"
-          >
-            <Task v-on:click="onTaskClicked(task.id)" :task="task" />
+        <div v-for="folder in taskFolders" v-bind:key="folder.name">
+          <div class="row">
+            <div v-if="folder.name">
+              <hr />
+              <h3>{{ folder.name }}</h3>
+            </div>
+            <div
+              v-for="task in folder.tasks"
+              v-bind:key="task.id"
+              class="col-sm-12 col-md-6 col-lg-4"
+            >
+              <Task v-on:click="onTaskClicked(task.id)" :task="task" />
+            </div>
           </div>
         </div>
       </div>
@@ -52,7 +58,7 @@ export default {
   },
   data() {
     return {
-      tasks: [],
+      taskFolders: [],
       taskIdSelected: null,
       listGridPosition: '1 / span 2',
     };
@@ -75,7 +81,24 @@ export default {
           await AuthService.getAuthHeader()
         )
         .then((res) => {
-          this.tasks = _.sortBy(res.data.tasks, 'name');
+          const folders = [];
+          const sortedTasks = _.sortBy(res.data.tasks, 'name');
+          for (let i = 0; i < sortedTasks.length; i++) {
+            let folderName = '';
+            if (sortedTasks[i].name.indexOf('/') > 0) {
+              folderName = sortedTasks[i].name.substring(
+                0,
+                sortedTasks[i].name.indexOf('/')
+              );
+            }
+            let folder = _.find(folders, { name: folderName });
+            if (!folder) {
+              folder = { name: folderName, tasks: [] };
+              folders.push(folder);
+            }
+            folder.tasks.push(sortedTasks[i]);
+            this.taskFolders = folders;
+          }
         })
         .catch(handleError);
     },
