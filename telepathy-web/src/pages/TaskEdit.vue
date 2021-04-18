@@ -45,15 +45,18 @@
           <div class="col-6 text-center">Pattern (RegEx)</div>
         </div>
         <div
-          v-for="output in task.outputDefinitions"
+          v-for="(output, index) in task.outputDefinitions"
           v-bind:key="output.id"
           class="row p-0 m-0 mb-1"
         >
-          <div class="col-6">
+          <div class="col-5">
             <input v-model="output.name" type="text" class="form-control" />
           </div>
           <div class="col-6">
             <input v-model="output.pattern" type="text" class="form-control" />
+          </div>
+          <div class="col-1">
+            <i class="bi bi-trash" v-on:click="deleteOutput(index)"></i>
           </div>
         </div>
         <p><i class="bi bi-plus-square" v-on:click="addOutput()"></i></p>
@@ -217,6 +220,10 @@ export default {
 
     addOutput() {
       this.task.outputDefinitions.push({ name: '', pattern: '' });
+    },
+
+    deleteOutput(index) {
+      this.task.outputDefinitions.splice(index, 1);
     },
   },
 };
