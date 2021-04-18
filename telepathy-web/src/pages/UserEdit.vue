@@ -58,6 +58,7 @@ export default {
   },
   async created() {
     if (this.userId) {
+      this.passwordEnabled = false;
       axios
         .get(
           `${(await Config.get()).SERVER_URL}/users/${this.userId}`,
@@ -67,6 +68,8 @@ export default {
           this.user = res.data;
         })
         .catch(handleError);
+    } else {
+      this.passwordEnabled = true;
     }
   },
   methods: {
