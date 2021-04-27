@@ -8,6 +8,15 @@ const logger = new Logger("router/handlers/userListHandler");
 
 export class UserListHandler {
   //
+  public static async checkInitialiation(req, res, next, stopAndSend): Promise<void> {
+    logger.debug(`[${req.method}] ${req.originalUrl}`);
+    if ((await AppContext.getUsers().list()).length === 0) {
+      res.status(201).json({ initialized: false });
+    } else {
+      res.status(201).json({ initialized: true });
+    }
+  }
+
   public static async login(req, res, next, stopAndSend): Promise<void> {
     logger.info(`[${req.method}] ${req.originalUrl}`);
     if (!req.body.name) {

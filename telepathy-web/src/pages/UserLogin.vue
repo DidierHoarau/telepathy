@@ -45,7 +45,7 @@ export default {
   },
   async created() {
     await axios
-      .get(`${(await Config.get()).SERVER_URL}/users/initialization`)
+      .get(`${(await Config.get()).SERVER_URL}/users/status/initialization`)
       .then((res) => {
         if (!res.data.initialized) {
           router.push({ path: '/users/new' });

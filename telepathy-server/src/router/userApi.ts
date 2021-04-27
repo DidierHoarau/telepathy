@@ -12,14 +12,7 @@ const logger = new Logger("router/userApi");
 
 export const userApi = express.Router();
 
-ERW.route(userApi, "get", "/initialization", async (req, res, next, stopAndSend) => {
-  logger.info(`[${req.method}] ${req.originalUrl}`);
-  if ((await AppContext.getUsers().list()).length === 0) {
-    res.status(201).json({ initialized: false });
-  } else {
-    res.status(201).json({ initialized: true });
-  }
-});
+ERW.route(userApi, "get", "/status/initialization", UserListHandler.checkInitialiation);
 
 ERW.route(userApi, "post", "/session", UserListHandler.login);
 

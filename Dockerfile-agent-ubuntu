@@ -1,0 +1,22 @@
+# BUILD
+FROM node:14 as builder
+
+WORKDIR /opt/app
+
+COPY . .
+
+RUN cd telepathy-agent && \
+    npm ci && \
+    npm run binary:linux:x64
+
+
+# RUN
+FROM ubuntu
+
+COPY --from=builder /opt/app/telepathy-agent/dist/telepathy-agent-linux-x64 /usr/bin/telepathy-agent
+
+RUN mkdir /workspace
+
+WORKDIR /workspace
+
+CMD [ "/usr/bin/telepathy-agent" ]
