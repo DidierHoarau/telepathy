@@ -21,7 +21,7 @@ export class Agents {
   }
 
   public async list(): Promise<Agent[]> {
-    return this.agents;
+    return _.cloneDeep(this.agents);
   }
 
   public async register(newAgent: Agent): Promise<void> {

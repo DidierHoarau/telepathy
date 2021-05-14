@@ -34,7 +34,7 @@ export class Users {
   }
 
   public async list(): Promise<User[]> {
-    return this.users;
+    return _.cloneDeep(this.users);
   }
 
   public async add(user: User): Promise<void> {

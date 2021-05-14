@@ -49,7 +49,7 @@ export class Tasks {
   }
 
   public async list(): Promise<Task[]> {
-    return this.tasks;
+    return _.cloneDeep(this.tasks);
   }
 
   public async add(task: Task): Promise<void> {

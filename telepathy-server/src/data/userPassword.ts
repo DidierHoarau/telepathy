@@ -9,6 +9,6 @@ export class UserPassword {
   }
 
   public static async checkPassword(user: User, password: string): Promise<boolean> {
-    return await bcrypt.compare(password, user.passwordEncrypted); // updated
+    return await bcrypt.compare(password, user.passwordEncrypted);
   }
 }

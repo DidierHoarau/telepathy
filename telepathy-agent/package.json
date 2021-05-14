@@ -8,8 +8,8 @@
     "//": "-------------------------------------------------------------------",
     "build": "npm run dependencies && tsc",
     "lint": "tslint --project tsconfig.json ./src/**/*.ts || exit 0",
-    "test": "echo 'No Test Yet'",
-    "test:unit": "npm run lint && NODE_ENV=dev jest --watch --coverage",
+    "test": "jest --coverage",
+    "test:dev": "jest --watch --coverage",
     "////": "-----------------------------------------------------------------",
     "dev": "DEV_MODE=true TELEPATHY_CONFIG=../_dev/config/config-agent.json TELEPATHY_DATA_DIR=../_dev/data/agent pm2 start ts-node --watch --name agent -- -P tsconfig.json ./src/app.ts",
     "dev:docker": "docker-packaging-config/start-dev-docker.sh || true",
@@ -47,26 +47,5 @@
     "ts-node": "^7.0.1",
     "tslint": "^5.20.1",
     "typescript": "^3.9.7"
-  },
-  "jest": {
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js"
-    ],
-    "transform": {
-      "\\.(ts|tsx)$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
-    },
-    "testRegex": "src/.*.spec.ts",
-    "collectCoverageFrom": [
-      "src/**/*.{ts}"
-    ],
-    "coverageThreshold": {
-      "global": {
-        "branches": 80,
-        "functions": 80,
-        "lines": 80
-      }
-    }
   }
 }
