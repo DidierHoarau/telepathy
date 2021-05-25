@@ -3,19 +3,6 @@ import { TaskOutputDefinition } from "./taskOutputDefinition";
 
 export class Task {
   //
-  public id: string;
-  public name: string;
-  public script: string;
-  public schedule: string;
-  public tag: string;
-  public webhook: string;
-  public outputDefinitions: TaskOutputDefinition[];
-
-  constructor() {
-    this.id = uuidv4();
-    this.outputDefinitions = [];
-  }
-
   public static fromJson(json: any): Task {
     if (!json) {
       return null;
@@ -36,6 +23,19 @@ export class Task {
     task.webhook = json.webhook;
 
     return task;
+  }
+
+  public id: string;
+  public name: string;
+  public script: string;
+  public schedule: string;
+  public tag: string;
+  public webhook: string;
+  public outputDefinitions: TaskOutputDefinition[];
+
+  constructor() {
+    this.id = uuidv4();
+    this.outputDefinitions = [];
   }
 
   public toJson(): any {

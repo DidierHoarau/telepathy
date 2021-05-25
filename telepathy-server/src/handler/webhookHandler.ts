@@ -1,14 +1,12 @@
 import * as _ from "lodash";
 import { AppContext } from "../appContext";
-import { TaskExecution } from "../common-model/taskExecution";
-import { TaskExecutionStatus } from "../common-model/taskExecutionStatus";
 import { Logger } from "../utils-std-ts/logger";
 
 const logger = new Logger("router/handlers/webhookHandler");
 
 export class WebhookHandler {
   //
-  public static async trigger(req, res, next, stopAndSend): Promise<void> {
+  public static async trigger(req: any, res: any, next: any, stopAndSend: any): Promise<void> {
     logger.info(`[${req.method}] ${req.originalUrl}`);
     const tasks = await AppContext.getTasks().list();
     const task = _.find(tasks, {

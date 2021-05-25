@@ -3,23 +3,6 @@ import { TaskOutput } from "./taskOutput";
 
 export class TaskExecution {
   //
-  public id: string;
-  public taskId: string;
-  public script: string;
-  public status: string;
-  public success: boolean = false;
-  public agentId: string;
-  public tag: string;
-  public dateQueued: Date;
-  public dateExecuting: Date;
-  public dateExecuted: Date;
-  public outputs: TaskOutput[];
-
-  constructor() {
-    this.id = uuidv4();
-    this.outputs = [];
-  }
-
   public static fromJson(json: any): TaskExecution {
     if (!json) {
       return null;
@@ -43,6 +26,23 @@ export class TaskExecution {
     taskExecution.dateExecuting = json.dateExecuting;
     taskExecution.dateExecuted = json.dateExecuted;
     return taskExecution;
+  }
+
+  public id: string;
+  public taskId: string;
+  public script: string;
+  public status: string;
+  public success: boolean = false;
+  public agentId: string;
+  public tag: string;
+  public dateQueued: Date;
+  public dateExecuting: Date;
+  public dateExecuted: Date;
+  public outputs: TaskOutput[];
+
+  constructor() {
+    this.id = uuidv4();
+    this.outputs = [];
   }
 
   public toJson(): any {

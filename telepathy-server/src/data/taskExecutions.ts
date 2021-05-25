@@ -4,7 +4,6 @@ import { AppContext } from "../appContext";
 import { TaskExecution } from "../common-model/taskExecution";
 import { TaskExecutionStatus } from "../common-model/taskExecutionStatus";
 import { TaskOutput } from "../common-model/taskOutput";
-import { config } from "../config";
 import { Logger } from "../utils-std-ts/logger";
 
 const logger = new Logger("data/taskExecution");
@@ -14,8 +13,8 @@ export class TaskExecutions {
   public taskExecutions: TaskExecution[];
 
   constructor() {
-    if (fs.existsSync(`${config.DATA_DIR}/task-executions.json`)) {
-      fs.readJSON(`${config.DATA_DIR}/task-executions.json`).then((data) => {
+    if (fs.existsSync(`${AppContext.getConfig().DATA_DIR}/task-executions.json`)) {
+      fs.readJSON(`${AppContext.getConfig().DATA_DIR}/task-executions.json`).then((data) => {
         this.taskExecutions = data;
       });
     } else {
@@ -98,25 +97,25 @@ export class TaskExecutions {
   }
 
   public async getLogs(id: string, taskId: string): Promise<Buffer> {
-    if (fs.existsSync(`${config.DATA_DIR}/logs/${taskId}_${id}.log`)) {
-      return await fs.readFile(`${config.DATA_DIR}/logs/${taskId}_${id}.log`);
+    if (fs.existsSync(`${AppContext.getConfig().DATA_DIR}/logs/${taskId}_${id}.log`)) {
+      return await fs.readFile(`${AppContext.getConfig().DATA_DIR}/logs/${taskId}_${id}.log`);
     } else {
       return Buffer.from("");
     }
   }
 
   public async deleteLogs(id: string, taskId: string): Promise<void> {
-    if (fs.existsSync(`${config.DATA_DIR}/logs/${taskId}_${id}.log`)) {
-      await fs.remove(`${config.DATA_DIR}/logs/${taskId}_${id}.log`);
+    if (fs.existsSync(`${AppContext.getConfig().DATA_DIR}/logs/${taskId}_${id}.log`)) {
+      await fs.remove(`${AppContext.getConfig().DATA_DIR}/logs/${taskId}_${id}.log`);
     }
   }
 
   public async updateLogs(taskExecutionId: string, taskId: string, logs: Buffer): Promise<void> {
-    await fs.ensureDir(`${config.DATA_DIR}/logs`);
-    await fs.writeFile(`${config.DATA_DIR}/logs/${taskId}_${taskExecutionId}.log`, logs);
+    await fs.ensureDir(`${AppContext.getConfig().DATA_DIR}/logs`);
+    await fs.writeFile(`${AppContext.getConfig().DATA_DIR}/logs/${taskId}_${taskExecutionId}.log`, logs);
   }
 
   public async save(): Promise<void> {
-    await fs.writeJSON(`${config.DATA_DIR}/task-executions.json`, this.taskExecutions);
+    await fs.writeJSON(`${AppContext.getConfig().DATA_DIR}/task-executions.json`, this.taskExecutions);
   }
 }

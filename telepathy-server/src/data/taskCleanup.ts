@@ -1,6 +1,5 @@
 import * as _ from "lodash";
 import { AppContext } from "../appContext";
-import { config } from "../config";
 import { Logger } from "../utils-std-ts/logger";
 import { Timeout } from "../utils-std-ts/timeout";
 
@@ -30,7 +29,7 @@ async function cleanByDate(): Promise<void> {
       await AppContext.getTaskExecutions().delete(taskExecution.id);
     }
     const taskAge = (new Date().getTime() - new Date(taskExecution.dateQueued).getTime()) / (1000 * 60 * 60 * 24);
-    if (taskAge > config.TASK_HISTORY_MAX_AGE_DAYS) {
+    if (taskAge > AppContext.getConfig().TASK_HISTORY_MAX_AGE_DAYS) {
       logger.info(`Clean task execution: ${taskExecution.id}`);
       await AppContext.getTaskExecutions().delete(taskExecution.id);
     }
@@ -43,8 +42,8 @@ async function cleanByCount(): Promise<void> {
 
   for (const task of tasks) {
     const currentTaskExecutions = _.sortBy(_.filter(taskExecutions, { taskId: task.id }), "dateQueued");
-    if (currentTaskExecutions.length > config.TASK_HISTORY_MAX_COUNT) {
-      const nbToDelete = currentTaskExecutions.length - config.TASK_HISTORY_MAX_COUNT;
+    if (currentTaskExecutions.length > AppContext.getConfig().TASK_HISTORY_MAX_COUNT) {
+      const nbToDelete = currentTaskExecutions.length - AppContext.getConfig().TASK_HISTORY_MAX_COUNT;
       logger.info(`Task ${task.id} as ${currentTaskExecutions.length} execution (${nbToDelete} to delete)`);
       for (let i = 0; i < nbToDelete; i++) {
         logger.info(`Clean task execution: ${currentTaskExecutions[i].id}`);

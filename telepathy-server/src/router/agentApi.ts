@@ -15,9 +15,4 @@ ERW.route(agentApi, "get", "/tags", AgentListHandler.listTags);
 
 ERW.route(agentApi, "post", "/:agentId/session", AgentHandler.authenticate);
 
-ERW.route(
-  agentApi,
-  "get",
-  "/:agentId/tasks/executions",
-  AgentHandler.assignTasks
-);
+ERW.route(agentApi, "get", "/:agentId/tasks/executions", AgentHandler.assignTasks);

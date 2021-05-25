@@ -7,7 +7,7 @@ const logger = new Logger("router/handlers/userHandler");
 
 export class UserHandler {
   //
-  public static async get(req, res, next, stopAndSend): Promise<void> {
+  public static async get(req: any, res: any, next: any, stopAndSend: any): Promise<void> {
     logger.debug(`[${req.method}] ${req.originalUrl}`);
     if (!req.user.authenticated) {
       stopAndSend(403, { error: "Access Denied" });
@@ -20,7 +20,7 @@ export class UserHandler {
     res.status(201).json(user);
   }
 
-  public static async update(req, res, next, stopAndSend): Promise<void> {
+  public static async update(req: any, res: any, next: any, stopAndSend: any): Promise<void> {
     logger.info(`[${req.method}] ${req.originalUrl}`);
     if (!req.user.authenticated) {
       stopAndSend(403, { error: "Access Denied" });
@@ -41,7 +41,7 @@ export class UserHandler {
     res.status(201).json({});
   }
 
-  public static async delete(req, res, next, stopAndSend): Promise<void> {
+  public static async delete(req: any, res: any, next: any, stopAndSend: any): Promise<void> {
     logger.info(`[${req.method}] ${req.originalUrl}`);
     if (!req.user.authenticated) {
       stopAndSend(403, { error: "Access Denied" });

@@ -5,7 +5,7 @@ const logger = new Logger("router/handlers/agentListHandler");
 
 export class AgentListHandler {
   //
-  public static async get(req, res, next, stopAndSend): Promise<void> {
+  public static async get(req: any, res: any, next: any, stopAndSend: any): Promise<void> {
     logger.debug(`[${req.method}] ${req.originalUrl}`);
     if (!req.user.authenticated) {
       stopAndSend(403, { error: "Access Denied" });
@@ -16,7 +16,7 @@ export class AgentListHandler {
     });
   }
 
-  public static async listTags(req, res, next, stopAndSend): Promise<void> {
+  public static async listTags(req: any, res: any, next: any, stopAndSend: any): Promise<void> {
     logger.debug(`[${req.method}] ${req.originalUrl}`);
     if (!req.user.authenticated) {
       stopAndSend(403, { error: "Access Denied" });

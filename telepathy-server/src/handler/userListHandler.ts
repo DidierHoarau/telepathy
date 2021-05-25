@@ -8,7 +8,7 @@ const logger = new Logger("router/handlers/userListHandler");
 
 export class UserListHandler {
   //
-  public static async checkInitialiation(req, res, next, stopAndSend): Promise<void> {
+  public static async checkInitialiation(req: any, res: any, next: any, stopAndSend: any): Promise<void> {
     logger.debug(`[${req.method}] ${req.originalUrl}`);
     if ((await AppContext.getUsers().list()).length === 0) {
       res.status(201).json({ initialized: false });
@@ -17,7 +17,7 @@ export class UserListHandler {
     }
   }
 
-  public static async login(req, res, next, stopAndSend): Promise<void> {
+  public static async login(req: any, res: any, next: any, stopAndSend: any): Promise<void> {
     logger.info(`[${req.method}] ${req.originalUrl}`);
     if (!req.body.name) {
       stopAndSend(400, { error: "Missing: Name" });
@@ -35,7 +35,7 @@ export class UserListHandler {
     }
   }
 
-  public static async list(req, res, next, stopAndSend): Promise<void> {
+  public static async list(req: any, res: any, next: any, stopAndSend: any): Promise<void> {
     logger.debug(`[${req.method}] ${req.originalUrl}`);
     if (!req.user.authenticated) {
       stopAndSend(403, { error: "Access Denied" });
@@ -47,7 +47,7 @@ export class UserListHandler {
     res.status(201).json({ users });
   }
 
-  public static async add(req, res, next, stopAndSend): Promise<void> {
+  public static async add(req: any, res: any, next: any, stopAndSend: any): Promise<void> {
     logger.info(`[${req.method}] ${req.originalUrl}`);
     let isInitialized = true;
     if ((await AppContext.getUsers().list()).length === 0) {

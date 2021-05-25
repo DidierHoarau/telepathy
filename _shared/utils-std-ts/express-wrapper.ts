@@ -1,14 +1,7 @@
 // Used to make it easier to create unit tests
 
-import {
-  Express,
-  NextFunction,
-  Request,
-  Response,
-  Router,
-  RouterOptions,
-} from 'express';
-import * as express from 'express';
+import { Express, NextFunction, Request, Response, Router, RouterOptions } from "express";
+import * as express from "express";
 
 export class ExpressWrapper {
   //

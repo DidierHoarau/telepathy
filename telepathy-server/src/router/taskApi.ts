@@ -24,39 +24,14 @@ ERW.route(taskApi, "put", "/:taskId", TaskHandler.updateTask);
 
 ERW.route(taskApi, "get", "/:taskId/executions", TaskExecutionListHandler.list);
 
-ERW.route(
-  taskApi,
-  "post",
-  "/:taskId/executions",
-  TaskExecutionListHandler.create
-);
+ERW.route(taskApi, "post", "/:taskId/executions", TaskExecutionListHandler.create);
 
-ERW.route(
-  taskApi,
-  "get",
-  "/:taskId/executions/:taskExecutionId",
-  TaskExecutionHandler.get
-);
+ERW.route(taskApi, "get", "/:taskId/executions/:taskExecutionId", TaskExecutionHandler.get);
 
-ERW.route(
-  taskApi,
-  "put",
-  "/:taskId/executions/:taskExecutionId",
-  TaskExecutionHandler.update
-);
+ERW.route(taskApi, "put", "/:taskId/executions/:taskExecutionId", TaskExecutionHandler.update);
 
-ERW.route(
-  taskApi,
-  "get",
-  "/:taskId/executions/:taskExecutionId/logs",
-  TaskExecutionLogHandler.get
-);
+ERW.route(taskApi, "get", "/:taskId/executions/:taskExecutionId/logs", TaskExecutionLogHandler.get);
 
-ERW.route(
-  taskApi,
-  "put",
-  "/:taskId/executions/:taskExecutionId/logs",
-  TaskExecutionLogHandler.update
-);
+ERW.route(taskApi, "put", "/:taskId/executions/:taskExecutionId/logs", TaskExecutionLogHandler.update);
 
 ERW.route(taskApi, "post", "/webhooks/:webhookId", WebhookHandler.trigger);

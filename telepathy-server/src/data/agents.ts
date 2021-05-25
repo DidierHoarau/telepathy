@@ -1,6 +1,6 @@
 import * as _ from "lodash";
+import { AppContext } from "../appContext";
 import { Agent } from "../common-model/agent";
-import { config } from "../config";
 import { Logger } from "../utils-std-ts/logger";
 import { Timeout } from "../utils-std-ts/timeout";
 
@@ -44,13 +44,13 @@ export class Agents {
         for (let i = this.agents.length - 1; i >= 0; i--) {
           if (
             this.agents[i].lastSyncDate.getTime() <
-            new Date().getTime() - config.AGENT_REGISTRATION_DURATION * 1000
+            new Date().getTime() - AppContext.getConfig().AGENT_REGISTRATION_DURATION * 1000
           ) {
             logger.info(`Agent un-registered: ${this.agents[i].id}`);
             this.agents.splice(i, 1);
           }
         }
-        await Timeout.wait((1000 * config.AGENT_REGISTRATION_DURATION) / 2);
+        await Timeout.wait((1000 * AppContext.getConfig().AGENT_REGISTRATION_DURATION) / 2);
       }
     });
   }

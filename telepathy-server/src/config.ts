@@ -4,7 +4,7 @@ import { Logger } from "./utils-std-ts/logger";
 
 const logger = new Logger("config");
 
-class Config {
+export class Config {
   //
   public readonly CONFIG_FILE: string = process.env.TELEPATHY_CONFIG;
   public readonly API_PORT: number = 8080;
@@ -17,10 +17,6 @@ class Config {
   public JWT_KEY: string = uuidv4();
   public TASK_HISTORY_MAX_COUNT: number = 100;
   public TASK_HISTORY_MAX_AGE_DAYS: 30;
-
-  public constructor() {
-    this.reload();
-  }
 
   public async reload(): Promise<void> {
     const content = await fse.readJson(this.CONFIG_FILE);
@@ -46,5 +42,3 @@ class Config {
     setIfSet("JWT_KEY", false);
   }
 }
-
-export const config = new Config();

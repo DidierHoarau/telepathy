@@ -7,7 +7,7 @@ const logger = new Logger("router/handlers/taskExecutionListHandler");
 
 export class TaskExecutionListHandler {
   //
-  public static async list(req, res, next, stopAndSend): Promise<void> {
+  public static async list(req: any, res: any, next: any, stopAndSend: any): Promise<void> {
     logger.debug(`[${req.method}] ${req.originalUrl}`);
     if (!req.user.authenticated) {
       stopAndSend(403, { error: "Access Denied" });
@@ -24,7 +24,7 @@ export class TaskExecutionListHandler {
     res.status(200).json({ task_executions: outputSorted });
   }
 
-  public static async create(req, res, next, stopAndSend): Promise<void> {
+  public static async create(req: any, res: any, next: any, stopAndSend: any): Promise<void> {
     logger.info(`[${req.method}] ${req.originalUrl}`);
     if (!req.user.authenticated) {
       stopAndSend(403, { error: "Access Denied" });

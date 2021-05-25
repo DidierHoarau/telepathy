@@ -6,7 +6,7 @@ const logger = new Logger("router/handlers/taskHandler");
 
 export class TaskHandler {
   //
-  public static async getTask(req, res, next, stopAndSend): Promise<void> {
+  public static async getTask(req: any, res: any, next: any, stopAndSend: any): Promise<void> {
     logger.debug(`[${req.method}] ${req.originalUrl}`);
     if (!req.user.authenticated) {
       stopAndSend(403, { error: "Access Denied" });
@@ -15,7 +15,7 @@ export class TaskHandler {
     res.status(200).json(task.toJson());
   }
 
-  public static async deleteTask(req, res, next, stopAndSend): Promise<void> {
+  public static async deleteTask(req: any, res: any, next: any, stopAndSend: any): Promise<void> {
     logger.info(`[${req.method}] ${req.originalUrl}`);
     if (!req.user.authenticated) {
       stopAndSend(403, { error: "Access Denied" });
@@ -24,7 +24,7 @@ export class TaskHandler {
     res.status(202).json({});
   }
 
-  public static async updateTask(req, res, next, stopAndSend): Promise<void> {
+  public static async updateTask(req: any, res: any, next: any, stopAndSend: any): Promise<void> {
     logger.info(`[${req.method}] ${req.originalUrl}`);
     if (!req.user.authenticated) {
       stopAndSend(403, { error: "Access Denied" });

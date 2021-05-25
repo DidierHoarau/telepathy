@@ -1,14 +1,15 @@
 import * as fs from "fs-extra";
 import * as _ from "lodash";
+import { AppContext } from "../appContext";
 import { User } from "../common-model/user";
-import { config } from "../config";
 
 export class Users {
   //
   public users: User[];
+
   constructor() {
-    if (fs.existsSync(`${config.DATA_DIR}/users.json`)) {
-      fs.readJSON(`${config.DATA_DIR}/users.json`).then((data) => {
+    if (fs.existsSync(`${AppContext.getConfig().DATA_DIR}/users.json`)) {
+      fs.readJSON(`${AppContext.getConfig().DATA_DIR}/users.json`).then((data) => {
         this.users = data;
       });
     } else {
@@ -52,7 +53,7 @@ export class Users {
   }
 
   public async save(): Promise<void> {
-    await fs.writeJSON(`${config.DATA_DIR}/users.json`, this.users);
+    await fs.writeJSON(`${AppContext.getConfig().DATA_DIR}/users.json`, this.users);
   }
 
   public async delete(id: string): Promise<void> {
