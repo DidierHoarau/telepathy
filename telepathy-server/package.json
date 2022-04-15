@@ -1,6 +1,6 @@
 {
   "name": "telepathy-server",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": "",
   "license": "MIT",
   "scripts": {
@@ -29,7 +29,7 @@
     "md5-file": "^4.0.0",
     "node-cron": "^2.0.0",
     "pkg": "^4.4.9",
-    "pm2": "^4.5.6",
+    "pm2": "^5.2.0",
     "request": "^2.88.2",
     "uuid": "^8.3.2"
   },

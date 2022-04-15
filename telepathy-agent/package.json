@@ -1,6 +1,6 @@
 {
   "name": "telepathy-agent",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": "",
   "license": "MIT",
   "scripts": {
@@ -26,7 +26,7 @@
     "lodash": "^4.17.20",
     "md5-file": "^4.0.0",
     "pkg": "^4.4.9",
-    "pm2": "^4.5.5",
+    "pm2": "^5.2.0",
     "request": "^2.88.2",
     "uuid": "^8.3.2"
   },
@@ -40,8 +40,8 @@
     "concurrently": "^5.3.0",
     "eslint": "^5.16.0",
     "jest": "^26.6.3",
-    "nodemon": "^1.19.4",
-    "npm-watch": "^0.4.0",
+    "nodemon": "^2.0.15",
+    "npm-watch": "^0.11.0",
     "sinon": "^7.5.0",
     "ts-jest": "^26.4.4",
     "ts-node": "^7.0.1",
