@@ -13,12 +13,12 @@
 </template>
 
 <script>
-import Navigation from './components/Navigation.vue';
-import AlertMessages from './components/AlertMessages.vue';
-import Config from './Config.ts';
+import Navigation from "./components/Navigation.vue";
+import AlertMessages from "./components/AlertMessages.vue";
+import Config from "./Config.ts";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
     Navigation,
     AlertMessages,

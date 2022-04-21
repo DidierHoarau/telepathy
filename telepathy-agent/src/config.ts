@@ -15,6 +15,7 @@ class Config {
   public HEARTBEAT_CYCLE: number = 60;
   public TAGS: string[] = [];
   public AGENT_KEY: string = uuidv4();
+  public TASK_ALIVE_FREQUENCY: number = 10;
 
   public constructor() {
     this.reload();
@@ -40,6 +41,7 @@ class Config {
     setIfSet("HEARTBEAT_CYCLE");
     setIfSet("LOG_DEBUG");
     setIfSet("AGENT_KEY", false);
+    setIfSet("TASK_ALIVE_FREQUENCY");
   }
 }
 

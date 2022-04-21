@@ -3,34 +3,30 @@
 REPO_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 cd ${REPO_DIR}
 
-echo "=== Pull Latest Base Images ==="
-docker pull node:alpine
-docker pull node:14-alpine
-docker pull node:14
-docker pull nginx:alpine
-docker pull alpine
-docker pull ubuntu
+function buildService {
+    SERVICE_BASE_NAME=${1}
+    SERVICE_NAME="telepathy-${1}"
+    OS_VARIANT=${2}
+    EXTRA_TAG=${3}
+    SERVICE_VERSION=$(cat ${REPO_DIR}/${SERVICE_NAME}/package.json | jq -r '.version')
+    SERVICE_VERSION_MAJOR=$(cat ${REPO_DIR}/${SERVICE_NAME}/package.json | grep \"version\" | cut -f4 -d"\"" | cut -f1 -d".")
+    SERVICE_VERSION_MINOR=$(cat ${REPO_DIR}/${SERVICE_NAME}/package.json | grep \"version\" | cut -f4 -d"\"" | cut -f1-2 -d".")
+    echo "Building ${SERVICE_NAME}/${SERVICE_VERSION}/${SERVICE_VERSION_MAJOR}/${SERVICE_VERSION_MINOR} - ${OS_VARIANT} - ${TAG}"
+    docker build -f Dockerfile-${SERVICE_BASE_NAME}-alpine -t didierhoarau/telepathy-${SERVICE_BASE_NAME}:${SERVICE_VERSION} .
+    docker push didierhoarau/telepathy-${SERVICE_BASE_NAME}:${SERVICE_VERSION}
+    docker tag didierhoarau/telepathy-${SERVICE_BASE_NAME}:${SERVICE_VERSION} didierhoarau/telepathy-${SERVICE_BASE_NAME}:${SERVICE_VERSION_MAJOR}
+    docker push didierhoarau/telepathy-${SERVICE_BASE_NAME}:${SERVICE_VERSION_MAJOR}
+    docker tag didierhoarau/telepathy-${SERVICE_BASE_NAME}:${SERVICE_VERSION} didierhoarau/telepathy-${SERVICE_BASE_NAME}:${SERVICE_VERSION_MINOR}
+    docker push didierhoarau/telepathy-${SERVICE_BASE_NAME}:${SERVICE_VERSION_MINOR}
+    if [ "${EXTRA_TAG}" != "" ]; then
+        echo docker tag didierhoarau/telepathy-${SERVICE_BASE_NAME}:${SERVICE_VERSION} didierhoarau/telepathy-${SERVICE_BASE_NAME}:${EXTRA_TAG}
+        echo docker push didierhoarau/telepathy-${SERVICE_BASE_NAME}:${EXTRA_TAG}
+    fi
+}
 
-# echo "=== Telepathy Agent Alpine ==="
-docker build -f Dockerfile-agent-alpine -t didierhoarau/telepathy-agent:latest .
-docker tag didierhoarau/telepathy-agent:latest didierhoarau/telepathy-agent:alpine
-docker push didierhoarau/telepathy-agent:latest
-docker push didierhoarau/telepathy-agent:alpine
-echo IMAGE_SIZE_AGENT_ALPINE: $(docker images | grep "didierhoarau/telepathy-agent" | grep latest | tr -s ' ' | cut -d' ' -f7)
 
-# echo "=== Telepathy Agent Ubuntu ==="
-docker build -f Dockerfile-agent-ubuntu -t didierhoarau/telepathy-agent:ubuntu .
-docker push didierhoarau/telepathy-agent:ubuntu
-echo IMAGE_SIZE_AGENT_UBUNTU: $(docker images | grep "didierhoarau/telepathy-agent" | grep ubuntu | tr -s ' ' | cut -d' ' -f7)
-
-echo "=== Telepathy Server ==="
-docker build -f Dockerfile-server-alpine -t didierhoarau/telepathy-server:latest .
-docker push didierhoarau/telepathy-server:latest
-docker tag didierhoarau/telepathy-server:latest didierhoarau/telepathy-server:alpine
-docker push didierhoarau/telepathy-server:alpine
-echo IMAGE_SIZE_SERVER: $(docker images | grep "didierhoarau/telepathy-server" | grep latest | tr -s ' ' | cut -d' ' -f7)
-
-# echo "=== Telepathy Web ==="
-docker build -f Dockerfile-web -t didierhoarau/telepathy-web:latest .
-docker push didierhoarau/telepathy-web:latest
-echo IMAGE_SIZE_Web: $(docker images | grep "didierhoarau/telepathy-web" | grep latest | tr -s ' ' | cut -d' ' -f7)
+buildService agent alpine
+# buildService agent ubuntu
+# buildService server alpine
+# buildService server ubuntu
+# buildService web alpine

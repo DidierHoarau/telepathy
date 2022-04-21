@@ -41,17 +41,40 @@ export class TaskExecutions {
     taskExecution.agentId = config.AGENT_ID;
     taskExecution.dateExecuting = new Date();
     await axios.put(
-      `${config.SERVER}/tasks/${taskExecution.taskId}/executions/${taskExecution.id}`,
+      `${config.SERVER}/tasks/${taskExecution.taskId}/executions/agent/${taskExecution.id}`,
       taskExecution,
       await Auth.getAuthHeader()
     );
-    let outputRaw = "";
-    const command = exec(taskExecution.script);
 
+    const command = exec(taskExecution.script);
+    let finalStatus = TaskExecutionStatus.executed;
+
+    const checkServerDefinition = async () => {
+      const taskExecutionServerDefinition = (
+        await axios.get(
+          `${config.SERVER}/tasks/${taskExecution.taskId}/executions/agent/${taskExecution.id}`,
+          await Auth.getAuthHeader()
+        )
+      ).data;
+      if (taskExecutionServerDefinition.status === TaskExecutionStatus.cancelling) {
+        logger.info("Cancelling Task Execution");
+        finalStatus = TaskExecutionStatus.cancelled;
+        process.kill(command.pid, "SIGINT");
+      }
+      if (
+        taskExecutionServerDefinition.status === TaskExecutionStatus.executing ||
+        taskExecutionServerDefinition.status === TaskExecutionStatus.cancelling
+      ) {
+        setTimeout(checkServerDefinition, config.TASK_ALIVE_FREQUENCY * 1000);
+      }
+    };
+    checkServerDefinition();
+
+    let outputRaw = "";
     command.stdout.on("data", async (data) => {
       outputRaw += data;
       await axios.put(
-        `${config.SERVER}/tasks/${taskExecution.taskId}/executions/${taskExecution.id}/logs`,
+        `${config.SERVER}/tasks/${taskExecution.taskId}/executions/agent/${taskExecution.id}/logs`,
         { logs: outputRaw },
         await Auth.getAuthHeader()
       );
@@ -60,7 +83,7 @@ export class TaskExecutions {
     command.stderr.on("data", async (data) => {
       outputRaw += data;
       await axios.put(
-        `${config.SERVER}/tasks/${taskExecution.taskId}/executions/${taskExecution.id}/logs`,
+        `${config.SERVER}/tasks/${taskExecution.taskId}/executions/agent/${taskExecution.id}/logs`,
         { logs: outputRaw },
         await Auth.getAuthHeader()
       );
@@ -69,8 +92,11 @@ export class TaskExecutions {
     command.on("error", async (error) => {
       logger.info(error.message);
       outputRaw += error.message;
+      taskExecution.dateExecuted = new Date();
+      taskExecution.success = false;
+      finalStatus = TaskExecutionStatus.failed;
       await axios.put(
-        `${config.SERVER}/tasks/${taskExecution.taskId}/executions/${taskExecution.id}/logs`,
+        `${config.SERVER}/tasks/${taskExecution.taskId}/executions/agent/${taskExecution.id}/logs`,
         { logs: outputRaw },
         await Auth.getAuthHeader()
       );
@@ -80,9 +106,9 @@ export class TaskExecutions {
       logger.info(`Command executed with code: ${code}`);
       taskExecution.dateExecuted = new Date();
       taskExecution.success = true;
-      taskExecution.status = TaskExecutionStatus.executed;
+      taskExecution.status = finalStatus;
       await axios.put(
-        `${config.SERVER}/tasks/${taskExecution.taskId}/executions/${taskExecution.id}`,
+        `${config.SERVER}/tasks/${taskExecution.taskId}/executions/agent/${taskExecution.id}`,
         taskExecution,
         await Auth.getAuthHeader()
       );

@@ -3,4 +3,6 @@ export enum TaskExecutionStatus {
   executing = "executing",
   executed = "executed",
   cancelled = "cancelled",
+  cancelling = "cancelling",
+  failed = "failed",
 }

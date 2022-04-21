@@ -25,9 +25,11 @@ export class TaskExecution {
     taskExecution.dateQueued = json.dateQueued;
     taskExecution.dateExecuting = json.dateExecuting;
     taskExecution.dateExecuted = json.dateExecuted;
+    taskExecution.dateAgentAlive = json.dateAgentAlive;
     return taskExecution;
   }
 
+  public version: number = 2;
   public id: string;
   public taskId: string;
   public script: string;
@@ -38,6 +40,7 @@ export class TaskExecution {
   public dateQueued: Date;
   public dateExecuting: Date;
   public dateExecuted: Date;
+  public dateAgentAlive: Date;
   public outputs: TaskOutput[];
 
   constructor() {
@@ -57,6 +60,7 @@ export class TaskExecution {
       dateQueued: this.dateQueued,
       dateExecuting: this.dateExecuting,
       dateExecuted: this.dateExecuted,
+      dateAgentAlive: this.dateAgentAlive,
       outputs: this.outputs,
     };
   }

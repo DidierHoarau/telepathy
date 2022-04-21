@@ -14,7 +14,6 @@ let scheduler: Scheduler;
 
 export class AppContext {
   //
-  //
   public static setConfig(reference: Config): void {
     config = reference;
   }

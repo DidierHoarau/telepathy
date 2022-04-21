@@ -56,6 +56,7 @@ export class TaskExecutions {
     taskExecution.dateQueued = taskExecutionUpdate.dateQueued;
     taskExecution.dateExecuting = taskExecutionUpdate.dateExecuting;
     taskExecution.dateExecuted = taskExecutionUpdate.dateExecuted;
+    taskExecution.dateAgentAlive = taskExecutionUpdate.dateAgentAlive;
     taskExecution.outputs = taskExecutionUpdate.outputs;
     await this.save();
     if (taskExecution.status === TaskExecutionStatus.executed) {

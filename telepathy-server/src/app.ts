@@ -49,7 +49,11 @@ Promise.resolve().then(async () => {
   }, 500);
 
   setTimeout(() => {
-    TaskCleanup.start();
+    TaskCleanup.enableMaintenance();
+  }, 1000);
+
+  setTimeout(() => {
+    TaskCleanup.monitorTimeouts();
   }, 1000);
 
   const app = express();
