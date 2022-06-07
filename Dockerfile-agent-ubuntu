@@ -11,7 +11,7 @@ RUN cd telepathy-agent && \
 
 
 # RUN
-FROM ubuntu
+FROM ubuntu:22.04
 
 COPY --from=builder /opt/app/telepathy-agent/dist/telepathy-agent-linux-x64 /usr/bin/telepathy-agent
 
