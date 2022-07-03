@@ -1,6 +1,7 @@
 .icon-button {
   font-size: 1.4rem;
   color: #333;
+  cursor: pointer;
 }
 
 div {

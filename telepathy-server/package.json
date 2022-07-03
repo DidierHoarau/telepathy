@@ -1,6 +1,6 @@
 {
   "name": "telepathy-server",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": "",
   "license": "MIT",
   "scripts": {
@@ -11,7 +11,7 @@
     "test": "jest --coverage",
     "test:dev": "jest --watch --coverage",
     "////": "-----------------------------------------------------------------",
-    "dev": "DEV_MODE=true TELEPATHY_CONFIG=../_dev/config/config-server.json TELEPATHY_DATA_DIR=../_dev/data/server pm2 start ts-node --watch --name auth -- -P tsconfig.json ./src/app.ts",
+    "dev": "ts-node ./src/app.ts",
     "dev:docker": "docker-packaging-config/start-dev-docker.sh || true",
     "dev:test": "NODE_ENV=dev jest --watch --config='jest.config.js'",
     "binary:linux:alpine": "npm run build && pkg dist/app.js --target alpine --output ./dist/telepathy-server-linux-alpine",
@@ -29,7 +29,7 @@
     "md5-file": "^4.0.0",
     "node-cron": "^2.0.0",
     "pkg": "^4.4.9",
-    "pm2": "^4.5.6",
+    "pm2": "^5.2.0",
     "request": "^2.88.2",
     "uuid": "^8.3.2"
   },

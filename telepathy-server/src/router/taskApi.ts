@@ -1,5 +1,6 @@
 import * as express from "express";
 import { TaskExecutionHandler } from "../handler/taskExecutionHandler";
+import { TaskExecutionAgentHandler } from "../handler/taskExecutionAgentHandler";
 import { TaskExecutionListHandler } from "../handler/taskExecutionListHandler";
 import { TaskExecutionLogHandler } from "../handler/taskExecutionLogHandler";
 import { TaskHandler } from "../handler/taskHandler";
@@ -13,25 +14,20 @@ const logger = new Logger("router/taskApi");
 export const taskApi = express.Router();
 
 ERW.route(taskApi, "get", "/", TaskListHandler.getTasks);
-
 ERW.route(taskApi, "post", "/", TaskListHandler.createTask);
 
 ERW.route(taskApi, "get", "/:taskId", TaskHandler.getTask);
-
 ERW.route(taskApi, "delete", "/:taskId", TaskHandler.deleteTask);
-
 ERW.route(taskApi, "put", "/:taskId", TaskHandler.updateTask);
 
 ERW.route(taskApi, "get", "/:taskId/executions", TaskExecutionListHandler.list);
-
 ERW.route(taskApi, "post", "/:taskId/executions", TaskExecutionListHandler.create);
-
 ERW.route(taskApi, "get", "/:taskId/executions/:taskExecutionId", TaskExecutionHandler.get);
-
-ERW.route(taskApi, "put", "/:taskId/executions/:taskExecutionId", TaskExecutionHandler.update);
-
+ERW.route(taskApi, "post", "/:taskId/executions/:taskExecutionId/cancellation", TaskExecutionHandler.cancel);
 ERW.route(taskApi, "get", "/:taskId/executions/:taskExecutionId/logs", TaskExecutionLogHandler.get);
 
-ERW.route(taskApi, "put", "/:taskId/executions/:taskExecutionId/logs", TaskExecutionLogHandler.update);
+ERW.route(taskApi, "get", "/:taskId/executions/agent/:taskExecutionId", TaskExecutionAgentHandler.get);
+ERW.route(taskApi, "put", "/:taskId/executions/agent/:taskExecutionId", TaskExecutionAgentHandler.update);
+ERW.route(taskApi, "put", "/:taskId/executions/agent/:taskExecutionId/logs", TaskExecutionAgentHandler.updateLog);
 
 ERW.route(taskApi, "post", "/webhooks/:webhookId", WebhookHandler.trigger);

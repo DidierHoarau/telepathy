@@ -17,6 +17,7 @@ export class Config {
   public JWT_KEY: string = uuidv4();
   public TASK_HISTORY_MAX_COUNT: number = 100;
   public TASK_HISTORY_MAX_AGE_DAYS: 30;
+  public TASK_ALIVE_TIMEOUT: number = 100;
 
   public async reload(): Promise<void> {
     const content = await fse.readJson(this.CONFIG_FILE);
@@ -40,5 +41,6 @@ export class Config {
     setIfSet("TASK_HISTORY_MAX_AGE_DAYS");
     setIfSet("AGENT_KEY", false);
     setIfSet("JWT_KEY", false);
+    setIfSet("TASK_ALIVE_TIMEOUT");
   }
 }

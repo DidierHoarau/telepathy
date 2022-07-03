@@ -1,6 +1,6 @@
 {
   "name": "telepathy-agent",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": "",
   "license": "MIT",
   "scripts": {
@@ -11,7 +11,7 @@
     "test": "jest --coverage",
     "test:dev": "jest --watch --coverage",
     "////": "-----------------------------------------------------------------",
-    "dev": "DEV_MODE=true TELEPATHY_CONFIG=../_dev/config/config-agent.json TELEPATHY_DATA_DIR=../_dev/data/agent pm2 start ts-node --watch --name agent -- -P tsconfig.json ./src/app.ts",
+    "dev": "ts-node ./src/app.ts",
     "dev:docker": "docker-packaging-config/start-dev-docker.sh || true",
     "dev:test": "NODE_ENV=dev jest --watch --coverage",
     "binary:linux:alpine": "npm run build && pkg dist/app.js --target alpine --output ./dist/telepathy-agent-linux-alpine",
@@ -26,7 +26,7 @@
     "lodash": "^4.17.20",
     "md5-file": "^4.0.0",
     "pkg": "^4.4.9",
-    "pm2": "^4.5.5",
+    "pm2": "^5.2.0",
     "request": "^2.88.2",
     "uuid": "^8.3.2"
   },
@@ -40,8 +40,8 @@
     "concurrently": "^5.3.0",
     "eslint": "^5.16.0",
     "jest": "^26.6.3",
-    "nodemon": "^1.19.4",
-    "npm-watch": "^0.4.0",
+    "nodemon": "^2.0.15",
+    "npm-watch": "^0.11.0",
     "sinon": "^7.5.0",
     "ts-jest": "^26.4.4",
     "ts-node": "^7.0.1",

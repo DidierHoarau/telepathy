@@ -1,19 +1,17 @@
 <template>
   <div class="taskexec_layout">
     <div class="taskexec_layout_title">
-      <h2 class="card-title">
-        <span class="title-type">Task:</span> {{ task.name }}
-      </h2>
+      <h2 class="card-title"><span class="title-type">Task:</span> {{ task.name }}</h2>
     </div>
     <div class="taskexec_layout_close">
-      <i v-on:click="closeTaskExecution()" class="bi bi-x icon-button"></i>
+      <em v-on:click="closeTaskExecution()" class="bi bi-x icon-button"></em>
     </div>
     <div class="taskexec_layout_exec_newer">
-      <i
+      <em
         v-if="taskExecutionHasNewer"
         v-on:click="selectTaskExecution(taskExecutionPosition - 1)"
         class="bi bi-arrow-left-circle icon-button"
-      ></i>
+      ></em>
     </div>
     <div class="taskexec_layout_exec_current text-center">
       <div class="execution-header" v-if="currentTaskExecution">
@@ -22,9 +20,7 @@
             ({{ new Date(currentTaskExecution.dateExecuted).toLocaleString() }})
           </span>
           <span v-else-if="currentTaskExecution.dateExecuting">
-            ({{
-              new Date(currentTaskExecution.dateExecuting).toLocaleString()
-            }})
+            ({{ new Date(currentTaskExecution.dateExecuting).toLocaleString() }})
           </span>
           <span v-else-if="currentTaskExecution.dateQueued">
             ({{ new Date(currentTaskExecution.dateQueued).toLocaleString() }})
@@ -34,20 +30,24 @@
       </div>
     </div>
     <div class="taskexec_layout_exec_older text-end">
-      <i
+      <em
         v-if="taskExecutionHasOlder"
         v-on:click="selectTaskExecution(taskExecutionPosition + 1)"
         class="bi bi-arrow-right-circle icon-button"
-      ></i>
+      ></em>
     </div>
 
     <div class="taskexec_layout_exec_details">
       <div v-if="currentTaskExecution">
         <div
-          v-for="output in currentTaskExecution.outputs"
-          v-bind:key="output.id"
-          class="taskoutput"
+          class="taskexec_cancel"
+          v-if="currentTaskExecution.status === 'queued' || currentTaskExecution.status === 'executing'"
+          v-on:click="cancelExecution(this.taskId, this.currentTaskExecution.id)"
         >
+          <em class="bi bi-stop-circle"></em>&nbsp;Cancel Execution
+        </div>
+
+        <div v-for="output in currentTaskExecution.outputs" v-bind:key="output.id" class="taskoutput">
           <div class="taskoutput_name">{{ output.name }}:</div>
           <div class="taskoutput_value">
             {{ output.value }}
@@ -66,13 +66,13 @@
 </template>
 
 <script>
-import axios from 'axios';
-import Config from '../Config.ts';
-import { AuthService } from '../services/AuthService';
-import { EventBus, EventTypes, handleError } from '../services/EventBus';
+import axios from "axios";
+import Config from "../Config.ts";
+import { AuthService } from "../services/AuthService";
+import { EventBus, EventTypes, handleError } from "../services/EventBus";
 
 export default {
-  name: 'TaskExecutions',
+  name: "TaskExecutions",
   props: {
     taskId: String,
   },
@@ -89,7 +89,7 @@ export default {
       currentTaskExecution: null,
       taskExecutionHasOlder: false,
       taskExecutionHasNewer: false,
-      logs: '',
+      logs: "",
       updateLoop: null,
     };
   },
@@ -113,19 +113,13 @@ export default {
   methods: {
     async loadTaskExecutionHistory() {
       axios
-        .get(
-          `${(await Config.get()).SERVER_URL}/tasks/${this.taskId}`,
-          await AuthService.getAuthHeader()
-        )
+        .get(`${(await Config.get()).SERVER_URL}/tasks/${this.taskId}`, await AuthService.getAuthHeader())
         .then((res) => {
           this.task = res.data;
         })
         .catch(handleError);
       axios
-        .get(
-          `${(await Config.get()).SERVER_URL}/tasks/${this.taskId}/executions`,
-          await AuthService.getAuthHeader()
-        )
+        .get(`${(await Config.get()).SERVER_URL}/tasks/${this.taskId}/executions`, await AuthService.getAuthHeader())
         .then((res) => {
           this.taskExecutionPosition = 0;
           this.taskExecutions = res.data.task_executions;
@@ -137,9 +131,7 @@ export default {
       if (this.currentTaskExecution) {
         axios
           .get(
-            `${(await Config.get()).SERVER_URL}/tasks/${
-              this.taskId
-            }/executions/${this.currentTaskExecution.id}`,
+            `${(await Config.get()).SERVER_URL}/tasks/${this.taskId}/executions/${this.currentTaskExecution.id}`,
             await AuthService.getAuthHeader()
           )
           .then((res) => {
@@ -173,15 +165,28 @@ export default {
     async getExecutionLogs(taskId, executionId) {
       axios
         .get(
-          `${
-            (await Config.get()).SERVER_URL
-          }/tasks/${taskId}/executions/${executionId}/logs`,
+          `${(await Config.get()).SERVER_URL}/tasks/${taskId}/executions/${executionId}/logs`,
           await AuthService.getAuthHeader()
         )
         .then((res) => {
           this.logs = res.data.logs;
         })
         .catch(handleError);
+    },
+    async cancelExecution(taskId, executionId) {
+      const confirmation = confirm("Cancel the task execution?");
+      if (confirmation == true) {
+        axios
+          .post(
+            `${(await Config.get()).SERVER_URL}/tasks/${taskId}/executions/${executionId}/cancellation`,
+            {},
+            await AuthService.getAuthHeader()
+          )
+          .then((res) => {
+            this.logs = res.data.logs;
+          })
+          .catch(handleError);
+      }
     },
     closeTaskExecution() {
       EventBus.emit(EventTypes.TASK_EXECUTION_CLOSED, { taskId: this.taskId });
@@ -242,5 +247,11 @@ export default {
 
 .title-type {
   color: #aaa;
+}
+
+.taskexec_cancel {
+  color: #999;
+  font-size: 0.8em;
+  cursor: pointer;
 }
 </style>
