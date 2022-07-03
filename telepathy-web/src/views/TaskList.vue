@@ -1,18 +1,13 @@
 <template>
   <div class="task_page_container">
-    <div
-      class="task_page_list page_content_container"
-      v-bind:style="{ gridRow: listGridPosition }"
-    >
+    <div class="task_page_list page_content_container" v-bind:style="{ gridRow: listGridPosition }">
       <div class="m-0 p-0">
         <div class="row">
           <div class="col-8">
             <h1>Tasks</h1>
           </div>
           <div class="col-4 text-end">
-            <router-link to="/tasks/new"
-              ><i class="bi bi-plus-square icon-button"></i
-            ></router-link>
+            <router-link to="/tasks/new"><em class="bi bi-plus-square icon-button"></em></router-link>
           </div>
         </div>
       </div>
@@ -23,11 +18,7 @@
               <hr />
               <h3>{{ folder.name }}</h3>
             </div>
-            <div
-              v-for="task in folder.tasks"
-              v-bind:key="task.id"
-              class="col-sm-12 col-md-6 col-lg-4"
-            >
+            <div v-for="task in folder.tasks" v-bind:key="task.id" class="col-sm-12 col-md-6 col-lg-4">
               <Task v-on:click="onTaskClicked(task.id)" :task="task" />
             </div>
           </div>
@@ -42,16 +33,16 @@
 </template>
 
 <script>
-import axios from 'axios';
-import * as _ from 'lodash';
-import Task from '../components/Task.vue';
-import TaskExecutions from '../components/TaskExecutions.vue';
-import Config from '../Config.ts';
-import { EventBus, EventTypes, handleError } from '../services/EventBus';
-import { AuthService } from '../services/AuthService';
+import axios from "axios";
+import * as _ from "lodash";
+import Task from "../components/Task.vue";
+import TaskExecutions from "../components/TaskExecutions.vue";
+import Config from "../Config.ts";
+import { EventBus, EventTypes, handleError } from "../services/EventBus";
+import { AuthService } from "../services/AuthService";
 
 export default {
-  name: 'Tasks',
+  name: "Tasks",
   components: {
     Task,
     TaskExecutions,
@@ -60,7 +51,7 @@ export default {
     return {
       taskFolders: [],
       taskIdSelected: null,
-      listGridPosition: '1 / span 2',
+      listGridPosition: "1 / span 2",
     };
   },
   created() {
@@ -69,27 +60,21 @@ export default {
       this.load();
     });
     EventBus.on(EventTypes.TASK_EXECUTION_CLOSED, (event) => {
-      this.listGridPosition = '1 / span 2';
+      this.listGridPosition = "1 / span 2";
       this.taskIdSelected = null;
     });
   },
   methods: {
     async load() {
       axios
-        .get(
-          `${(await Config.get()).SERVER_URL}/tasks`,
-          await AuthService.getAuthHeader()
-        )
+        .get(`${(await Config.get()).SERVER_URL}/tasks`, await AuthService.getAuthHeader())
         .then((res) => {
           const folders = [];
-          const sortedTasks = _.sortBy(res.data.tasks, 'name');
+          const sortedTasks = _.sortBy(res.data.tasks, "name");
           for (let i = 0; i < sortedTasks.length; i++) {
-            let folderName = '';
-            if (sortedTasks[i].name.indexOf('/') > 0) {
-              folderName = sortedTasks[i].name.substring(
-                0,
-                sortedTasks[i].name.indexOf('/')
-              );
+            let folderName = "";
+            if (sortedTasks[i].name.indexOf("/") > 0) {
+              folderName = sortedTasks[i].name.substring(0, sortedTasks[i].name.indexOf("/"));
             }
             let folder = _.find(folders, { name: folderName });
             if (!folder) {
@@ -104,7 +89,7 @@ export default {
     },
     async onTaskClicked(id) {
       this.taskIdSelected = id;
-      this.listGridPosition = '1';
+      this.listGridPosition = "1";
     },
   },
 };

@@ -1,8 +1,6 @@
 import * as _ from "lodash";
 import { AppContext } from "../appContext";
-import { TaskExecution } from "../common-model/taskExecution";
 import { TaskExecutionStatus } from "../common-model/taskExecutionStatus";
-import { Config } from "../config";
 import { Logger } from "../utils-std-ts/logger";
 import { Timeout } from "../utils-std-ts/timeout";
 

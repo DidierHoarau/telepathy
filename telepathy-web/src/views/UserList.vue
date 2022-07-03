@@ -6,18 +6,12 @@
           <h1>Users</h1>
         </div>
         <div class="col-4 text-end">
-          <router-link to="/users/new"
-            ><i class="bi bi-plus-square icon-button"></i
-          ></router-link>
+          <router-link to="/users/new"><em class="bi bi-plus-square icon-button"></em></router-link>
         </div>
       </div>
     </div>
     <div class="task-list row">
-      <div
-        v-for="user in users"
-        v-bind:key="user.id"
-        class="col-sm-12 col-md-6 col-lg-4"
-      >
+      <div v-for="user in users" v-bind:key="user.id" class="col-sm-12 col-md-6 col-lg-4">
         <User :user="user" />
       </div>
     </div>
@@ -25,14 +19,14 @@
 </template>
 
 <script>
-import axios from 'axios';
-import Config from '../Config.ts';
-import User from '../components/User.vue';
-import { AuthService } from '../services/AuthService';
-import { handleError } from '../services/EventBus';
+import axios from "axios";
+import Config from "../Config.ts";
+import User from "../components/User.vue";
+import { AuthService } from "../services/AuthService";
+import { handleError } from "../services/EventBus";
 
 export default {
-  name: 'Users',
+  name: "Users",
   components: {
     User,
   },
@@ -43,10 +37,7 @@ export default {
   },
   async created() {
     axios
-      .get(
-        `${(await Config.get()).SERVER_URL}/users`,
-        await AuthService.getAuthHeader()
-      )
+      .get(`${(await Config.get()).SERVER_URL}/users`, await AuthService.getAuthHeader())
       .then((res) => {
         this.users = res.data.users;
       })
