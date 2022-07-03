@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 REPO_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 cd ${REPO_DIR}
 
@@ -26,7 +28,7 @@ function buildService {
 
 
 buildService agent alpine
-# buildService agent ubuntu
-# buildService server alpine
-# buildService server ubuntu
-# buildService web alpine
+buildService agent ubuntu
+buildService server alpine
+buildService server ubuntu
+buildService web alpine

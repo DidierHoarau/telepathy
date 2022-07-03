@@ -1,7 +1,5 @@
 # BUILD
-FROM node:16-alpine as builder
-
-RUN apk add --no-cache bash git python perl alpine-sdk
+FROM node:16 as builder
 
 WORKDIR /opt/app
 
@@ -13,7 +11,7 @@ RUN cd telepathy-server && \
 
 
 # RUN
-FROM node:16-alpine
+FROM node:16-ubuntu
 
 COPY --from=builder /opt/app/telepathy-server/dist /opt/app/dist
 COPY --from=builder /opt/app/telepathy-server/node_modules /opt/app/node_modules
