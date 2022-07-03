@@ -14,8 +14,8 @@
     "dev": "ts-node ./src/app.ts",
     "dev:docker": "docker-packaging-config/start-dev-docker.sh || true",
     "dev:test": "NODE_ENV=dev jest --watch --coverage",
-    "binary:linux:alpine": "npm run build && pkg dist/app.js --target alpine --output ./dist/telepathy-agent-linux-alpine",
-    "binary:linux:x64": "npm run build && pkg dist/app.js --target node14-linux-x64 --output ./dist/telepathy-agent-linux-x64",
+    "binary:linux:alpine": "npm run build && pkg dist/app.js --target node16-alpine-x64 --output ./dist/telepathy-agent-linux-alpine",
+    "binary:linux:x64": "npm run build && pkg dist/app.js --target node16-linux-x64 --output ./dist/telepathy-agent-linux-x64",
     "binary:linux:armv6": "npm run build && pkg dist/app.js --target node12-linux-armv6 --output ./dist/telepathy-agent-linux-armv6",
     "binary:linux:arm64": "npm run build && pkg dist/app.js --target node12-linux-arm64 --output ./dist/telepathy-agent-linux-arm64"
   },
