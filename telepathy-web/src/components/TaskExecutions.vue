@@ -4,14 +4,14 @@
       <h2 class="card-title"><span class="title-type">Task:</span> {{ task.name }}</h2>
     </div>
     <div class="taskexec_layout_close">
-      <i v-on:click="closeTaskExecution()" class="bi bi-x icon-button"></i>
+      <em v-on:click="closeTaskExecution()" class="bi bi-x icon-button"></em>
     </div>
     <div class="taskexec_layout_exec_newer">
-      <i
+      <em
         v-if="taskExecutionHasNewer"
         v-on:click="selectTaskExecution(taskExecutionPosition - 1)"
         class="bi bi-arrow-left-circle icon-button"
-      ></i>
+      ></em>
     </div>
     <div class="taskexec_layout_exec_current text-center">
       <div class="execution-header" v-if="currentTaskExecution">
@@ -30,11 +30,11 @@
       </div>
     </div>
     <div class="taskexec_layout_exec_older text-end">
-      <i
+      <em
         v-if="taskExecutionHasOlder"
         v-on:click="selectTaskExecution(taskExecutionPosition + 1)"
         class="bi bi-arrow-right-circle icon-button"
-      ></i>
+      ></em>
     </div>
 
     <div class="taskexec_layout_exec_details">
@@ -44,7 +44,7 @@
           v-if="currentTaskExecution.status === 'queued' || currentTaskExecution.status === 'executing'"
           v-on:click="cancelExecution(this.taskId, this.currentTaskExecution.id)"
         >
-          <i class="bi bi-stop-circle"></i>&nbsp;Cancel Execution
+          <em class="bi bi-stop-circle"></em>&nbsp;Cancel Execution
         </div>
 
         <div v-for="output in currentTaskExecution.outputs" v-bind:key="output.id" class="taskoutput">

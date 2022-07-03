@@ -27,11 +27,7 @@
       </div>
       <div class="mb-3">
         <label class="form-label">Tag</label>
-        <select
-          v-model="task.tag"
-          class="form-select"
-          aria-label="Task Tag Selection"
-        >
+        <select v-model="task.tag" class="form-select" aria-label="Task Tag Selection">
           <option value="">Any</option>
           <option v-for="tag in tags" v-bind:key="tag" :value="tag">
             {{ tag }}
@@ -44,11 +40,7 @@
           <div class="col-6 text-center">Name</div>
           <div class="col-6 text-center">Pattern (RegEx)</div>
         </div>
-        <div
-          v-for="(output, index) in task.outputDefinitions"
-          v-bind:key="output.id"
-          class="row p-0 m-0 mb-1"
-        >
+        <div v-for="(output, index) in task.outputDefinitions" v-bind:key="output.id" class="row p-0 m-0 mb-1">
           <div class="col-5">
             <input v-model="output.name" type="text" class="form-control" />
           </div>
@@ -56,10 +48,10 @@
             <input v-model="output.pattern" type="text" class="form-control" />
           </div>
           <div class="col-1">
-            <i class="bi bi-trash" v-on:click="deleteOutput(index)"></i>
+            <em class="bi bi-trash" v-on:click="deleteOutput(index)"></em>
           </div>
         </div>
-        <p><i class="bi bi-plus-square" v-on:click="addOutput()"></i></p>
+        <p><em class="bi bi-plus-square" v-on:click="addOutput()"></em></p>
       </div>
       <div class="mb-3">
         <label class="form-label">Webhook</label>
@@ -71,46 +63,33 @@
             v-on:click="webhookSwitched()"
             id="flexSwitchCheckDefault"
           />
-          <input
-            v-model="task.webhook"
-            type="text"
-            class="form-control"
-            disabled
-          />
-          <label class="form-check-label"
-            >Webhook call: {API}/tasks/webhooks/{WEBHOOK_ID}</label
-          >
+          <input v-model="task.webhook" type="text" class="form-control" disabled />
+          <label class="form-check-label">Webhook call: {API}/tasks/webhooks/{WEBHOOK_ID}</label>
         </div>
       </div>
       <br />
-      <button v-if="taskId" v-on:click="saveUpdate()" class="btn btn-primary">
-        Save</button
-      >&nbsp;
-      <button v-if="taskId" v-on:click="remove()" class="btn btn-primary">
-        Delete
-      </button>
-      <button v-if="!taskId" v-on:click="saveNew()" class="btn btn-primary">
-        Save
-      </button>
+      <button v-if="taskId" v-on:click="saveUpdate()" class="btn btn-primary">Save</button>&nbsp;
+      <button v-if="taskId" v-on:click="remove()" class="btn btn-primary">Delete</button>
+      <button v-if="!taskId" v-on:click="saveNew()" class="btn btn-primary">Save</button>
     </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
-import Config from '../Config.ts';
-import { EventBus, EventTypes, handleError } from '../services/EventBus';
-import { AuthService } from '../services/AuthService';
-import router from '../router';
+import axios from "axios";
+import Config from "../Config.ts";
+import { EventBus, EventTypes, handleError } from "../services/EventBus";
+import { AuthService } from "../services/AuthService";
+import router from "../router";
 
 export default {
-  name: 'TaskEdit',
+  name: "TaskEdit",
   props: {
     taskId: String,
   },
   data() {
     return {
-      task: { name: '', script: '', outputDefinitions: [] },
+      task: { name: "", script: "", outputDefinitions: [] },
       webhookEnabled: false,
       tags: [],
     };
@@ -118,20 +97,14 @@ export default {
   setup() {},
   async created() {
     axios
-      .get(
-        `${(await Config.get()).SERVER_URL}/agents/tags`,
-        await AuthService.getAuthHeader()
-      )
+      .get(`${(await Config.get()).SERVER_URL}/agents/tags`, await AuthService.getAuthHeader())
       .then((res) => {
         this.tags = res.data;
       })
       .catch(handleError);
     if (this.taskId) {
       axios
-        .get(
-          `${(await Config.get()).SERVER_URL}/tasks/${this.taskId}`,
-          await AuthService.getAuthHeader()
-        )
+        .get(`${(await Config.get()).SERVER_URL}/tasks/${this.taskId}`, await AuthService.getAuthHeader())
         .then((res) => {
           this.task = res.data;
           if (this.task.webhook) {
@@ -147,17 +120,14 @@ export default {
     async webhookSwitched() {
       setTimeout(() => {
         if (this.webhookEnabled) {
-          const chars =
-            'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-          let randomString = '';
+          const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+          let randomString = "";
           for (let i = 0; i < 50; i++) {
-            randomString += chars.charAt(
-              Math.floor(Math.random() * chars.length)
-            );
+            randomString += chars.charAt(Math.floor(Math.random() * chars.length));
           }
           this.task.webhook = randomString;
         } else {
-          this.task.webhook = '';
+          this.task.webhook = "";
         }
       }, 200);
     },
@@ -165,15 +135,11 @@ export default {
     async saveUpdate() {
       if (this.task.name && this.task.script) {
         axios
-          .put(
-            `${(await Config.get()).SERVER_URL}/tasks/${this.taskId}`,
-            this.task,
-            await AuthService.getAuthHeader()
-          )
+          .put(`${(await Config.get()).SERVER_URL}/tasks/${this.taskId}`, this.task, await AuthService.getAuthHeader())
           .then((res) => {
             EventBus.emit(EventTypes.ALERT_MESSAGE, {
-              type: 'info',
-              text: 'Task updated',
+              type: "info",
+              text: "Task updated",
             });
           })
           .catch(handleError);
@@ -183,43 +149,36 @@ export default {
     async saveNew() {
       if (this.task.name && this.task.script) {
         axios
-          .post(
-            `${(await Config.get()).SERVER_URL}/tasks`,
-            this.task,
-            await AuthService.getAuthHeader()
-          )
+          .post(`${(await Config.get()).SERVER_URL}/tasks`, this.task, await AuthService.getAuthHeader())
           .then((res) => {
             EventBus.emit(EventTypes.ALERT_MESSAGE, {
-              type: 'info',
-              text: 'Task created',
+              type: "info",
+              text: "Task created",
             });
-            router.push({ path: '/tasks' });
+            router.push({ path: "/tasks" });
           })
           .catch(handleError);
       }
     },
 
     async remove() {
-      const confirmation = confirm('Delete the task?');
+      const confirmation = confirm("Delete the task?");
       if (confirmation == true) {
         axios
-          .delete(
-            `${(await Config.get()).SERVER_URL}/tasks/${this.taskId}`,
-            await AuthService.getAuthHeader()
-          )
+          .delete(`${(await Config.get()).SERVER_URL}/tasks/${this.taskId}`, await AuthService.getAuthHeader())
           .then((res) => {
             EventBus.emit(EventTypes.ALERT_MESSAGE, {
-              type: 'info',
-              text: 'Task Deleted',
+              type: "info",
+              text: "Task Deleted",
             });
-            router.push({ path: '/tasks' });
+            router.push({ path: "/tasks" });
           })
           .catch(handleError);
       }
     },
 
     addOutput() {
-      this.task.outputDefinitions.push({ name: '', pattern: '' });
+      this.task.outputDefinitions.push({ name: "", pattern: "" });
     },
 
     deleteOutput(index) {

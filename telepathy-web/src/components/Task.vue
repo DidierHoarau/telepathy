@@ -5,15 +5,9 @@
       <div v-if="lastExecution">
         <p>
           {{ lastExecution.status }}
-          <span v-if="lastExecution.dateExecuted">{{
-            new Date(lastExecution.dateExecuted).toLocaleString()
-          }}</span>
+          <span v-if="lastExecution.dateExecuted">{{ new Date(lastExecution.dateExecuted).toLocaleString() }}</span>
         </p>
-        <div
-          v-for="output in lastExecution.outputs"
-          v-bind:key="output.id"
-          class="taskoutput"
-        >
+        <div v-for="output in lastExecution.outputs" v-bind:key="output.id" class="taskoutput">
           <div class="taskoutput_name">{{ output.name }}:</div>
           <div class="taskoutput_value">
             {{ output.value }}
@@ -23,23 +17,23 @@
     </div>
     <div class="cardlayout_actions">
       <p class="text-end">
-        <i v-on:click="edit()" class="bi bi-pencil-square icon-button"></i>
+        <em v-on:click="edit()" class="bi bi-pencil-square icon-button"></em>
         <br /><br />
-        <i v-on:click="execute()" class="bi bi-play-circle icon-button"></i>
+        <em v-on:click="execute()" class="bi bi-play-circle icon-button"></em>
       </p>
     </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
-import Config from '../Config.ts';
-import { EventBus, EventTypes, handleError } from '../services/EventBus';
-import { AuthService } from '../services/AuthService';
-import router from '../router';
+import axios from "axios";
+import Config from "../Config.ts";
+import { EventBus, EventTypes, handleError } from "../services/EventBus";
+import { AuthService } from "../services/AuthService";
+import router from "../router";
 
 export default {
-  name: 'Task',
+  name: "Task",
   props: {
     task: Object,
   },
@@ -82,10 +76,7 @@ export default {
     },
     async checkExecutions() {
       axios
-        .get(
-          `${(await Config.get()).SERVER_URL}/tasks/${this.task.id}/executions`,
-          await AuthService.getAuthHeader()
-        )
+        .get(`${(await Config.get()).SERVER_URL}/tasks/${this.task.id}/executions`, await AuthService.getAuthHeader())
         .then((res) => {
           if (res.data.task_executions.length > 0) {
             this.lastExecution = res.data.task_executions[0];
