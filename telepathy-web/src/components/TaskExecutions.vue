@@ -41,7 +41,7 @@
       <div v-if="currentTaskExecution">
         <div
           class="taskexec_cancel"
-          v-if="!currentTaskExecution.dateExecuted"
+          v-if="currentTaskExecution.status === 'queued' || currentTaskExecution.status === 'executing'"
           v-on:click="cancelExecution(this.taskId, this.currentTaskExecution.id)"
         >
           <i class="bi bi-stop-circle"></i>&nbsp;Cancel Execution

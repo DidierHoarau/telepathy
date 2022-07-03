@@ -32,7 +32,13 @@ export class TaskExecutionHandler {
       stopAndSend(403, { error: "Access Denied" });
     }
     const taskExecution = await AppContext.getTaskExecutions().get(req.params.taskExecutionId);
-    taskExecution.status = TaskExecutionStatus.cancelling;
+    if (taskExecution.status === TaskExecutionStatus.queued) {
+      taskExecution.status = TaskExecutionStatus.cancelled;
+    } else if (taskExecution.status === TaskExecutionStatus.executing) {
+      taskExecution.status = TaskExecutionStatus.cancelling;
+    } else {
+      stopAndSend(403, { error: "Wrong Status" });
+    }
     await AppContext.getTaskExecutions().update(req.params.taskExecutionId, taskExecution);
     res.status(202).json({});
   }

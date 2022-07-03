@@ -11,7 +11,7 @@
     "test": "jest --coverage",
     "test:dev": "jest --watch --coverage",
     "////": "-----------------------------------------------------------------",
-    "dev": "DEV_MODE=true TELEPATHY_CONFIG=../_dev/config/config-agent.json TELEPATHY_DATA_DIR=../_dev/data/agent pm2 start ts-node --watch --name agent -- -P tsconfig.json ./src/app.ts",
+    "dev": "ts-node ./src/app.ts",
     "dev:docker": "docker-packaging-config/start-dev-docker.sh || true",
     "dev:test": "NODE_ENV=dev jest --watch --coverage",
     "binary:linux:alpine": "npm run build && pkg dist/app.js --target alpine --output ./dist/telepathy-agent-linux-alpine",
