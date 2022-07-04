@@ -54,5 +54,5 @@ jobs:
       - name: E2E Test
         uses: cypress-io/github-action@v4
         with:
-          working-directory: telepathy/tests/tests-e2e
+          working-directory: tests/tests-e2e
           browser: chrome
