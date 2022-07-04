@@ -40,7 +40,7 @@ export class Config {
     setIfSet("TASK_HISTORY_MAX_COUNT");
     setIfSet("TASK_HISTORY_MAX_AGE_DAYS");
     setIfSet("AGENT_KEY", false);
-    setIfSet("JWT_KEY", false);
+    setIfSet("JWT_KEY");
     setIfSet("TASK_ALIVE_TIMEOUT");
   }
 }

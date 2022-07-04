@@ -7,14 +7,14 @@ export class Users {
   //
   public users: User[];
 
-  constructor() {
+  public async load(): Promise<void> {
     if (fs.existsSync(`${AppContext.getConfig().DATA_DIR}/users.json`)) {
-      fs.readJSON(`${AppContext.getConfig().DATA_DIR}/users.json`).then((data) => {
+      await fs.readJSON(`${AppContext.getConfig().DATA_DIR}/users.json`).then((data) => {
         this.users = data;
       });
     } else {
       this.users = [];
-      this.save();
+      await this.save();
     }
   }
 

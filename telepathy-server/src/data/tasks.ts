@@ -7,14 +7,14 @@ export class Tasks {
   //
   public tasks: Task[];
 
-  constructor() {
+  public async load(): Promise<void> {
     if (fs.existsSync(`${AppContext.getConfig().DATA_DIR}/tasks.json`)) {
       fs.readJSON(`${AppContext.getConfig().DATA_DIR}/tasks.json`).then((data) => {
         this.tasks = data;
       });
     } else {
       this.tasks = [];
-      this.save();
+      await this.save();
     }
   }
 

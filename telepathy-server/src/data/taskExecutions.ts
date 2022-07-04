@@ -12,14 +12,14 @@ export class TaskExecutions {
   //
   public taskExecutions: TaskExecution[];
 
-  constructor() {
+  public async load(): Promise<void> {
     if (fs.existsSync(`${AppContext.getConfig().DATA_DIR}/task-executions.json`)) {
-      fs.readJSON(`${AppContext.getConfig().DATA_DIR}/task-executions.json`).then((data) => {
+      await fs.readJSON(`${AppContext.getConfig().DATA_DIR}/task-executions.json`).then((data) => {
         this.taskExecutions = data;
       });
     } else {
       this.taskExecutions = [];
-      this.save();
+      await this.save();
     }
   }
 
