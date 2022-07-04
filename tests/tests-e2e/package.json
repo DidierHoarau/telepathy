@@ -1,0 +1,16 @@
+{
+  "name": "tests-e2e",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "cypress:open": "cypress open",
+    "test": "ELECTRON_RUN_AS_NODE=1 cypress run --headless"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cypress": "^10.3.0"
+  }
+}
