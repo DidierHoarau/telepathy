@@ -7,7 +7,9 @@
             <h1>Tasks</h1>
           </div>
           <div class="col-4 text-end">
-            <router-link to="/tasks/new"><em class="bi bi-plus-square icon-button"></em></router-link>
+            <router-link id="addTaskButton" to="/tasks/new"
+              ><em class="bi bi-plus-square icon-button"></em
+            ></router-link>
           </div>
         </div>
       </div>

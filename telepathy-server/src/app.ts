@@ -66,7 +66,7 @@ Promise.resolve().then(async () => {
   }
 
   fastify.register(require("./routes/agents"), { prefix: "/agents" });
-  fastify.register(require("./routes/agentsAgentid"), { prefix: "/agents/:agentId" });
+  fastify.register(require("./routes/agentsAgentId"), { prefix: "/agents/:agentId" });
   fastify.register(require("./routes/tasks"), { prefix: "/tasks" });
   fastify.register(require("./routes/tasksTaskId"), { prefix: "/tasks/:taskId" });
   fastify.register(require("./routes/tasksTaskIdExecutions"), { prefix: "/tasks/:taskId/executions" });

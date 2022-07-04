@@ -4,7 +4,7 @@
       <div class="p-0">
         <div class="row p-0 m-0">
           <div class="col-3 col-md-12 nav-item p-2 text-center">
-            <router-link to="/tasks">Tasks</router-link>
+            <router-link id="navigationTaskList" to="/tasks">Tasks</router-link>
           </div>
           <div class="col-3 col-md-12 nav-item p-2 text-center">
             <router-link to="/agents">Agents</router-link>

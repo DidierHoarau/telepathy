@@ -42,3 +42,17 @@ jobs:
           set -e
           chmod +x _dev/*.sh
           ./_dev/docker-build-images.sh
+
+      - name: Start Test Environment
+        run: |
+          set -e
+          chmod +x _dev/*.sh
+          npm install -g pm2
+          ./_dev/run-test-env.sh
+          sleep 20
+
+      - name: E2E Test
+        uses: cypress-io/github-action@v4
+        with:
+          working-directory: tests/tests-e2e
+          browser: chrome

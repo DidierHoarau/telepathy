@@ -5,14 +5,14 @@
     <div>
       <div class="mb-3">
         <label class="form-label">Name</label>
-        <input v-model="task.name" type="text" class="form-control" />
+        <input id="taskName" v-model="task.name" type="text" class="form-control" />
       </div>
       <div class="mb-3">
         <label class="form-label">Script</label>
         <div class="form-floating">
           <textarea
             class="form-control task-script"
-            id="floatingTextarea2"
+            id="taskScript"
             style="height: 300px"
             v-model="task.script"
           ></textarea>
