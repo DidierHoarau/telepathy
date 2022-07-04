@@ -1,10 +1,3 @@
-describe("List Tasks", () => {
-  it("passes", () => {
-    cy.login("admin", "admin");
-    cy.get("#navigationTaskList").click();
-  });
-});
-
 describe("Add 1 Task", () => {
   it("passes", () => {
     cy.login("admin", "admin");
