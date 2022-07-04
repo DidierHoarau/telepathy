@@ -5,7 +5,7 @@
     </div>
     <div class="cardlayout_actions">
       <p class="text-end">
-        <router-link :to="'/users/' + user.id + '/edit'"><i class="bi bi-pencil-square icon-button"></i></router-link>
+        <router-link :to="'/users/' + user.id + '/edit'"><em class="bi bi-pencil-square icon-button"></em></router-link>
       </p>
     </div>
   </div>
