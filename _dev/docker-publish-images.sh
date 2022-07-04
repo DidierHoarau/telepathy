@@ -9,7 +9,7 @@ function tagAndPush {
     IMAGE_BASE=${1}
     IMAGE_TARGET=${2}
     docker tag ${IMAGE_BASE} ${IMAGE_TARGET}
-    echo docker push ${IMAGE_TARGET}
+    docker push ${IMAGE_TARGET}
 }
 
 function buildService {
