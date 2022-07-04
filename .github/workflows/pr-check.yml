@@ -48,7 +48,7 @@ jobs:
           set -e
           chmod +x _dev/*.sh
           npm install -g pm2
-          ./_dev/run-dev.sh
+          ./_dev/run-test-env.sh
           sleep 20
 
       - name: E2E Test
