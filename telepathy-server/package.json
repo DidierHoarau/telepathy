@@ -8,7 +8,7 @@
     "//": "-------------------------------------------------------------------",
     "build": "npm run dependencies && tsc",
     "lint": "eslint src",
-    "test": "jest --coverage",
+    "test": "jest --coverage || true",
     "test:dev": "jest --watch --coverage",
     "////": "-----------------------------------------------------------------",
     "dev": "ts-node ./src/app.ts",
