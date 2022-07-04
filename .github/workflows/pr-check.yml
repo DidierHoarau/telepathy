@@ -52,7 +52,7 @@ jobs:
           sleep 20
 
       - name: E2E Test
-        uses: cypress-io/github-action@v3
+        uses: cypress-io/github-action@v4
         with:
-          project: telepathy/tests/tests-e2e
+          working-directory: telepathy/tests/tests-e2e
           browser: chrome
