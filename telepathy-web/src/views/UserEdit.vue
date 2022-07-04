@@ -18,35 +18,24 @@
         <label class="form-label">Password</label>
       </div>
       <label v-if="!userId" class="form-label">Password</label>
-      <input
-        v-model="user.password"
-        type="password"
-        class="form-control"
-        :disabled="!passwordEnabled"
-      />
+      <input v-model="user.password" type="password" class="form-control" :disabled="!passwordEnabled" />
     </div>
     <br />
-    <button v-if="userId" v-on:click="saveUpdate()" class="btn btn-primary">
-      Save</button
-    >&nbsp;
-    <button v-if="userId" v-on:click="remove()" class="btn btn-primary">
-      Delete
-    </button>
-    <button v-if="!userId" v-on:click="saveNew()" class="btn btn-primary">
-      Save
-    </button>
+    <button v-if="userId" v-on:click="saveUpdate()" class="btn btn-primary">Save</button>&nbsp;
+    <button v-if="userId" v-on:click="remove()" class="btn btn-primary">Delete</button>
+    <button v-if="!userId" v-on:click="saveNew()" class="btn btn-primary">Save</button>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
-import Config from '../Config.ts';
-import { AuthService } from '../services/AuthService';
-import { handleError, EventBus, EventTypes } from '../services/EventBus';
-import router from '../router';
+import axios from "axios";
+import Config from "../Config.ts";
+import { AuthService } from "../services/AuthService";
+import { handleError, EventBus, EventTypes } from "../services/EventBus";
+import router from "../router";
 
 export default {
-  name: 'UserEdit',
+  name: "UserEdit",
   props: {
     userId: String,
   },
@@ -60,10 +49,7 @@ export default {
     if (this.userId) {
       this.passwordEnabled = false;
       axios
-        .get(
-          `${(await Config.get()).SERVER_URL}/users/${this.userId}`,
-          await AuthService.getAuthHeader()
-        )
+        .get(`${(await Config.get()).SERVER_URL}/users/${this.userId}`, await AuthService.getAuthHeader())
         .then((res) => {
           this.user = res.data;
         })
@@ -76,23 +62,19 @@ export default {
     async saveNew() {
       if (this.user.name && this.user.password) {
         await axios
-          .post(
-            `${(await Config.get()).SERVER_URL}/users`,
-            this.user,
-            await AuthService.getAuthHeader()
-          )
+          .post(`${(await Config.get()).SERVER_URL}/users`, this.user, await AuthService.getAuthHeader())
           .then((res) => {
             EventBus.emit(EventTypes.ALERT_MESSAGE, {
-              type: 'info',
-              text: 'User created',
+              type: "info",
+              text: "User created",
             });
-            router.push({ path: '/users' });
+            router.push({ path: "/users" });
           })
           .catch(handleError);
       } else {
         EventBus.emit(EventTypes.ALERT_MESSAGE, {
-          type: 'error',
-          text: 'Username or password missing',
+          type: "error",
+          text: "Username or password missing",
         });
       }
     },
@@ -100,47 +82,38 @@ export default {
     async saveUpdate() {
       if (!this.user.name) {
         EventBus.emit(EventTypes.ALERT_MESSAGE, {
-          type: 'error',
-          text: 'Username missing',
+          type: "error",
+          text: "Username missing",
         });
       } else if (this.passwordEnabled && !this.user.password) {
         EventBus.emit(EventTypes.ALERT_MESSAGE, {
-          type: 'error',
-          text: 'Username missing',
+          type: "error",
+          text: "Username missing",
         });
       } else {
         axios
-          .put(
-            `${(await Config.get()).SERVER_URL}/users/${this.userId}`,
-            this.user,
-            await AuthService.getAuthHeader()
-          )
+          .put(`${(await Config.get()).SERVER_URL}/users/${this.userId}`, this.user, await AuthService.getAuthHeader())
           .then((res) => {
             EventBus.emit(EventTypes.ALERT_MESSAGE, {
-              type: 'info',
-              text: 'User updated',
+              type: "info",
+              text: "User updated",
             });
           })
           .catch(handleError);
       }
     },
 
-    async passwordSwitch() {},
-
     async remove() {
-      const confirmation = confirm('Delete the user?');
+      const confirmation = confirm("Delete the user?");
       if (confirmation == true) {
         axios
-          .delete(
-            `${(await Config.get()).SERVER_URL}/users/${this.userId}`,
-            await AuthService.getAuthHeader()
-          )
+          .delete(`${(await Config.get()).SERVER_URL}/users/${this.userId}`, await AuthService.getAuthHeader())
           .then((res) => {
             EventBus.emit(EventTypes.ALERT_MESSAGE, {
-              type: 'info',
-              text: 'Users Deleted',
+              type: "info",
+              text: "Users Deleted",
             });
-            router.push({ path: '/users' });
+            router.push({ path: "/users" });
           })
           .catch(handleError);
       }

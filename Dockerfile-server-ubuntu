@@ -11,7 +11,7 @@ RUN cd telepathy-server && \
 
 
 # RUN
-FROM node:16-ubuntu
+FROM node:16
 
 COPY --from=builder /opt/app/telepathy-server/dist /opt/app/dist
 COPY --from=builder /opt/app/telepathy-server/node_modules /opt/app/node_modules

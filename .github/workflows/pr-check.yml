@@ -1,0 +1,44 @@
+name: PR Check
+
+on:
+  pull_request:
+    branches: ["master"]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build Agent
+        run: |
+          cd telepathy-agent
+          npm ci
+          npm run build
+          npm run lint
+          npm run test
+
+      - name: Build Server
+        run: |
+          cd telepathy-server
+          npm ci
+          npm run build
+          npm run lint
+          npm run test
+
+      - name: Build Web
+        run: |
+          cd telepathy-web
+          npm ci
+          npm run build
+          npm run lint
+          npm run test
+
+      - name: Build Docker Images
+        run: |
+          set -e
+          chmod +x _dev/*.sh
+          ./_dev/docker-build-images.sh

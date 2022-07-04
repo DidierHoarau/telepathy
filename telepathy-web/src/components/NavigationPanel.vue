@@ -31,24 +31,24 @@
 </template>
 
 <script>
-import { EventBus, EventTypes } from '../services/EventBus';
-import { AuthService } from '../services/AuthService';
-import router from '../router';
+import { EventBus, EventTypes } from "../services/EventBus";
+import { AuthService } from "../services/AuthService";
+import router from "../router";
 
 export default {
-  name: 'Navigation',
+  name: "NavigationPanel",
   data() {
     return {
       isAuthenticated: false,
     };
   },
   async created() {
-    EventBus.on(EventTypes.AUTH_UPDATED, async (event) => {
+    EventBus.on(EventTypes.AUTH_UPDATED, async () => {
       this.isAuthenticated = await AuthService.isAuthenticated();
     });
     this.isAuthenticated = await AuthService.isAuthenticated();
     if (!this.isAuthenticated) {
-      router.push({ path: '/users/login' });
+      router.push({ path: "/users/login" });
     }
   },
   methods: {},

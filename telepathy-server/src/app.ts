@@ -1,18 +1,15 @@
-import * as bodyParser from "body-parser";
-import * as express from "express";
-import { NextFunction, Response, Request } from "express";
+import Fastify from "fastify";
+
 import { watchFile } from "fs-extra";
 import { AppContext } from "./appContext";
 import { Agent } from "./common-model/agent";
 import { Config } from "./config";
 import { Agents } from "./data/agents";
-import { Auth } from "./data/auth";
 import { Scheduler } from "./data/scheduler";
 import { TaskCleanup } from "./data/taskCleanup";
 import { TaskExecutions } from "./data/taskExecutions";
 import { Tasks } from "./data/tasks";
 import { Users } from "./data/users";
-import { router } from "./router";
 import { Logger } from "./utils-std-ts/logger";
 
 const logger = new Logger("app");
@@ -30,56 +27,63 @@ Promise.resolve().then(async () => {
   });
 
   const users = new Users();
+  await users.load();
   AppContext.setUsers(users);
+
+  const tasks = new Tasks();
+  await tasks.load();
+  AppContext.setTasks(tasks);
+
+  const taskExecutions = new TaskExecutions();
+  await taskExecutions.load();
+  AppContext.setTaskExecutions(taskExecutions);
 
   const registeredAgents: Agent[] = [];
   const agentRegistration = new Agents(registeredAgents);
   AppContext.setAgents(agentRegistration);
   agentRegistration.waitRegistrations();
 
-  const tasks = new Tasks();
-  AppContext.setTasks(tasks);
-  const taskExecutions = new TaskExecutions();
-  AppContext.setTaskExecutions(taskExecutions);
-
   const scheduler = new Scheduler();
   AppContext.setScheduler(scheduler);
-  setTimeout(() => {
-    scheduler.calculate();
-  }, 500);
+  scheduler.calculate();
 
-  setTimeout(() => {
-    TaskCleanup.enableMaintenance();
-  }, 1000);
+  TaskCleanup.startMaintenance();
+  TaskCleanup.monitorTimeouts();
 
-  setTimeout(() => {
-    TaskCleanup.monitorTimeouts();
-  }, 1000);
+  // API
+  /* eslint-disable @typescript-eslint/no-var-requires */
 
-  const app = express();
-  if (AppContext.getConfig().CORS_POLICY_ORIGIN) {
-    app.use((req: Request, res: Response, next: NextFunction) => {
-      res.header("Access-Control-Allow-Origin", AppContext.getConfig().CORS_POLICY_ORIGIN);
-      res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-      res.header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE");
-      next();
-    });
-  }
-  app.use(bodyParser.json());
-  app.use(async (req: Request, res: Response, next: NextFunction) => {
-    req.user = { authenticated: false };
-    if (req.headers.authorization) {
-      try {
-        req.user = await Auth.checkToken(req.headers.authorization.split(" ")[1]);
-      } catch (err) {
-        logger.error(err);
-      }
-    }
-    next();
+  const fastify = Fastify({
+    logger: process.env.DEV_MODE === "true",
+    ignoreTrailingSlash: true,
   });
 
-  app.use(router);
-  app.listen(AppContext.getConfig().API_PORT, () => {
-    logger.info(`App listening on port ${AppContext.getConfig().API_PORT}`);
+  if (AppContext.getConfig().CORS_POLICY_ORIGIN) {
+    fastify.register(require("@fastify/cors"), {
+      origin: AppContext.getConfig().CORS_POLICY_ORIGIN,
+      methods: "GET,PUT,POST,DELETE",
+    });
+  }
+
+  fastify.register(require("./routes/agents"), { prefix: "/agents" });
+  fastify.register(require("./routes/agentsAgentid"), { prefix: "/agents/:agentId" });
+  fastify.register(require("./routes/tasks"), { prefix: "/tasks" });
+  fastify.register(require("./routes/tasksTaskId"), { prefix: "/tasks/:taskId" });
+  fastify.register(require("./routes/tasksTaskIdExecutions"), { prefix: "/tasks/:taskId/executions" });
+  fastify.register(require("./routes/tasksTaskIdExecutionsAgent"), { prefix: "/tasks/:taskId/executions/agent" });
+  fastify.register(require("./routes/tasksTaskIdExecutionsExecutionId"), {
+    prefix: "/tasks/:taskId/executions/:taskExecutionId",
+  });
+  fastify.register(require("./routes/tasksWebhooks"), { prefix: "/tasks/webhooks" });
+  fastify.register(require("./routes/users"), { prefix: "/users" });
+  fastify.register(require("./routes/usersUserId"), { prefix: "/users/:userId" });
+
+  fastify.listen({ port: AppContext.getConfig().API_PORT, host: "0.0.0.0" }, (err) => {
+    if (err) {
+      logger.error(err);
+      fastify.log.error(err);
+      process.exit(1);
+    }
+    logger.info("API Listerning");
   });
 });

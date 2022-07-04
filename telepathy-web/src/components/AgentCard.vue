@@ -14,15 +14,13 @@
 
 <script>
 export default {
-  name: 'Agent',
+  name: "AgentCard",
   props: {
     agent: Object,
   },
   data() {
     return {};
   },
-  setup() {},
-  created() {},
   methods: {},
 };
 </script>

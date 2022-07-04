@@ -19,7 +19,7 @@
               <h3>{{ folder.name }}</h3>
             </div>
             <div v-for="task in folder.tasks" v-bind:key="task.id" class="col-sm-12 col-md-6 col-lg-4">
-              <Task v-on:click="onTaskClicked(task.id)" :task="task" />
+              <TaskCard v-on:click="onTaskClicked(task.id)" :task="task" />
             </div>
           </div>
         </div>
@@ -35,16 +35,16 @@
 <script>
 import axios from "axios";
 import * as _ from "lodash";
-import Task from "../components/Task.vue";
+import TaskCard from "../components/TaskCard.vue";
 import TaskExecutions from "../components/TaskExecutions.vue";
 import Config from "../Config.ts";
 import { EventBus, EventTypes, handleError } from "../services/EventBus";
 import { AuthService } from "../services/AuthService";
 
 export default {
-  name: "Tasks",
+  name: "TaskList",
   components: {
-    Task,
+    TaskCard,
     TaskExecutions,
   },
   data() {

@@ -4,7 +4,7 @@
       <header class="page_header">
         <a href="/"><h1>Telepathy</h1></a>
       </header>
-      <Navigation class="page_menu" />
+      <NavigationPanel class="page_menu" />
       <router-view class="page_content" />
       <div class="page_footer" />
     </div>
@@ -13,14 +13,14 @@
 </template>
 
 <script>
-import Navigation from "./components/Navigation.vue";
+import NavigationPanel from "./components/NavigationPanel.vue";
 import AlertMessages from "./components/AlertMessages.vue";
 import Config from "./Config.ts";
 
 export default {
   name: "App",
   components: {
-    Navigation,
+    NavigationPanel,
     AlertMessages,
   },
   created() {

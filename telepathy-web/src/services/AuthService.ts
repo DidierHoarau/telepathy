@@ -1,6 +1,6 @@
-import jwtDecode from 'jwt-decode';
+import jwtDecode from "jwt-decode";
 
-const AUTH_TOKEN_KEY = 'auth_token';
+const AUTH_TOKEN_KEY = "auth_token";
 
 export class AuthService {
   //
@@ -25,7 +25,7 @@ export class AuthService {
     if (storedKey) {
       const decoded = jwtDecode(storedKey);
       if ((decoded as any).exp < Date.now() / 1000) {
-        console.log('Auth token expired');
+        console.log("Auth token expired");
         localStorage.removeItem(AUTH_TOKEN_KEY);
         return null;
       }

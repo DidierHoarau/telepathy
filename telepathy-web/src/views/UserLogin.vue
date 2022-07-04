@@ -14,32 +14,26 @@
     </div>
     <div v-if="isAuthenticated">
       <h1>Logged in</h1>
-      <button
-        v-if="isAuthenticated"
-        v-on:click="logout()"
-        class="btn btn-primary"
-      >
-        Logout
-      </button>
+      <button v-if="isAuthenticated" v-on:click="logout()" class="btn btn-primary">Logout</button>
     </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
-import Config from '../Config.ts';
-import { AuthService } from '../services/AuthService';
-import { EventBus, EventTypes, handleError } from '../services/EventBus';
-import router from '../router';
+import axios from "axios";
+import Config from "../Config.ts";
+import { AuthService } from "../services/AuthService";
+import { EventBus, EventTypes, handleError } from "../services/EventBus";
+import router from "../router";
 
 export default {
-  name: 'UserLogin',
+  name: "UserLogin",
   props: {
     msg: String,
   },
   data() {
     return {
-      user: { name: '', script: '' },
+      user: { name: "", script: "" },
       isAuthenticated: false,
     };
   },
@@ -48,13 +42,12 @@ export default {
       .get(`${(await Config.get()).SERVER_URL}/users/status/initialization`)
       .then((res) => {
         if (!res.data.initialized) {
-          router.push({ path: '/users/new' });
+          router.push({ path: "/users/new" });
         }
       })
       .catch(handleError);
     this.isAuthenticated = await AuthService.isAuthenticated();
   },
-  setup() {},
   methods: {
     async login() {
       if (this.user.name && this.user.password) {
@@ -64,15 +57,15 @@ export default {
             AuthService.saveToken(res.data.token);
             EventBus.emit(EventTypes.AUTH_UPDATED, {});
             EventBus.emit(EventTypes.ALERT_MESSAGE, {
-              type: 'info',
-              text: 'Authentication successful',
+              type: "info",
+              text: "Authentication successful",
             });
           })
           .catch(handleError);
       } else {
         EventBus.emit(EventTypes.ALERT_MESSAGE, {
-          type: 'error',
-          text: 'Username or password missing',
+          type: "error",
+          text: "Username or password missing",
         });
       }
       this.isAuthenticated = await AuthService.isAuthenticated();
@@ -81,8 +74,8 @@ export default {
       await AuthService.removeToken();
       EventBus.emit(EventTypes.AUTH_UPDATED, {});
       EventBus.emit(EventTypes.ALERT_MESSAGE, {
-        type: 'info',
-        text: 'Logout successful',
+        type: "info",
+        text: "Logout successful",
       });
       this.isAuthenticated = await AuthService.isAuthenticated();
     },

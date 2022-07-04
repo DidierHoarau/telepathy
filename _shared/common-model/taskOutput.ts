@@ -4,6 +4,4 @@ export class TaskOutput {
   public name: string;
   public value: string;
   public taskOutputDefinitionId: string;
-
-  constructor() {}
 }

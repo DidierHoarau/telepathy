@@ -12,7 +12,7 @@
     </div>
     <div class="task-list row">
       <div v-for="user in users" v-bind:key="user.id" class="col-sm-12 col-md-6 col-lg-4">
-        <User :user="user" />
+        <UserCard :user="user" />
       </div>
     </div>
   </div>
@@ -21,14 +21,14 @@
 <script>
 import axios from "axios";
 import Config from "../Config.ts";
-import User from "../components/User.vue";
+import UserCard from "../components/UserCard.vue";
 import { AuthService } from "../services/AuthService";
 import { handleError } from "../services/EventBus";
 
 export default {
-  name: "Users",
+  name: "UserList",
   components: {
-    User,
+    UserCard,
   },
   data() {
     return {
