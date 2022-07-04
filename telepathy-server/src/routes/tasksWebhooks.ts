@@ -1,7 +1,7 @@
 import * as _ from "lodash";
 import * as path from "path";
 import { Logger } from "../utils-std-ts/logger";
-import { FastifyInstance, FastifyRequest, RequestGenericInterface } from "fastify";
+import { FastifyInstance, RequestGenericInterface } from "fastify";
 import { AppContext } from "../appContext";
 
 const logger = new Logger(path.basename(__filename));

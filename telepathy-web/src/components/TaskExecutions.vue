@@ -93,7 +93,6 @@ export default {
       updateLoop: null,
     };
   },
-  setup() {},
   created() {
     this.loadTaskExecutionHistory();
     this.updateLoop = setInterval(() => {

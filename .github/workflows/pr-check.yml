@@ -36,3 +36,9 @@ jobs:
           npm run build
           npm run lint
           npm run test
+
+      - name: Build Docker Images
+        run: |
+          set -e
+          chmod +x _dev/*.sh
+          ./_dev/docker-build-images.sh

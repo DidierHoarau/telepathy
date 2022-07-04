@@ -5,7 +5,6 @@ import { AppContext } from "./appContext";
 import { Agent } from "./common-model/agent";
 import { Config } from "./config";
 import { Agents } from "./data/agents";
-import { Auth } from "./data/auth";
 import { Scheduler } from "./data/scheduler";
 import { TaskCleanup } from "./data/taskCleanup";
 import { TaskExecutions } from "./data/taskExecutions";
@@ -48,10 +47,12 @@ Promise.resolve().then(async () => {
   AppContext.setScheduler(scheduler);
   scheduler.calculate();
 
-  TaskCleanup.enableMaintenance();
+  TaskCleanup.startMaintenance();
   TaskCleanup.monitorTimeouts();
 
   // API
+  /* eslint-disable @typescript-eslint/no-var-requires */
+
   const fastify = Fastify({
     logger: process.env.DEV_MODE === "true",
     ignoreTrailingSlash: true,
@@ -77,7 +78,7 @@ Promise.resolve().then(async () => {
   fastify.register(require("./routes/users"), { prefix: "/users" });
   fastify.register(require("./routes/usersUserId"), { prefix: "/users/:userId" });
 
-  fastify.listen({ port: AppContext.getConfig().API_PORT, host: "0.0.0.0" }, (err, address) => {
+  fastify.listen({ port: AppContext.getConfig().API_PORT, host: "0.0.0.0" }, (err) => {
     if (err) {
       logger.error(err);
       fastify.log.error(err);

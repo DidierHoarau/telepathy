@@ -22,5 +22,6 @@ jobs:
       - name: Build Docker Images
         run: |
           set -e
-          chmod +x _dev/generate-images.sh
-          ./_dev/generate-images.sh
+          chmod +x _dev/*.sh
+          ./_dev/docker-build-images.sh
+          ./_dev/docker-publish-images.sh

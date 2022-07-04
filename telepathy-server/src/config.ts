@@ -6,18 +6,18 @@ const logger = new Logger("config");
 
 export class Config {
   //
-  public readonly CONFIG_FILE: string = process.env.TELEPATHY_CONFIG;
+  public readonly CONFIG_FILE: string = process.env.TELEPATHY_CONFIG || "";
   public readonly API_PORT: number = 8080;
-  public VERSION: number = 1;
+  public VERSION = 1;
   public AGENT_REGISTRATION_DURATION: number = 30 * 60;
   public JWT_VALIDITY_DURATION: number = 7 * 24 * 3600;
   public CORS_POLICY_ORIGIN: string;
-  public DATA_DIR: string = ".";
+  public DATA_DIR = ".";
   public AGENT_KEY: string = uuidv4();
   public JWT_KEY: string = uuidv4();
-  public TASK_HISTORY_MAX_COUNT: number = 100;
-  public TASK_HISTORY_MAX_AGE_DAYS: 30;
-  public TASK_ALIVE_TIMEOUT: number = 100;
+  public TASK_HISTORY_MAX_COUNT = 100;
+  public TASK_HISTORY_MAX_AGE_DAYS = 30;
+  public TASK_ALIVE_TIMEOUT = 100;
 
   public async reload(): Promise<void> {
     const content = await fse.readJson(this.CONFIG_FILE);

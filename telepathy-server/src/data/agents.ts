@@ -38,20 +38,17 @@ export class Agents {
     }
   }
 
-  public waitRegistrations(): void {
-    Promise.resolve().then(async () => {
-      while (true) {
-        for (let i = this.agents.length - 1; i >= 0; i--) {
-          if (
-            this.agents[i].lastSyncDate.getTime() <
-            new Date().getTime() - AppContext.getConfig().AGENT_REGISTRATION_DURATION * 1000
-          ) {
-            logger.info(`Agent un-registered: ${this.agents[i].id}`);
-            this.agents.splice(i, 1);
-          }
-        }
-        await Timeout.wait((1000 * AppContext.getConfig().AGENT_REGISTRATION_DURATION) / 2);
+  public async waitRegistrations(): Promise<void> {
+    for (let i = this.agents.length - 1; i >= 0; i--) {
+      if (
+        this.agents[i].lastSyncDate.getTime() <
+        new Date().getTime() - AppContext.getConfig().AGENT_REGISTRATION_DURATION * 1000
+      ) {
+        logger.info(`Agent un-registered: ${this.agents[i].id}`);
+        this.agents.splice(i, 1);
       }
-    });
+    }
+    await Timeout.wait((1000 * AppContext.getConfig().AGENT_REGISTRATION_DURATION) / 2);
+    this.waitRegistrations();
   }
 }

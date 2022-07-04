@@ -8,27 +8,24 @@ const logger = new Logger("data/taskCleanup");
 
 export class TaskCleanup {
   //
-  public static async enableMaintenance(): Promise<void> {
+  public static async startMaintenance(): Promise<void> {
     logger.info("Start Task execution maintenance");
-    while (true) {
-      await cleanByDate().catch((error) => {
-        logger.error(error);
-      });
-      await cleanByCount().catch((error) => {
-        logger.error(error);
-      });
-      await Timeout.wait(1000 * 60 * 60);
-    }
+    await cleanByDate().catch((error) => {
+      logger.error(error);
+    });
+    await cleanByCount().catch((error) => {
+      logger.error(error);
+    });
+    await Timeout.wait(1000 * 60 * 60);
+    TaskCleanup.startMaintenance();
   }
 
   public static async monitorTimeouts(): Promise<void> {
-    logger.info("Monitoring task execution timetout");
-    while (true) {
-      await cleanTimedOut().catch((error) => {
-        logger.error(error);
-      });
-      await Timeout.wait(AppContext.getConfig().TASK_ALIVE_TIMEOUT * 1000);
-    }
+    await cleanTimedOut().catch((error) => {
+      logger.error(error);
+    });
+    await Timeout.wait(AppContext.getConfig().TASK_ALIVE_TIMEOUT * 1000);
+    TaskCleanup.monitorTimeouts();
   }
 }
 

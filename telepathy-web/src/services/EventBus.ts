@@ -1,12 +1,12 @@
-import mitt from 'mitt';
+import mitt from "mitt";
 export const EventBus = mitt();
 
 export enum EventTypes {
-  AUTH_UPDATED = 'AUTH_UPDATED',
-  TASK_UPDATED = 'TASK_UPDATED',
-  ALERT_MESSAGE = 'ALERT_MESSAGE',
-  TASK_EXECUTION_TRIGGERED = 'TASK_EXECUTION_TRIGGERED',
-  TASK_EXECUTION_CLOSED = 'TASK_EXECUTION_CLOSED',
+  AUTH_UPDATED = "AUTH_UPDATED",
+  TASK_UPDATED = "TASK_UPDATED",
+  ALERT_MESSAGE = "ALERT_MESSAGE",
+  TASK_EXECUTION_TRIGGERED = "TASK_EXECUTION_TRIGGERED",
+  TASK_EXECUTION_CLOSED = "TASK_EXECUTION_CLOSED",
 }
 
 export function handleError(error: any): void {
@@ -15,7 +15,7 @@ export function handleError(error: any): void {
     text = error.response.data.error;
   }
   EventBus.emit(EventTypes.ALERT_MESSAGE, {
-    type: 'error',
+    type: "error",
     text,
   });
 }

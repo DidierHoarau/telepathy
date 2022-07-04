@@ -1,8 +1,7 @@
-import * as _ from "lodash";
 import * as path from "path";
 import * as cron from "node-cron";
 import { Logger } from "../utils-std-ts/logger";
-import { FastifyInstance, FastifyRequest, RequestGenericInterface } from "fastify";
+import { FastifyInstance, RequestGenericInterface } from "fastify";
 import { AppContext } from "../appContext";
 import { Auth } from "../data/auth";
 import { Task } from "../common-model/task";

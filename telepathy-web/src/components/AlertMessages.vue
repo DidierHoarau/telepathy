@@ -10,11 +10,10 @@
 </template>
 
 <script>
-import { EventBus, EventTypes } from '../services/EventBus';
-import * as _ from 'lodash';
+import { EventBus, EventTypes } from "../services/EventBus";
 
 export default {
-  name: 'AlertMessages',
+  name: "AlertMessages",
   data() {
     return {
       messages: [],

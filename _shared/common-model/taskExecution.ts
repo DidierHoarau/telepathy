@@ -29,12 +29,12 @@ export class TaskExecution {
     return taskExecution;
   }
 
-  public version: number = 2;
+  public version = 2;
   public id: string;
   public taskId: string;
   public script: string;
   public status: string;
-  public success: boolean = false;
+  public success = false;
   public agentId: string;
   public tag: string;
   public dateQueued: Date;

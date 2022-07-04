@@ -7,7 +7,7 @@ const logger = new Logger("config");
 
 class Config {
   //
-  public readonly CONFIG_FILE: string = process.env.TELEPATHY_CONFIG;
+  public readonly CONFIG_FILE: string = process.env.TELEPATHY_CONFIG || "";
   public VERSION = 1;
   public SERVER = "";
   public AGENT_ID: string = os.hostname();

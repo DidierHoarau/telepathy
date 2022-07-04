@@ -5,9 +5,7 @@
     </div>
     <div class="cardlayout_actions">
       <p class="text-end">
-        <router-link :to="'/users/' + user.id + '/edit'"
-          ><i class="bi bi-pencil-square icon-button"></i
-        ></router-link>
+        <router-link :to="'/users/' + user.id + '/edit'"><i class="bi bi-pencil-square icon-button"></i></router-link>
       </p>
     </div>
   </div>
@@ -15,15 +13,13 @@
 
 <script>
 export default {
-  name: 'Agent',
+  name: "UserCard",
   props: {
     user: Object,
   },
   data() {
     return {};
   },
-  setup() {},
-  created() {},
   methods: {},
 };
 </script>

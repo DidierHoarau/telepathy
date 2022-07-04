@@ -94,7 +94,6 @@ export default {
       tags: [],
     };
   },
-  setup() {},
   async created() {
     axios
       .get(`${(await Config.get()).SERVER_URL}/agents/tags`, await AuthService.getAuthHeader())

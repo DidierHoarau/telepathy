@@ -33,7 +33,7 @@ import { AuthService } from "../services/AuthService";
 import router from "../router";
 
 export default {
-  name: "Task",
+  name: "TaskCard",
   props: {
     task: Object,
   },
@@ -43,7 +43,6 @@ export default {
       updateLoop: null,
     };
   },
-  setup() {},
   created() {
     this.updateLoop = setInterval(() => {
       this.checkExecutions();
