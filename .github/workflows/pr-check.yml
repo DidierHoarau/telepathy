@@ -1,0 +1,32 @@
+name: Master-Build
+
+on:
+  pull_request:
+    branches: ["master"]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build Agent
+        run: |
+          cd telepathy-agent
+          npm ci
+          npm run build
+
+      - name: Build Server
+        run: |
+          cd telepathy-server
+          npm ci
+          npm run build
+
+      - name: Build Web
+        run: |
+          cd telepathy-web
+          npm ci
+          npm run build
