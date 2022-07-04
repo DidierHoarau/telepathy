@@ -18,15 +18,21 @@ jobs:
           cd telepathy-agent
           npm ci
           npm run build
+          npm run lint
+          npm run test
 
       - name: Build Server
         run: |
           cd telepathy-server
           npm ci
           npm run build
+          npm run lint
+          npm run test
 
       - name: Build Web
         run: |
           cd telepathy-web
           npm ci
           npm run build
+          npm run lint
+          npm run test
