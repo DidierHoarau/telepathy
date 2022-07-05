@@ -1,31 +1,13 @@
 <template>
   <nav>
-    <div v-if="isAuthenticated">
-      <div class="p-0">
-        <div class="row p-0 m-0">
-          <div class="col-3 col-md-12 nav-item p-2 text-center">
-            <router-link id="navigationTaskList" to="/tasks">Tasks</router-link>
-          </div>
-          <div class="col-3 col-md-12 nav-item p-2 text-center">
-            <router-link to="/agents">Agents</router-link>
-          </div>
-          <div class="col-3 col-md-12 nav-item p-2 text-center">
-            <router-link to="/users">Users</router-link>
-          </div>
-          <div class="col-3 col-md-12 nav-item p-2 text-center">
-            <router-link to="/users/login">Logout</router-link>
-          </div>
-        </div>
-      </div>
+    <div class="navigation_container" v-if="isAuthenticated">
+      <router-link class="navigation_item" id="navigationTaskList" to="/tasks">Tasks</router-link>
+      <router-link class="navigation_item" to="/agents">Agents</router-link>
+      <router-link class="navigation_item" to="/users">Users</router-link>
+      <router-link class="navigation_item" to="/users/login">Logout</router-link>
     </div>
-    <div v-if="!isAuthenticated">
-      <div class="container">
-        <div class="row">
-          <div class="col-12 nav-item p-2 text-center">
-            <router-link to="/users/login">Login</router-link>
-          </div>
-        </div>
-      </div>
+    <div class="navigation_container" v-if="!isAuthenticated">
+      <router-link class="navigation_item" to="/users/login">Login</router-link>
     </div>
   </nav>
 </template>
@@ -56,10 +38,30 @@ export default {
 </script>
 
 <style scoped>
-.nav-item a {
+.navigation_container {
+  display: grid;
+  align-items: center;
+}
+.navigation_item {
   color: #eee;
   font-weight: bold;
   text-decoration: none;
   font-size: 0.8rem;
+  text-align: center;
+}
+
+@media (max-width: 700px) {
+  .navigation_container {
+    grid-auto-columns: minmax(0, 1fr);
+    grid-auto-flow: column;
+    height: 100%;
+  }
+}
+
+@media (min-width: 700px) {
+  .navigation_container {
+    grid-auto-rows: 4em;
+    grid-auto-flow: row;
+  }
 }
 </style>
