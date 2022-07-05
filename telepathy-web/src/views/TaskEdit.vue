@@ -23,11 +23,11 @@
           >Cron Schedule
           <span>(minute hour day_of_month month day_of_week)</span>
         </label>
-        <input v-model="task.schedule" type="text" class="form-control" />
+        <input id="taskSchedule" v-model="task.schedule" type="text" class="form-control" />
       </div>
       <div class="mb-3">
         <label class="form-label">Tag</label>
-        <select v-model="task.tag" class="form-select" aria-label="Task Tag Selection">
+        <select id="taskTag" v-model="task.tag" class="form-select" aria-label="Task Tag Selection">
           <option value="">Any</option>
           <option v-for="tag in tags" v-bind:key="tag" :value="tag">
             {{ tag }}
@@ -68,9 +68,9 @@
         </div>
       </div>
       <br />
-      <button v-if="taskId" v-on:click="saveUpdate()" class="btn btn-primary">Save</button>&nbsp;
+      <button v-if="taskId" v-on:click="saveUpdate()" id="saveTaskButton" class="btn btn-primary">Save</button>&nbsp;
       <button v-if="taskId" v-on:click="remove()" class="btn btn-primary">Delete</button>
-      <button v-if="!taskId" v-on:click="saveNew()" class="btn btn-primary">Save</button>
+      <button v-if="!taskId" v-on:click="saveNew()" id="saveTaskButton" class="btn btn-primary">Save</button>
     </div>
   </div>
 </template>

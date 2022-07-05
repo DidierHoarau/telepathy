@@ -1,5 +1,5 @@
 describe("Task Functions", () => {
-  before(() => {
+  beforeEach(() => {
     cy.login("admin", "admin");
   });
 
@@ -12,5 +12,8 @@ describe("Task Functions", () => {
     cy.get("#addTaskButton").click();
     cy.get("#taskName").type("a task");
     cy.get("#taskScript").type("ls");
+    cy.get("#taskSchedule").type("0 0 * * *");
+    cy.get("#taskTag").select("Any");
+    cy.get("#saveTaskButton").click();
   });
 });
