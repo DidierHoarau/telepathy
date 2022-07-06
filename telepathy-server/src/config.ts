@@ -15,6 +15,7 @@ export class Config {
   public DATA_DIR = ".";
   public AGENT_KEY: string = uuidv4();
   public JWT_KEY: string = uuidv4();
+  public LOG_LEVEL = "info";
   public TASK_HISTORY_MAX_COUNT = 100;
   public TASK_HISTORY_MAX_AGE_DAYS = 30;
   public TASK_ALIVE_TIMEOUT = 100;
@@ -40,7 +41,8 @@ export class Config {
     setIfSet("TASK_HISTORY_MAX_COUNT");
     setIfSet("TASK_HISTORY_MAX_AGE_DAYS");
     setIfSet("AGENT_KEY", false);
-    setIfSet("JWT_KEY");
+    setIfSet("JWT_KEY", false);
     setIfSet("TASK_ALIVE_TIMEOUT");
+    setIfSet("LOG_LEVEL");
   }
 }

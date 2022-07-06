@@ -23,11 +23,12 @@ function buildService {
     
     echo "Publishing ${SERVICE_NAME}/${SERVICE_VERSION}/${SERVICE_VERSION_MAJOR}/${SERVICE_VERSION_MINOR} - ${OS_VARIANT} - ${TAG}"
 
-    tagAndPush didierhoarau/telepathy-${SERVICE_BASE_NAME}:${SERVICE_VERSION}-${OS_VARIANT} didierhoarau/telepathy-${SERVICE_BASE_NAME}:${SERVICE_VERSION}-${OS_VARIANT} 
-    tagAndPush didierhoarau/telepathy-${SERVICE_BASE_NAME}:${SERVICE_VERSION}-${OS_VARIANT} didierhoarau/telepathy-${SERVICE_BASE_NAME}:${SERVICE_VERSION_MAJOR}-${OS_VARIANT} 
-    tagAndPush didierhoarau/telepathy-${SERVICE_BASE_NAME}:${SERVICE_VERSION}-${OS_VARIANT} didierhoarau/telepathy-${SERVICE_BASE_NAME}:${SERVICE_VERSION_MINOR}-${OS_VARIANT} 
+    tagAndPush didierhoarau/telepathy-${SERVICE_BASE_NAME}:${SERVICE_VERSION}-${OS_VARIANT} didierhoarau/telepathy-${SERVICE_BASE_NAME}:${SERVICE_VERSION}-${OS_VARIANT}
+    tagAndPush didierhoarau/telepathy-${SERVICE_BASE_NAME}:${SERVICE_VERSION}-${OS_VARIANT} didierhoarau/telepathy-${SERVICE_BASE_NAME}:${SERVICE_VERSION_MAJOR}-${OS_VARIANT}
+    tagAndPush didierhoarau/telepathy-${SERVICE_BASE_NAME}:${SERVICE_VERSION}-${OS_VARIANT} didierhoarau/telepathy-${SERVICE_BASE_NAME}:${SERVICE_VERSION_MINOR}-${OS_VARIANT}
+    tagAndPush didierhoarau/telepathy-${SERVICE_BASE_NAME}:${SERVICE_VERSION}-${OS_VARIANT} didierhoarau/telepathy-${SERVICE_BASE_NAME}:${OS_VARIANT}
     if [ "${DEFAULT_TAG}" == "Y" ]; then
-        tagAndPush didierhoarau/telepathy-${SERVICE_BASE_NAME}:${SERVICE_VERSION}-${OS_VARIANT} didierhoarau/telepathy-${SERVICE_BASE_NAME}:${SERVICE_VERSION_MAJOR}
+        tagAndPush didierhoarau/telepathy-${SERVICE_BASE_NAME}:${SERVICE_VERSION}-${OS_VARIANT} didierhoarau/telepathy-${SERVICE_BASE_NAME}:${SERVICE_VERSION}
         tagAndPush didierhoarau/telepathy-${SERVICE_BASE_NAME}:${SERVICE_VERSION}-${OS_VARIANT} didierhoarau/telepathy-${SERVICE_BASE_NAME}:${SERVICE_VERSION_MAJOR}
         tagAndPush didierhoarau/telepathy-${SERVICE_BASE_NAME}:${SERVICE_VERSION}-${OS_VARIANT} didierhoarau/telepathy-${SERVICE_BASE_NAME}:${SERVICE_VERSION_MINOR}
         tagAndPush didierhoarau/telepathy-${SERVICE_BASE_NAME}:${SERVICE_VERSION}-${OS_VARIANT} didierhoarau/telepathy-${SERVICE_BASE_NAME}
