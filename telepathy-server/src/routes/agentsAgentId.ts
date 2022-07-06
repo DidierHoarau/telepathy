@@ -39,12 +39,12 @@ async function routes(fastify: FastifyInstance): Promise<void> {
     }
   });
 
-  interface GetTaskExecutiions extends RequestGenericInterface {
+  interface GetTaskExecutions extends RequestGenericInterface {
     Params: {
       agentId: string;
     };
   }
-  fastify.get<GetTaskExecutiions>("/tasks/executions", async (req, res) => {
+  fastify.get<GetTaskExecutions>("/tasks/executions", async (req, res) => {
     logger.debug(`[${req.method}] ${req.url}`);
     await Auth.mustBeAuthenticated(req, res);
     const taskExecutionsQueued = _.filter(await AppContext.getTaskExecutions().list(), {
