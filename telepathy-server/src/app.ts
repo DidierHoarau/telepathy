@@ -54,7 +54,7 @@ Promise.resolve().then(async () => {
   /* eslint-disable @typescript-eslint/no-var-requires */
 
   const fastify = Fastify({
-    logger: process.env.DEV_MODE === "true",
+    logger: AppContext.getConfig().LOG_LEVEL === "debug",
     ignoreTrailingSlash: true,
   });
 
