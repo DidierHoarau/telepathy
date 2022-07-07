@@ -62,6 +62,7 @@ export class TaskExecutions {
     if (taskExecution.status === TaskExecutionStatus.executed) {
       // Delay to wait for the log to be stable
       setTimeout(async () => {
+        taskExecution.outputs = [];
         const task = await AppContext.getTasks().get(taskExecution.taskId);
         const logs = await this.getLogs(taskExecution.id, taskExecution.taskId);
         for (const outputDefinition of task.outputDefinitions) {
@@ -75,7 +76,7 @@ export class TaskExecutions {
               taskOutput.taskOutputDefinitionId = outputDefinition.id;
               taskExecution.outputs.push(taskOutput);
             }
-            this.save();
+            await this.save();
           } catch (error) {
             logger.error(`Output Pattern Matching Failed: ${error}`);
           }
