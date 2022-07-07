@@ -7,13 +7,13 @@ describe("Task Functions", () => {
     cy.get("#navigationTaskList").click();
   });
 
-  it("Should add a Task", () => {
-    cy.get("#navigationTaskList").click();
-    cy.get("#addTaskButton").click();
-    cy.get("#taskName").type("a task");
-    cy.get("#taskScript").type("ls");
-    cy.get("#taskSchedule").type("0 0 * * *");
-    cy.get("#taskTag").select("Any");
-    cy.get("#saveTaskButton").click();
-  });
+  // it("Should add a Task", () => {
+  //   cy.get("#navigationTaskList").click();
+  //   cy.get("#addTaskButton").click();
+  //   cy.get("#taskName").type("a task");
+  //   cy.get("#taskScript").type("ls");
+  //   cy.get("#taskSchedule").type("0 0 * * *");
+  //   cy.get("#taskTag").select("Any");
+  //   cy.get("#saveTaskButton").click();
+  // });
 });

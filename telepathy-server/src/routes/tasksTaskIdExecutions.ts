@@ -41,7 +41,7 @@ async function routes(fastify: FastifyInstance): Promise<void> {
       status: TaskExecutionStatus.queued,
       taskId: req.params.taskId,
     });
-    if (taskExecutionAlreadyQueued) {
+    if (taskExecutionAlreadyQueued.length > 0) {
       res.status(400).send({ Error: "Execution already queued" });
       return;
     }
