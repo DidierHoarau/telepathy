@@ -13,7 +13,7 @@
           </div>
         </div>
       </div>
-      <div class="task-list">
+      <div id="taskList">
         <div v-for="folder in taskFolders" v-bind:key="folder.name">
           <div class="row">
             <div v-if="folder.name">
@@ -98,7 +98,7 @@ export default {
 </script>
 
 <style scoped>
-.task-list {
+#taskList {
   width: 100%;
 }
 

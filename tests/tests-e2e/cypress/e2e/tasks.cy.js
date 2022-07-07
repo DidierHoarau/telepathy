@@ -29,4 +29,29 @@ describe("Task Functions", () => {
     };
     cy.addTask(task);
   });
+
+  it.only("Should delete a Task", () => {
+    const task = {
+      name: "test_0000",
+      command: "ls",
+      schedule: "0 0 * * *",
+      tag: "Any",
+    };
+    cy.addTask(task);
+    cy.get("#navigationTaskList").click();
+    cy.get(".page_content_container > #taskList")
+      .find(".taskCard")
+      .each(($el, index, $list) => {
+        cy.wrap($el)
+          .find("#taskName")
+          .then((taskName) => {
+            if (taskName.text() === task.name) {
+              cy.wrap($el).get("#editButton").click();
+              cy.get("#deleteButton").click();
+              cy.on("window:confirm", () => true);
+            }
+          });
+      });
+    // cy.addTask(task);
+  });
 });
