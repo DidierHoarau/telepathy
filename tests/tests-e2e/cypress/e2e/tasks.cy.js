@@ -19,4 +19,14 @@ describe("Task Functions", () => {
     cy.get("#taskTag").select("Any");
     cy.get("#saveTaskButton").click();
   });
+
+  it("Should add a Task (cypress command)", () => {
+    const task = {
+      name: "test_0000",
+      command: "ls",
+      schedule: "0 0 * * *",
+      tag: "Any",
+    };
+    cy.addTask(task);
+  });
 });

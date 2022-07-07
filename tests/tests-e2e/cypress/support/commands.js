@@ -28,3 +28,13 @@ Cypress.Commands.add("login", () => {
   cy.get("#password").type(Cypress.env("ADMIN_PASSWORD"));
   cy.get("#loginButton").click();
 });
+
+Cypress.Commands.add("addTask", (task) => {
+  cy.get("#navigationTaskList").click();
+  cy.get("#addTaskButton").click();
+  cy.get("#taskName").type(task.name);
+  cy.get("#taskScript").type(task.command);
+  cy.get("#taskSchedule").type(task.schedule);
+  cy.get("#taskTag").select(task.tag);
+  cy.get("#saveTaskButton").click();
+});
