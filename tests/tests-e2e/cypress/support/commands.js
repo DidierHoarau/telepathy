@@ -8,9 +8,23 @@
 // https://on.cypress.io/custom-commands
 // ***********************************************
 
-Cypress.Commands.add("login", (username, password) => {
-  cy.visit("http://localhost:3000/users/login");
-  cy.get("#username").type(username);
-  cy.get("#password").type(password);
+Cypress.Commands.add("checkInit", () => {
+  cy.request({
+    url: `${Cypress.env("API_URL")}/users/status/initialization`,
+    method: "GET",
+  }).then((response) => {
+    if (!response.body.initialized) {
+      cy.visit(`${Cypress.env("WEB_URL")}/users/login`);
+      cy.get("#username").type(Cypress.env("ADMIN_USERNAME"));
+      cy.get("#password").type(Cypress.env("ADMIN_PASSWORD"));
+      cy.get("#loginButton").click();
+    }
+  });
+});
+
+Cypress.Commands.add("login", () => {
+  cy.visit(`${Cypress.env("WEB_URL")}/users/login`);
+  cy.get("#username").type(Cypress.env("ADMIN_USERNAME"));
+  cy.get("#password").type(Cypress.env("ADMIN_PASSWORD"));
   cy.get("#loginButton").click();
 });
