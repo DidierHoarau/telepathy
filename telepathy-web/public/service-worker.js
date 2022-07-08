@@ -1,5 +1,5 @@
-var cacheName = "hello-pwa";
-var filesToCache = ["/", "/index.html", "/index.css"];
+const cacheName = "hello-pwa";
+const filesToCache = ["/", "/index.html", "/index.css"];
 
 /* Start the service worker and cache all of the app's content */
 self.addEventListener("install", function (e) {
