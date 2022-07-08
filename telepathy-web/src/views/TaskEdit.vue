@@ -55,7 +55,7 @@
     </div>
     <br />
     <button v-if="taskId" v-on:click="saveUpdate()" id="saveTaskButton" class="btn btn-primary">Save</button>&nbsp;
-    <button v-if="taskId" v-on:click="remove()" class="btn btn-primary">Delete</button>
+    <button v-if="taskId" v-on:click="remove()" id="deleteButton" class="btn btn-primary">Delete</button>
     <button v-if="!taskId" v-on:click="saveNew()" id="saveTaskButton" class="btn btn-primary">Save</button>
   </div>
 </template>

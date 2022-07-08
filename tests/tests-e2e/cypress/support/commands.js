@@ -41,6 +41,6 @@ Cypress.Commands.add("addTask", (task) => {
 
 Cypress.Commands.add("deleteTask", (task) => {
   cy.get("#navigationTaskList").click();
-  cy.get("h2").contains(task.name).parents(".taskCard").get("#editButton").click();
+  cy.get("h2").contains(task.name).parents(".cardLayout").get("#editButton").click();
   cy.get("#deleteButton").click({ force: true });
 });
