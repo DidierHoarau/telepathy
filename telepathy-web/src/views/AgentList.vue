@@ -1,8 +1,10 @@
 <template>
-  <div class="page_content_container">
-    <h1>Agents</h1>
-    <div class="agent-list row">
-      <div v-for="agent in agents" v-bind:key="agent.id" class="col-sm-12 col-md-6 col-lg-4">
+  <div class="pageContent">
+    <div class="pageHeader">
+      <h1>Agents</h1>
+    </div>
+    <div class="cardList">
+      <div v-for="agent in agents" v-bind:key="agent.id">
         <AgentCard :agent="agent" />
       </div>
     </div>
@@ -41,9 +43,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.agent-list {
-  width: 100%;
-}
-</style>

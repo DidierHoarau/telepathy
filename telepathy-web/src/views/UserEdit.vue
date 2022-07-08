@@ -2,24 +2,23 @@
   <div class="page_content_container">
     <h1 v-if="userId">Update User</h1>
     <h1 v-else>New User</h1>
-    <div class="mb-3">
-      <label class="form-label">Name</label>
-      <input v-model="user.name" type="text" class="form-control" />
+
+    <label class="form-label">Name</label>
+    <input v-model="user.name" type="text" class="form-control" />
+
+    <div v-if="userId" class="form-check form-switch formSection">
+      <input
+        class="form-check-input checkbox"
+        type="checkbox"
+        v-model="passwordEnabled"
+        v-on:click="passwordSwitch()"
+        id="flexSwitchCheckDefault"
+      />
+      <label class="form-label">Password</label>
     </div>
-    <div class="mb-3">
-      <div v-if="userId" class="form-check form-switch">
-        <input
-          class="form-check-input"
-          type="checkbox"
-          v-model="passwordEnabled"
-          v-on:click="passwordSwitch()"
-          id="flexSwitchCheckDefault"
-        />
-        <label class="form-label">Password</label>
-      </div>
-      <label v-if="!userId" class="form-label">Password</label>
-      <input v-model="user.password" type="password" class="form-control" :disabled="!passwordEnabled" />
-    </div>
+    <label v-if="!userId" class="form-label">Password</label>
+    <input v-model="user.password" type="password" class="form-control" :disabled="!passwordEnabled" />
+
     <br />
     <button v-if="userId" v-on:click="saveUpdate()" class="btn btn-primary">Save</button>&nbsp;
     <button v-if="userId" v-on:click="remove()" class="btn btn-primary">Delete</button>
@@ -121,5 +120,3 @@ export default {
   },
 };
 </script>
-
-<style scoped></style>

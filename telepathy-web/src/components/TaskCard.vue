@@ -1,7 +1,7 @@
 <template>
-  <div class="cardlayout">
+  <div class="cardLayout">
     <div class="cardlayout_content">
-      <h2>{{ task.name }}</h2>
+      <h2 id="taskName">{{ task.name }}</h2>
       <div v-if="lastExecution">
         <p>
           {{ lastExecution.status }}
@@ -17,7 +17,7 @@
     </div>
     <div class="cardlayout_actions">
       <p class="text-end">
-        <em v-on:click="edit()" class="bi bi-pencil-square icon-button"></em>
+        <em v-on:click="edit()" id="editButton" class="bi bi-pencil-square icon-button"></em>
         <br /><br />
         <em v-on:click="execute()" class="bi bi-play-circle icon-button"></em>
       </p>
@@ -88,9 +88,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.card {
-  margin: 0.6rem 0.2rem 0.6rem 0.2rem;
-}
-</style>

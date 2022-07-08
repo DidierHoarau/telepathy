@@ -88,3 +88,59 @@ h5 {
 div {
   /* border: 1px solid red; */
 }
+
+/* Form */
+
+label {
+  margin-top: 0.6em;
+}
+
+.formSection {
+  margin-top: 1em;
+}
+
+.checkbox {
+  margin-top: 0.6em;
+}
+
+/* Page */
+
+.pageContent {
+  padding: 1em;
+}
+.pageHeader {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  margin-bottom: 1em;
+}
+
+.pageSeparator {
+  border-top: 2px solid #aaa;
+  margin-top: 1.6em;
+  margin-bottom: 0.8em;
+}
+
+/* Cards */
+
+.cardList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(18em, 1fr));
+  gap: 1.6em;
+  margin: 5px;
+}
+
+.cardLayout {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: 1fr;
+  box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.2);
+  background-color: #f5f5f5;
+  transition: 0.3s;
+  border: 1px solid #e0e0e0;
+}
+
+.cardLayout h2 {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

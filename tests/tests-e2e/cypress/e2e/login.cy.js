@@ -1,10 +1,18 @@
 describe("Login", () => {
-  it("Should login and logout", () => {
-    cy.visit("http://localhost:3000/users/login");
-    cy.get("#username").type("admin");
-    cy.get("#password").type("admin");
+  beforeEach(() => {
+    cy.checkInit();
+    cy.clearCookies();
+    cy.clearLocalStorage();
+  });
+
+  it("Should login", () => {
+    cy.visit(`${Cypress.env("WEB_URL")}/users/login`);
+    cy.get("#username").type(Cypress.env("ADMIN_USERNAME"));
+    cy.get("#password").type(Cypress.env("ADMIN_PASSWORD"));
     cy.get("#loginButton").click();
-    cy.get("#logoutButton").click();
-    cy.login("admin", "admin");
+  });
+
+  it("Should login (with cypress commannd)", () => {
+    cy.login();
   });
 });
