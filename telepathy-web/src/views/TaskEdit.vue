@@ -2,17 +2,21 @@
   <div class="page_content_container">
     <h1 v-if="taskId">Edit Task</h1>
     <h1 v-if="!taskId">New Task</h1>
+
     <label class="form-label">Name</label>
     <input id="taskName" v-model="task.name" type="text" class="form-control" />
+
     <label class="form-label">Script</label>
     <div class="form-floating">
       <textarea class="form-control task-script" id="taskScript" style="height: 300px" v-model="task.script"></textarea>
     </div>
+
     <label class="form-label"
       >Cron Schedule
       <span class="task-schedule">(minute hour day_of_month month day_of_week)</span>
     </label>
     <input id="taskSchedule" v-model="task.schedule" type="text" class="form-control task-schedule" />
+
     <label class="form-label">Tag</label>
     <select id="taskTag" v-model="task.tag" class="form-select" aria-label="Task Tag Selection">
       <option value="">Any</option>
@@ -20,39 +24,32 @@
         {{ tag }}
       </option>
     </select>
-    <div class="mb-3">
-      <label class="form-label">Outputs</label>
-      <div v-if="task.outputDefinitions.length > 0" class="row">
-        <div class="col-6 text-center">Name</div>
-        <div class="col-6 text-center">Pattern (RegEx)</div>
-      </div>
-      <div v-for="(output, index) in task.outputDefinitions" v-bind:key="output.id" class="row p-0 m-0 mb-1">
-        <div class="col-5">
-          <input v-model="output.name" type="text" class="form-control" />
-        </div>
-        <div class="col-6">
-          <input v-model="output.pattern" type="text" class="form-control" />
-        </div>
-        <div class="col-1">
-          <em class="bi bi-trash" v-on:click="deleteOutput(index)"></em>
-        </div>
-      </div>
-      <p><em class="bi bi-plus-square" v-on:click="addOutput()"></em></p>
+
+    <label class="form-label">Outputs</label>
+    <div v-if="task.outputDefinitions.length > 0" class="outputDefinitionsItem">
+      <div class="col-6 text-center">Name</div>
+      <div class="col-6 text-center">Pattern (RegEx)</div>
     </div>
-    <div class="mb-3">
-      <label class="form-label">Webhook</label>
-      <div class="form-check form-switch">
-        <input
-          class="form-check-input"
-          type="checkbox"
-          v-model="webhookEnabled"
-          v-on:click="webhookSwitched()"
-          id="flexSwitchCheckDefault"
-        />
-        <input v-model="task.webhook" type="text" class="form-control" disabled />
-        <label class="form-check-label">Webhook call: {API}/tasks/webhooks/{WEBHOOK_ID}</label>
-      </div>
+    <div v-for="(output, index) in task.outputDefinitions" v-bind:key="output.id" class="outputDefinitionsItem">
+      <input v-model="output.name" type="text" class="form-control" />
+      <input v-model="output.pattern" type="text" class="form-control" />
+      <em class="bi bi-trash" v-on:click="deleteOutput(index)"></em>
     </div>
+    <div class="outputDefinitionsItem"><em class="bi bi-plus-square" v-on:click="addOutput()"></em></div>
+
+    <label class="form-label">Webhook</label>
+    <div class="form-check form-switch">
+      <input
+        class="form-check-input checkbox"
+        type="checkbox"
+        v-model="webhookEnabled"
+        v-on:click="webhookSwitched()"
+        id="flexSwitchCheckDefault"
+      />
+      <input v-model="task.webhook" type="text" class="form-control" disabled />
+      <label class="form-check-label">Webhook call: {API}/tasks/webhooks/{WEBHOOK_ID}</label>
+    </div>
+
     <br />
     <button v-if="taskId" v-on:click="saveUpdate()" id="saveTaskButton" class="btn btn-primary">Save</button>&nbsp;
     <button v-if="taskId" v-on:click="remove()" id="deleteButton" class="btn btn-primary">Delete</button>
@@ -180,5 +177,12 @@ export default {
 }
 .task-schedule {
   font-family: monospace;
+}
+.outputDefinitionsItem {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  padding-left: 1em;
+  gap: 1em;
+  margin-bottom: 0.5em;
 }
 </style>

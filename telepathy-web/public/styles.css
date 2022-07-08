@@ -95,6 +95,14 @@ label {
   margin-top: 0.6em;
 }
 
+.formSection {
+  margin-top: 1em;
+}
+
+.checkbox {
+  margin-top: 0.6em;
+}
+
 /* Page */
 
 .pageContent {
