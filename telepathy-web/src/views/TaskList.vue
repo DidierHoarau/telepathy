@@ -1,34 +1,17 @@
 <template>
-  <div class="task_page_container">
-    <div class="task_page_list page_content_container" v-bind:style="{ gridRow: listGridPosition }">
-      <div class="m-0 p-0">
-        <div class="row">
-          <div class="col-8">
-            <h1>Tasks</h1>
-          </div>
-          <div class="col-4 text-end">
-            <router-link id="addTaskButton" to="/tasks/new"
-              ><em class="bi bi-plus-square icon-button"></em
-            ></router-link>
-          </div>
-        </div>
-      </div>
-      <div id="taskList">
-        <div v-for="folder in taskFolders" v-bind:key="folder.name">
-          <div class="row">
-            <div v-if="folder.name">
-              <hr />
-              <h3>{{ folder.name }}</h3>
-            </div>
-            <div v-for="task in folder.tasks" v-bind:key="task.id" class="col-sm-12 col-md-6 col-lg-4">
-              <TaskCard v-on:click="onTaskClicked(task.id)" :task="task" />
-            </div>
-          </div>
-        </div>
+  <div class="pageContent">
+    <div class="pageHeader">
+      <h1>Tasks</h1>
+      <router-link id="addTaskButton" to="/tasks/new"><em class="bi bi-plus-square icon-button"></em></router-link>
+    </div>
+    <div v-for="folder in taskFolders" v-bind:key="folder.name">
+      <div class="pageSeparator" v-if="taskFolders.length > 0" />
+      <h3 v-if="folder.name">{{ folder.name }}</h3>
+      <div id="taskList" class="cardList">
+        <TaskCard v-for="task in folder.tasks" v-bind:key="task.id" v-on:click="onTaskClicked(task.id)" :task="task" />
       </div>
     </div>
-
-    <div v-if="taskIdSelected" class="task_page_detail page_content_container">
+    <div v-if="taskIdSelected" class="taskDetailPanel">
       <TaskExecutions :taskId="taskIdSelected" />
     </div>
   </div>
@@ -98,26 +81,12 @@ export default {
 </script>
 
 <style scoped>
-#taskList {
-  width: 100%;
-}
-
-.task_page_container {
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 1fr 2fr;
-  width: 100%;
-  height: auto;
-}
-
-.task_page_list {
-  grid-column: 1;
-  overflow-x: hidden;
-  overflow-y: auto;
-  transition: grid-row 2s;
-}
-
-.task_page_detail {
+.taskDetailPanel {
+  position: fixed;
+  margin-left: 0em;
+  width: calc(100%-2em);
+  bottom: 0px;
+  right: 0px;
   grid-column: 1;
   grid-row: 2;
   overflow-x: hidden;

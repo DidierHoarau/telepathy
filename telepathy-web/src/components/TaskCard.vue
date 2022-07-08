@@ -1,5 +1,5 @@
 <template>
-  <div class="taskCard cardlayout">
+  <div class="cardLayout">
     <div class="cardlayout_content">
       <h2 id="taskName">{{ task.name }}</h2>
       <div v-if="lastExecution">
@@ -89,8 +89,4 @@ export default {
 };
 </script>
 
-<style scoped>
-.card {
-  margin: 0.6rem 0.2rem 0.6rem 0.2rem;
-}
-</style>
+<style scoped></style>

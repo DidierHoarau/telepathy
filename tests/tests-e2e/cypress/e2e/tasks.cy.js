@@ -13,7 +13,7 @@ describe("Task Functions", () => {
   it("Should add a Task", () => {
     cy.get("#navigationTaskList").click();
     cy.get("#addTaskButton").click();
-    cy.get("#taskName").type("000_a_task");
+    cy.get("#taskName").type("create/test_0000_c");
     cy.get("#taskScript").type("ls");
     cy.get("#taskSchedule").type("0 0 * * *");
     cy.get("#taskTag").select("Any");
@@ -22,7 +22,7 @@ describe("Task Functions", () => {
 
   it("Should add a Task (cypress command)", () => {
     const task = {
-      name: "test_0000",
+      name: "create/test_0001_c",
       command: "ls",
       schedule: "0 0 * * *",
       tag: "Any",
@@ -30,28 +30,27 @@ describe("Task Functions", () => {
     cy.addTask(task);
   });
 
-  it.only("Should delete a Task", () => {
+  it("Should delete a Task", () => {
     const task = {
-      name: "test_0000",
+      name: `delete/test_0000_del_${new Date().getSeconds()}`,
       command: "ls",
       schedule: "0 0 * * *",
       tag: "Any",
     };
     cy.addTask(task);
     cy.get("#navigationTaskList").click();
-    cy.get(".page_content_container > #taskList")
-      .find(".taskCard")
-      .each(($el, index, $list) => {
-        cy.wrap($el)
-          .find("#taskName")
-          .then((taskName) => {
-            if (taskName.text() === task.name) {
-              cy.wrap($el).get("#editButton").click();
-              cy.get("#deleteButton").click();
-              cy.on("window:confirm", () => true);
-            }
-          });
-      });
-    // cy.addTask(task);
+    cy.get("h2").contains(task.name).parents(".taskCard").get("#editButton").click();
+    cy.get("#deleteButton").click({ force: true });
+  });
+
+  it("Should delete a Task (cypress command)", () => {
+    const task = {
+      name: `test_0000_del_${new Date().getSeconds()}`,
+      command: "ls",
+      schedule: "0 0 * * *",
+      tag: "Any",
+    };
+    cy.addTask(task);
+    cy.deleteTask(task);
   });
 });

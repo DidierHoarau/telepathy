@@ -17,7 +17,7 @@ Cypress.Commands.add("checkInit", () => {
       cy.visit(`${Cypress.env("WEB_URL")}/users/login`);
       cy.get("#username").type(Cypress.env("ADMIN_USERNAME"));
       cy.get("#password").type(Cypress.env("ADMIN_PASSWORD"));
-      cy.get("#loginButton").click();
+      cy.get("#loginButton").click({ force: true });
     }
   });
 });
@@ -26,7 +26,7 @@ Cypress.Commands.add("login", () => {
   cy.visit(`${Cypress.env("WEB_URL")}/users/login`);
   cy.get("#username").type(Cypress.env("ADMIN_USERNAME"));
   cy.get("#password").type(Cypress.env("ADMIN_PASSWORD"));
-  cy.get("#loginButton").click();
+  cy.get("#loginButton").click({ force: true });
 });
 
 Cypress.Commands.add("addTask", (task) => {
@@ -36,5 +36,11 @@ Cypress.Commands.add("addTask", (task) => {
   cy.get("#taskScript").type(task.command);
   cy.get("#taskSchedule").type(task.schedule);
   cy.get("#taskTag").select(task.tag);
-  cy.get("#saveTaskButton").click();
+  cy.get("#saveTaskButton").click({ force: true });
+});
+
+Cypress.Commands.add("deleteTask", (task) => {
+  cy.get("#navigationTaskList").click();
+  cy.get("h2").contains(task.name).parents(".taskCard").get("#editButton").click();
+  cy.get("#deleteButton").click({ force: true });
 });
