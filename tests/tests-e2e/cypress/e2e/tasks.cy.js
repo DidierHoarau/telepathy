@@ -30,27 +30,27 @@ describe("Task Functions", () => {
     cy.addTask(task);
   });
 
-  it("Should delete a Task", () => {
-    const task = {
-      name: `delete/test_0000_del_${new Date().getSeconds()}`,
-      command: "ls",
-      schedule: "0 0 * * *",
-      tag: "Any",
-    };
-    cy.addTask(task);
-    cy.get("#navigationTaskList").click();
-    cy.get("h2").contains(task.name).parents(".taskCard").get("#editButton").click();
-    cy.get("#deleteButton").click({ force: true });
-  });
+  // it("Should delete a Task", () => {
+  //   const task = {
+  //     name: `delete/test_0000_del_${new Date().getSeconds()}`,
+  //     command: "ls",
+  //     schedule: "0 0 * * *",
+  //     tag: "Any",
+  //   };
+  //   cy.addTask(task);
+  //   cy.get("#navigationTaskList").click();
+  //   cy.get("h2").contains(task.name).parents(".taskCard").get("#editButton").click();
+  //   cy.get("#deleteButton").click({ force: true });
+  // });
 
-  it("Should delete a Task (cypress command)", () => {
-    const task = {
-      name: `test_0000_del_${new Date().getSeconds()}`,
-      command: "ls",
-      schedule: "0 0 * * *",
-      tag: "Any",
-    };
-    cy.addTask(task);
-    cy.deleteTask(task);
-  });
+  // it("Should delete a Task (cypress command)", () => {
+  //   const task = {
+  //     name: `test_0000_del_${new Date().getSeconds()}`,
+  //     command: "ls",
+  //     schedule: "0 0 * * *",
+  //     tag: "Any",
+  //   };
+  //   cy.addTask(task);
+  //   cy.deleteTask(task);
+  // });
 });
