@@ -1,6 +1,8 @@
 <template>
   <div class="pageContent">
-    <h1>Agents</h1>
+    <div class="pageHeader">
+      <h1>Agents</h1>
+    </div>
     <div class="cardList">
       <div v-for="agent in agents" v-bind:key="agent.id">
         <AgentCard :agent="agent" />

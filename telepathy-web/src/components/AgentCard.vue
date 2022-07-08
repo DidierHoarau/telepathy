@@ -1,5 +1,5 @@
 <template>
-  <div class="cardlayout">
+  <div class="cardLayout">
     <div class="cardlayout_content">
       <h2 class="card-title">{{ agent.id }}</h2>
       <p>
@@ -25,8 +25,4 @@ export default {
 };
 </script>
 
-<style scoped>
-.card {
-  margin: 0.6rem 0.2rem 0.6rem 0.2rem;
-}
-</style>
+<style scoped></style>
