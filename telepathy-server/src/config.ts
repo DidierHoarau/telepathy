@@ -19,6 +19,7 @@ export class Config {
   public TASK_HISTORY_MAX_COUNT = 100;
   public TASK_HISTORY_MAX_AGE_DAYS = 30;
   public TASK_ALIVE_TIMEOUT = 100;
+  public FILE_REDUNDANCY = 2;
 
   public async reload(): Promise<void> {
     const content = await fse.readJson(this.CONFIG_FILE);
@@ -44,5 +45,6 @@ export class Config {
     setIfSet("JWT_KEY", false);
     setIfSet("TASK_ALIVE_TIMEOUT");
     setIfSet("LOG_LEVEL");
+    setIfSet("FILE_REDUNDANCY");
   }
 }

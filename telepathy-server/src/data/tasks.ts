@@ -1,21 +1,13 @@
-import * as fs from "fs-extra";
 import * as _ from "lodash";
-import { AppContext } from "../appContext";
 import { Task } from "../common-model/task";
+import { FileDBUtils } from "./fileDbUtils";
 
 export class Tasks {
   //
   public tasks: Task[];
 
   public async load(): Promise<void> {
-    if (fs.existsSync(`${AppContext.getConfig().DATA_DIR}/tasks.json`)) {
-      fs.readJSON(`${AppContext.getConfig().DATA_DIR}/tasks.json`).then((data) => {
-        this.tasks = data;
-      });
-    } else {
-      this.tasks = [];
-      await this.save();
-    }
+    this.tasks = await FileDBUtils.load("tasks", []);
   }
 
   public async get(id: string): Promise<Task> {
@@ -59,6 +51,6 @@ export class Tasks {
   }
 
   public async save(): Promise<void> {
-    await fs.writeJSON(`${AppContext.getConfig().DATA_DIR}/tasks.json`, this.tasks);
+    await FileDBUtils.save("tasks", this.tasks);
   }
 }

@@ -5,6 +5,7 @@ import { TaskExecution } from "../common-model/taskExecution";
 import { TaskExecutionStatus } from "../common-model/taskExecutionStatus";
 import { TaskOutput } from "../common-model/taskOutput";
 import { Logger } from "../utils-std-ts/logger";
+import { FileDBUtils } from "./fileDbUtils";
 
 const logger = new Logger("data/taskExecution");
 
@@ -13,14 +14,7 @@ export class TaskExecutions {
   public taskExecutions: TaskExecution[];
 
   public async load(): Promise<void> {
-    if (fs.existsSync(`${AppContext.getConfig().DATA_DIR}/task-executions.json`)) {
-      await fs.readJSON(`${AppContext.getConfig().DATA_DIR}/task-executions.json`).then((data) => {
-        this.taskExecutions = data;
-      });
-    } else {
-      this.taskExecutions = [];
-      await this.save();
-    }
+    this.taskExecutions = await FileDBUtils.load("task-executions", []);
   }
 
   public async get(id: string): Promise<TaskExecution> {
@@ -118,6 +112,6 @@ export class TaskExecutions {
   }
 
   public async save(): Promise<void> {
-    await fs.writeJSON(`${AppContext.getConfig().DATA_DIR}/task-executions.json`, this.taskExecutions);
+    await FileDBUtils.save("task-executions", this.taskExecutions);
   }
 }
