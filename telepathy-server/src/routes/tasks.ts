@@ -12,18 +12,12 @@ const logger = new Logger(path.basename(__filename));
 async function routes(fastify: FastifyInstance): Promise<void> {
   //
   fastify.get("/", async (req, res) => {
-    const tracer = opentelemetry.trace.getTracer("my-service-tracer");
-
-    const span = tracer.startSpan(`[${req.method}] ${req.url}`);
-
     logger.debug(`[${req.method}] ${req.url}`);
     await Auth.mustBeAuthenticated(req, res);
     const tasks = await AppContext.getTasks().list();
     res.status(200).send({
       tasks,
     });
-
-    span.end();
   });
 
   interface Post extends RequestGenericInterface {

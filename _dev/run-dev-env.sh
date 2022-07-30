@@ -6,6 +6,13 @@ REPO_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 
 pm2 delete all || true
 
+
+# Monitoring
+cd "${REPO_DIR}/_dev/monitoring"
+docker compose down || true
+docker compose up -d || true
+
+
 # Server
 cd "${REPO_DIR}/telepathy-server"
 if [ ! -d node_modules ]; then

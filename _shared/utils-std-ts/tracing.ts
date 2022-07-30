@@ -9,7 +9,7 @@ diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.INFO);
 
 if (process.env["OPENTELEMETRY_COLLECTOR_HTTP"]) {
   const exporter = new OTLPTraceExporter({
-    url: process.env["OPENTELEMETRY_COLLECTOR_HTTP"]"http://localhost:4318/v1/traces",
+    url: process.env["OPENTELEMETRY_COLLECTOR_HTTP"],
     headers: {},
   });
   

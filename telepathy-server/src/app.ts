@@ -54,7 +54,7 @@ Promise.resolve().then(async () => {
   /* eslint-disable @typescript-eslint/no-var-requires */
 
   const fastify = Fastify({
-    logger: AppContext.getConfig().LOG_LEVEL === "debug",
+    logger: AppContext.getConfig().LOG_LEVEL === "debug_tmp",
     ignoreTrailingSlash: true,
   });
 
@@ -64,6 +64,18 @@ Promise.resolve().then(async () => {
       methods: "GET,PUT,POST,DELETE",
     });
   }
+
+  fastify.addHook("onRequest", (req, reply, done) => {
+    const tracer = opentelemetry.trace.getTracer("my-service-tracer");
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    // const span = tracer.startSpan(`[${req.method}] ${req.url}`);
+    done();
+  });
+
+  fastify.addHook("onResponse", (req, reply, done) => {
+    // (req as any).span.end();
+    done();
+  });
 
   fastify.register(require("./routes/agents"), { prefix: "/agents" });
   fastify.register(require("./routes/agentsAgentId"), { prefix: "/agents/:agentId" });
