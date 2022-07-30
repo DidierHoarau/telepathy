@@ -2,7 +2,7 @@
   "name": "telepathy-web",
   "version": "1.1.2",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --port 3000",
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview --port 5050",
     "test": "vitest --environment jsdom || true",
