@@ -1,4 +1,6 @@
 import Fastify from "fastify";
+import { SemanticAttributes } from "@opentelemetry/semantic-conventions";
+import { SpanContext, SpanStatusCode } from "@opentelemetry/api";
 
 import { watchFile } from "fs-extra";
 import { AppContext } from "./appContext";
@@ -11,6 +13,8 @@ import { TaskExecutions } from "./data/taskExecutions";
 import { Tasks } from "./data/tasks";
 import { Users } from "./data/users";
 import { Logger } from "./utils-std-ts/logger";
+import { StandardTracer } from "./utils-std-ts/standardTracer";
+import { Span } from "@opentelemetry/sdk-trace-base";
 
 const logger = new Logger("app");
 
@@ -26,16 +30,20 @@ Promise.resolve().then(async () => {
     AppContext.getConfig().reload();
   });
 
+  StandardTracer.initTelemetry();
+
+  const span = StandardTracer.startSpan("init");
+
   const users = new Users();
-  await users.load();
+  await users.load(span);
   AppContext.setUsers(users);
 
   const tasks = new Tasks();
-  await tasks.load();
+  await tasks.load(span);
   AppContext.setTasks(tasks);
 
   const taskExecutions = new TaskExecutions();
-  await taskExecutions.load();
+  await taskExecutions.load(span);
   AppContext.setTaskExecutions(taskExecutions);
 
   const registeredAgents: Agent[] = [];
@@ -45,16 +53,18 @@ Promise.resolve().then(async () => {
 
   const scheduler = new Scheduler();
   AppContext.setScheduler(scheduler);
-  scheduler.calculate();
+  scheduler.calculate(span);
 
   TaskCleanup.startMaintenance();
   TaskCleanup.monitorTimeouts();
+
+  span.end();
 
   // API
   /* eslint-disable @typescript-eslint/no-var-requires */
 
   const fastify = Fastify({
-    logger: AppContext.getConfig().LOG_LEVEL === "debug",
+    logger: AppContext.getConfig().LOG_LEVEL === "debug_tmp",
     ignoreTrailingSlash: true,
   });
 
@@ -64,6 +74,44 @@ Promise.resolve().then(async () => {
       methods: "GET,PUT,POST,DELETE",
     });
   }
+
+  fastify.addHook("onRequest", async (req) => {
+    const tracerSpanApi = StandardTracer.startSpan(`${req.method}-${req.url}`);
+    let context: Span;
+    if (req.headers.otel_context) {
+      const spanContextHeaders = JSON.parse(req.headers.otel_context as string);
+      tracerSpanApi.spanContext().traceId = spanContextHeaders.traceId;
+      tracerSpanApi.spanContext().spanId = spanContextHeaders.spanId;
+      tracerSpanApi.spanContext().isRemote = true;
+    }
+    tracerSpanApi.spanContext();
+    tracerSpanApi.setAttribute(SemanticAttributes.HTTP_METHOD, req.method);
+    tracerSpanApi.setAttribute(
+      SemanticAttributes.HTTP_URL,
+      `${AppContext.getConfig().SERVICE_ID.toLowerCase()}-${AppContext.getConfig().VERSION}-${req.url}`
+    );
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    (req as any).tracerSpanApi = tracerSpanApi;
+  });
+
+  fastify.addHook("onResponse", async (req, reply, payload) => {
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    const tracerSpanApi = (req as any).tracerSpanApi as Span;
+    if (reply.statusCode > 299) {
+      tracerSpanApi.status.code = SpanStatusCode.ERROR;
+    } else {
+      tracerSpanApi.status.code = SpanStatusCode.OK;
+    }
+    tracerSpanApi.setAttribute(SemanticAttributes.HTTP_STATUS_CODE, reply.statusCode);
+    tracerSpanApi.end();
+  });
+
+  fastify.addHook("onError", async (req, reply, error) => {
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    const tracerSpanApi = (req as any).tracerSpanApi as Span;
+    tracerSpanApi.status.code = SpanStatusCode.ERROR;
+    tracerSpanApi.recordException(error);
+  });
 
   fastify.register(require("./routes/agents"), { prefix: "/agents" });
   fastify.register(require("./routes/agentsAgentId"), { prefix: "/agents/:agentId" });

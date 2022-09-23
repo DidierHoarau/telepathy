@@ -1,13 +1,10 @@
 import * as _ from "lodash";
-import * as path from "path";
-import { Logger } from "../utils-std-ts/logger";
 import { FastifyInstance, RequestGenericInterface } from "fastify";
 import { Auth } from "../data/auth";
 import { AppContext } from "../appContext";
 import { TaskExecution } from "../common-model/taskExecution";
 import { TaskExecutionStatus } from "../common-model/taskExecutionStatus";
-
-const logger = new Logger(path.basename(__filename));
+import { StandardTracer } from "../utils-std-ts/standardTracer";
 
 async function routes(fastify: FastifyInstance): Promise<void> {
   //
@@ -17,9 +14,8 @@ async function routes(fastify: FastifyInstance): Promise<void> {
     };
   }
   fastify.get<GetTaskExecutions>("/", async (req, res) => {
-    logger.debug(`[${req.method}] ${req.url}`);
     await Auth.mustBeAuthenticated(req, res);
-    const tasksExecutions = await AppContext.getTaskExecutions().list();
+    const tasksExecutions = await AppContext.getTaskExecutions().list(StandardTracer.getSpanFromRequest(req));
     const output: TaskExecution[] = [];
     for (const tasksExecution of tasksExecutions) {
       if (tasksExecution.taskId === req.params.taskId) {
@@ -36,16 +32,21 @@ async function routes(fastify: FastifyInstance): Promise<void> {
     };
   }
   fastify.post<PostTaskExecutions>("/", async (req, res) => {
-    logger.info(`[${req.method}] ${req.url}`);
-    const taskExecutionAlreadyQueued = _.filter(await AppContext.getTaskExecutions().list(), {
-      status: TaskExecutionStatus.queued,
-      taskId: req.params.taskId,
-    });
+    const taskExecutionAlreadyQueued = _.filter(
+      await AppContext.getTaskExecutions().list(StandardTracer.getSpanFromRequest(req)),
+      {
+        status: TaskExecutionStatus.queued,
+        taskId: req.params.taskId,
+      }
+    );
     if (taskExecutionAlreadyQueued.length > 0) {
       res.status(400).send({ Error: "Execution already queued" });
       return;
     }
-    const newTaskExecution = await AppContext.getTaskExecutions().createFromTaskId(req.params.taskId);
+    const newTaskExecution = await AppContext.getTaskExecutions().createFromTaskId(
+      StandardTracer.getSpanFromRequest(req),
+      req.params.taskId
+    );
     res.status(201).send(newTaskExecution.toJson());
   });
 }

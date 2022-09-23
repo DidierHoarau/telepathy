@@ -1,12 +1,9 @@
-import * as path from "path";
-import { Logger } from "../utils-std-ts/logger";
 import { FastifyInstance, RequestGenericInterface } from "fastify";
 import { Auth } from "../data/auth";
 import { AppContext } from "../appContext";
 import { UserPassword } from "../data/userPassword";
 import { User } from "../common-model/user";
-
-const logger = new Logger(path.basename(__filename));
+import { StandardTracer } from "../utils-std-ts/standardTracer";
 
 async function routes(fastify: FastifyInstance): Promise<void> {
   //
@@ -16,9 +13,8 @@ async function routes(fastify: FastifyInstance): Promise<void> {
     };
   }
   fastify.get<GetUserRequest>("/", async (req, res) => {
-    logger.debug(`[${req.method}] ${req.url}`);
     Auth.mustBeAuthenticated(req, res);
-    const user = await AppContext.getUsers().get(req.params.userId);
+    const user = await AppContext.getUsers().get(StandardTracer.getSpanFromRequest(req), req.params.userId);
     if (!user) {
       return res.status(404).send({ error: "Not Found" });
     }
@@ -36,9 +32,8 @@ async function routes(fastify: FastifyInstance): Promise<void> {
     };
   }
   fastify.put<PutUserRequest>("/", async (req, res) => {
-    logger.info(`[${req.method}] ${req.url}`);
     Auth.mustBeAuthenticated(req, res);
-    const user = await AppContext.getUsers().get(req.params.userId);
+    const user = await AppContext.getUsers().get(StandardTracer.getSpanFromRequest(req), req.params.userId);
     if (!user) {
       return res.status(404).send({ error: "Not Found" });
     }
@@ -48,9 +43,9 @@ async function routes(fastify: FastifyInstance): Promise<void> {
     }
     userUpddate.name = req.body.name;
     if (req.body.password) {
-      await UserPassword.setPassword(userUpddate, req.body.password);
+      await UserPassword.setPassword(StandardTracer.getSpanFromRequest(req), userUpddate, req.body.password);
     }
-    await AppContext.getUsers().update(user.id, userUpddate);
+    await AppContext.getUsers().update(StandardTracer.getSpanFromRequest(req), user.id, userUpddate);
     res.status(201).send({});
   });
 
@@ -60,13 +55,12 @@ async function routes(fastify: FastifyInstance): Promise<void> {
     };
   }
   fastify.delete<DeleteUserRequest>("/", async (req, res) => {
-    logger.info(`[${req.method}] ${req.url}`);
     Auth.mustBeAuthenticated(req, res);
-    const user = await AppContext.getUsers().get(req.params.userId);
+    const user = await AppContext.getUsers().get(StandardTracer.getSpanFromRequest(req), req.params.userId);
     if (!user) {
       return res.status(404).send({ error: "Not Found" });
     }
-    await AppContext.getUsers().delete(user.id);
+    await AppContext.getUsers().delete(StandardTracer.getSpanFromRequest(req), user.id);
     res.status(201).send({});
   });
 }

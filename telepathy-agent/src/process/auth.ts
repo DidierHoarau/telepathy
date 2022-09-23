@@ -1,6 +1,9 @@
+import { SpanStatusCode } from "@opentelemetry/api";
+import { Span } from "@opentelemetry/sdk-trace-base";
 import axios from "axios";
-import { config } from "../config";
+import { AppContext } from "../appContext";
 import { Logger } from "../utils-std-ts/logger";
+import { StandardTracer } from "../utils-std-ts/standardTracer";
 import { Timeout } from "../utils-std-ts/timeout";
 
 const logger = new Logger("agents/auth");
@@ -10,30 +13,37 @@ let token = "";
 export class Auth {
   //
   public static async check(): Promise<void> {
-    logger.debug("Contacting server");
+    const span = StandardTracer.startSpan("Auth_check");
     await axios
-      .post(`${config.SERVER}/agents/${config.AGENT_ID}/session`, {
-        key: config.AGENT_KEY,
-        tags: config.TAGS,
-      })
+      .post(
+        `${AppContext.getConfig().SERVER}/agents/${AppContext.getConfig().AGENT_ID}/session`,
+        {
+          key: AppContext.getConfig().AGENT_KEY,
+          tags: AppContext.getConfig().TAGS,
+        },
+        { headers: StandardTracer.appendHeader(span) }
+      )
       .then(async (res) => {
         token = res.data.token;
-        logger.debug(`Authentication successful to Server: ${config.SERVER}`);
+        span.status.code = SpanStatusCode.OK;
       })
       .catch((error) => {
+        span.status.code = SpanStatusCode.ERROR;
+        span.recordException(error);
         logger.error(`Error authenticating to server: ${error}`);
       });
-    await Timeout.wait(config.HEARTBEAT_CYCLE * 1000);
+    span.end();
+    await Timeout.wait(AppContext.getConfig().HEARTBEAT_CYCLE * 1000);
     Auth.check();
   }
 
   // eslint-disable-line @typescript-eslint/no-explicit-any
-  public static async getAuthHeader(): Promise<any> {
+  public static async getAuthHeader(context: Span): Promise<any> {
     if (token) {
       return {
-        headers: {
+        headers: StandardTracer.appendHeader(context, {
           Authorization: `Bearer ${token}`,
-        },
+        }),
       };
     } else {
       return {};

@@ -1,12 +1,9 @@
-import * as path from "path";
 import * as cron from "node-cron";
-import { Logger } from "../utils-std-ts/logger";
 import { FastifyInstance, RequestGenericInterface } from "fastify";
 import { AppContext } from "../appContext";
 import { Auth } from "../data/auth";
 import { TaskOutputDefinition } from "../common-model/taskOutputDefinition";
-
-const logger = new Logger(path.basename(__filename));
+import { StandardTracer } from "../utils-std-ts/standardTracer";
 
 async function routes(fastify: FastifyInstance): Promise<void> {
   //
@@ -16,9 +13,8 @@ async function routes(fastify: FastifyInstance): Promise<void> {
     };
   }
   fastify.get<GetRequest>("/", async (req, res) => {
-    logger.debug(`[${req.method}] ${req.url}`);
     Auth.mustBeAuthenticated(req, res);
-    const task = await AppContext.getTasks().get(req.params.taskId);
+    const task = await AppContext.getTasks().get(StandardTracer.getSpanFromRequest(req), req.params.taskId);
     res.status(200).send(task.toJson());
   });
 
@@ -28,9 +24,8 @@ async function routes(fastify: FastifyInstance): Promise<void> {
     };
   }
   fastify.delete<DeleteRequest>("/", async (req, res) => {
-    logger.info(`[${req.method}] ${req.url}`);
     Auth.mustBeAuthenticated(req, res);
-    await AppContext.getTasks().delete(req.params.taskId);
+    await AppContext.getTasks().delete(StandardTracer.getSpanFromRequest(req), req.params.taskId);
     res.status(202).send({});
   });
 
@@ -48,9 +43,8 @@ async function routes(fastify: FastifyInstance): Promise<void> {
     };
   }
   fastify.put<PutRequest>("/", async (req, res) => {
-    logger.info(`[${req.method}] ${req.url}`);
     Auth.mustBeAuthenticated(req, res);
-    const task = await AppContext.getTasks().get(req.params.taskId);
+    const task = await AppContext.getTasks().get(StandardTracer.getSpanFromRequest(req), req.params.taskId);
     if (!task) {
       return res.status(404).send({ error: "Not Found" });
     }
@@ -69,8 +63,8 @@ async function routes(fastify: FastifyInstance): Promise<void> {
     task.webhook = req.body.webhook;
     task.tag = req.body.tag;
     task.outputDefinitions = req.body.outputDefinitions;
-    await AppContext.getTasks().update(req.params.taskId, task);
-    AppContext.getScheduler().calculate();
+    await AppContext.getTasks().update(StandardTracer.getSpanFromRequest(req), req.params.taskId, task);
+    AppContext.getScheduler().calculate(StandardTracer.getSpanFromRequest(req));
     res.status(201).send(task);
   });
 }

@@ -5,9 +5,10 @@ import { v4 as uuidv4 } from "uuid";
 
 const logger = new Logger("config");
 
-class Config {
+export class Config {
   //
   public readonly CONFIG_FILE: string = process.env.TELEPATHY_CONFIG || "";
+  public readonly SERVICE_ID = "telepathy-agent";
   public VERSION = 1;
   public SERVER = "";
   public AGENT_ID: string = os.hostname();
@@ -16,10 +17,7 @@ class Config {
   public TAGS: string[] = [];
   public AGENT_KEY: string = uuidv4();
   public TASK_ALIVE_FREQUENCY = 10;
-
-  public constructor() {
-    this.reload();
-  }
+  public OPENTELEMETRY_COLLECTOR_HTTP: string;
 
   public async reload(): Promise<void> {
     const content = await fse.readJson(this.CONFIG_FILE);
@@ -42,6 +40,7 @@ class Config {
     setIfSet("LOG_DEBUG");
     setIfSet("AGENT_KEY", false);
     setIfSet("TASK_ALIVE_FREQUENCY");
+    setIfSet("OPENTELEMETRY_COLLECTOR_HTTP");
   }
 }
 

@@ -1,6 +1,8 @@
+import { Span } from "@opentelemetry/sdk-trace-base";
 import * as _ from "lodash";
 import { AppContext } from "../appContext";
 import { Agent } from "../common-model/agent";
+import { StandardTracer } from "../utils-std-ts/standardTracer";
 import { Logger } from "../utils-std-ts/logger";
 import { Timeout } from "../utils-std-ts/timeout";
 
@@ -14,17 +16,18 @@ export class Agents {
     this.agents = agentList;
   }
 
-  public async get(id): Promise<Agent> {
+  public async get(context: Span, id): Promise<Agent> {
     return _.find(this.agents, {
       id,
     }) as Agent;
   }
 
-  public async list(): Promise<Agent[]> {
+  public async list(context: Span): Promise<Agent[]> {
     return _.cloneDeep(this.agents);
   }
 
-  public async register(newAgent: Agent): Promise<void> {
+  public async register(context: Span, newAgent: Agent): Promise<void> {
+    const span = StandardTracer.startSpan("Agents_register", context);
     const knownAgent: Agent = _.find(this.agents, {
       id: newAgent.id,
     }) as Agent;
@@ -36,6 +39,7 @@ export class Agents {
       newAgent.lastSyncDate = new Date();
       this.agents.push(newAgent);
     }
+    span.end();
   }
 
   public async waitRegistrations(): Promise<void> {
