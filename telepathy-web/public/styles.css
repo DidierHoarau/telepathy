@@ -51,12 +51,6 @@ h5 {
   margin: 0.6rem;
 }
 
-.cardlayout_content {
-  grid-column: 1;
-  grid-row: 1;
-  padding: 0.8rem;
-}
-
 .cardlayout_actions {
   grid-column: 2;
   grid-row: 1;
@@ -137,10 +131,18 @@ label {
   background-color: #f5f5f5;
   transition: 0.3s;
   border: 1px solid #e0e0e0;
+  width: 100%;
 }
 
 .cardLayout h2 {
   white-space: nowrap;
-  overflow: hidden;
   text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.cardlayout_content {
+  grid-column: 1;
+  grid-row: 1;
+  padding: 0.8rem;
+  overflow: hidden;
 }

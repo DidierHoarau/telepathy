@@ -28,7 +28,6 @@ module.exports = {
         DEV_MODE: "true",
         TELEPATHY_CONFIG: "../_dev/config/config-agent.json",
         TELEPATHY_DATA_DIR: "../_dev/data/server",
-        OPENTELEMETRY_COLLECTOR_HTTP: "http://localhost:4318/v1/traces",
       },
     },
     {
@@ -46,7 +45,6 @@ module.exports = {
         DEV_MODE: "true",
         TELEPATHY_CONFIG: "../_dev/config/config-server.json",
         TELEPATHY_DATA_DIR: "../_dev/data/server",
-        OPENTELEMETRY_COLLECTOR_HTTP: "http://localhost:4318/v1/traces",
       },
     },
     {

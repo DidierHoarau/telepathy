@@ -1,11 +1,8 @@
-import * as path from "path";
-import { Logger } from "../utils-std-ts/logger";
 import { FastifyInstance, RequestGenericInterface } from "fastify";
 import { Auth } from "../data/auth";
 import { AppContext } from "../appContext";
 import { TaskExecutionStatus } from "../common-model/taskExecutionStatus";
-
-const logger = new Logger(path.basename(__filename));
+import { StandardTracer } from "../utils-std-ts/standardTracer";
 
 async function routes(fastify: FastifyInstance): Promise<void> {
   //
@@ -16,9 +13,11 @@ async function routes(fastify: FastifyInstance): Promise<void> {
     };
   }
   fastify.get<GetTaskExecutionRequest>("/", async (req, res) => {
-    logger.debug(`[${req.method}] ${req.url}`);
     Auth.mustBeAuthenticated(req, res);
-    const taskExecution = await AppContext.getTaskExecutions().get(req.params.taskExecutionId);
+    const taskExecution = await AppContext.getTaskExecutions().get(
+      StandardTracer.getSpanFromRequest(req),
+      req.params.taskExecutionId
+    );
     res.status(200).send(taskExecution.toJson());
   });
 
@@ -29,9 +28,11 @@ async function routes(fastify: FastifyInstance): Promise<void> {
     };
   }
   fastify.post<PostTaskExecutionCancellationRequest>("/cancellation", async (req, res) => {
-    logger.info(`[${req.method}] ${req.url}`);
     Auth.mustBeAuthenticated(req, res);
-    const taskExecution = await AppContext.getTaskExecutions().get(req.params.taskExecutionId);
+    const taskExecution = await AppContext.getTaskExecutions().get(
+      StandardTracer.getSpanFromRequest(req),
+      req.params.taskExecutionId
+    );
     if (taskExecution.status === TaskExecutionStatus.queued) {
       taskExecution.status = TaskExecutionStatus.cancelled;
     } else if (taskExecution.status === TaskExecutionStatus.executing) {
@@ -39,7 +40,11 @@ async function routes(fastify: FastifyInstance): Promise<void> {
     } else {
       return res.status(403).send({ error: "Wrong Status" });
     }
-    await AppContext.getTaskExecutions().update(req.params.taskExecutionId, taskExecution);
+    await AppContext.getTaskExecutions().update(
+      StandardTracer.getSpanFromRequest(req),
+      req.params.taskExecutionId,
+      taskExecution
+    );
     res.status(202).send({});
   });
 
@@ -50,9 +55,12 @@ async function routes(fastify: FastifyInstance): Promise<void> {
     };
   }
   fastify.get<GetTaskExecutionLogRequest>("/logs", async (req, res) => {
-    logger.debug(`[${req.method}] ${req.url}`);
     Auth.mustBeAuthenticated(req, res);
-    const logs = await AppContext.getTaskExecutions().getLogs(req.params.taskExecutionId, req.params.taskId);
+    const logs = await AppContext.getTaskExecutions().getLogs(
+      StandardTracer.getSpanFromRequest(req),
+      req.params.taskExecutionId,
+      req.params.taskId
+    );
     res.status(200).send({ logs: logs.toString() });
   });
 }

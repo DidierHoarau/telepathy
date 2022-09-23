@@ -7,8 +7,9 @@ const logger = new Logger("config");
 export class Config {
   //
   public readonly CONFIG_FILE: string = process.env.TELEPATHY_CONFIG || "";
-  public readonly API_PORT: number = 8080;
+  public readonly SERVICE_ID = "telepathy-server";
   public VERSION = 1;
+  public readonly API_PORT: number = 8080;
   public AGENT_REGISTRATION_DURATION: number = 30 * 60;
   public JWT_VALIDITY_DURATION: number = 7 * 24 * 3600;
   public CORS_POLICY_ORIGIN: string;
@@ -19,6 +20,8 @@ export class Config {
   public TASK_HISTORY_MAX_COUNT = 100;
   public TASK_HISTORY_MAX_AGE_DAYS = 30;
   public TASK_ALIVE_TIMEOUT = 100;
+  public FILE_REDUNDANCY = 2;
+  public OPENTELEMETRY_COLLECTOR_HTTP: string;
 
   public async reload(): Promise<void> {
     const content = await fse.readJson(this.CONFIG_FILE);
@@ -44,5 +47,7 @@ export class Config {
     setIfSet("JWT_KEY", false);
     setIfSet("TASK_ALIVE_TIMEOUT");
     setIfSet("LOG_LEVEL");
+    setIfSet("FILE_REDUNDANCY");
+    setIfSet("OPENTELEMETRY_COLLECTOR_HTTP");
   }
 }

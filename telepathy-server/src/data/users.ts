@@ -1,24 +1,17 @@
-import * as fs from "fs-extra";
+import { Span } from "@opentelemetry/sdk-trace-base";
 import * as _ from "lodash";
-import { AppContext } from "../appContext";
 import { User } from "../common-model/user";
+import { FileDBUtils } from "./fileDbUtils";
 
 export class Users {
   //
   public users: User[];
 
-  public async load(): Promise<void> {
-    if (fs.existsSync(`${AppContext.getConfig().DATA_DIR}/users.json`)) {
-      await fs.readJSON(`${AppContext.getConfig().DATA_DIR}/users.json`).then((data) => {
-        this.users = data;
-      });
-    } else {
-      this.users = [];
-      await this.save();
-    }
+  public async load(context: Span): Promise<void> {
+    this.users = await FileDBUtils.load(context, "users", []);
   }
 
-  public async get(id: string): Promise<User> {
+  public async get(context: Span, id: string): Promise<User> {
     return User.fromJson(
       _.find(this.users, {
         id,
@@ -26,7 +19,7 @@ export class Users {
     );
   }
 
-  public async getByName(name: string): Promise<User> {
+  public async getByName(context: Span, name: string): Promise<User> {
     return User.fromJson(
       _.find(this.users, {
         name,
@@ -34,35 +27,35 @@ export class Users {
     );
   }
 
-  public async list(): Promise<User[]> {
+  public async list(context: Span): Promise<User[]> {
     return _.cloneDeep(this.users);
   }
 
-  public async add(user: User): Promise<void> {
+  public async add(context: Span, user: User): Promise<void> {
     this.users.push(user);
-    await this.save();
+    await this.save(context);
   }
 
-  public async update(id: string, userUpdate: User): Promise<void> {
+  public async update(context: Span, id: string, userUpdate: User): Promise<void> {
     const user = _.find(this.users, {
       id,
     }) as User;
     user.name = userUpdate.name;
     user.passwordEncrypted = userUpdate.passwordEncrypted;
-    await this.save();
+    await this.save(context);
   }
 
-  public async save(): Promise<void> {
-    await fs.writeJSON(`${AppContext.getConfig().DATA_DIR}/users.json`, this.users);
+  public async save(context: Span): Promise<void> {
+    await FileDBUtils.save(context, "users", this.users);
   }
 
-  public async delete(id: string): Promise<void> {
+  public async delete(context: Span, id: string): Promise<void> {
     const position = _.findIndex(this.users, {
       id,
     });
     if (position >= 0) {
       this.users.splice(position, 1);
     }
-    await this.save();
+    await this.save(context);
   }
 }
