@@ -9,25 +9,28 @@ import { SemanticAttributes, SemanticResourceAttributes } from "@opentelemetry/s
 import opentelemetry, { SpanStatusCode } from "@opentelemetry/api";
 import * as os from "os";
 import { AppContext } from "../appContext";
+import { Config } from "../config";
 
 let tracerInstance;
+let config: Config;
 
 export class StandardTracer {
   //
-  public static initTelemetry() {
+  public static initTelemetry(initConfig: Config) {
+    config = initConfig;
     const provider = new NodeTracerProvider({
       idGenerator: new AWSXRayIdGenerator(),
       resource: new Resource({
-        [SemanticResourceAttributes.SERVICE_NAME]: `${AppContext.getConfig().SERVICE_ID}`,
-        [SemanticResourceAttributes.SERVICE_VERSION]: `${AppContext.getConfig().VERSION}`,
+        [SemanticResourceAttributes.SERVICE_NAME]: `${config.SERVICE_ID}`,
+        [SemanticResourceAttributes.SERVICE_VERSION]: `${config.VERSION}`,
         [SemanticResourceAttributes.SERVICE_NAMESPACE]: "telepathy",
         [SemanticResourceAttributes.HOST_NAME]: os.hostname(),
       }),
     });
     provider.register();
-    if (AppContext.getConfig().OPENTELEMETRY_COLLECTOR_HTTP) {
+    if (config.OPENTELEMETRY_COLLECTOR_HTTP) {
       const exporter = new OTLPTraceExporter({
-        url: AppContext.getConfig().OPENTELEMETRY_COLLECTOR_HTTP,
+        url: config.OPENTELEMETRY_COLLECTOR_HTTP,
         headers: {},
       });
       provider.addSpanProcessor(new BatchSpanProcessor(exporter));
@@ -41,27 +44,28 @@ export class StandardTracer {
   public static startSpan(name, parentContext?: Span): Span {
     const tracer = StandardTracer.getTracer();
     let span;
+    let spanName = name;
+    if (config.OPENTELEMETRY_COLLECTOR_AWS) {
+      spanName = `${config.SERVICE_ID}-${config.VERSION}`;
+    }
     if (parentContext) {
       span = tracer.startSpan(
-        name,
+        spanName,
         undefined,
         opentelemetry.trace.setSpan(opentelemetry.context.active(), parentContext)
       ) as Span;
     } else {
-      span = tracer.startSpan(`${AppContext.getConfig().SERVICE_ID}-${AppContext.getConfig().VERSION}-${name}`) as Span;
-      span.setAttribute(
-        SemanticAttributes.HTTP_URL,
-        `${AppContext.getConfig().SERVICE_ID}-${AppContext.getConfig().VERSION}-${name}`
-      );
+      span = tracer.startSpan(spanName) as Span;
+      if (config.OPENTELEMETRY_COLLECTOR_AWS) {
+        span.setAttribute(SemanticAttributes.HTTP_URL, `${config.SERVICE_ID}-${config.VERSION}-${name}`);
+      }
     }
     return span;
   }
 
   public static getTracer(): any {
     if (!tracerInstance) {
-      tracerInstance = opentelemetry.trace.getTracer(
-        `${AppContext.getConfig().SERVICE_ID}-${AppContext.getConfig().VERSION}`
-      );
+      tracerInstance = opentelemetry.trace.getTracer(`${config.SERVICE_ID}-${config.VERSION}`);
     }
     return tracerInstance;
   }

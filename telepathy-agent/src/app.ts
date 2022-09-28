@@ -20,7 +20,7 @@ Promise.resolve().then(async () => {
     AppContext.getConfig().reload();
   });
 
-  StandardTracer.initTelemetry();
+  StandardTracer.initTelemetry(config);
 
   setTimeout(() => {
     Auth.check();

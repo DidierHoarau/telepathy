@@ -18,6 +18,7 @@ export class Config {
   public AGENT_KEY: string = uuidv4();
   public TASK_ALIVE_FREQUENCY = 10;
   public OPENTELEMETRY_COLLECTOR_HTTP: string;
+  public OPENTELEMETRY_COLLECTOR_AWS = false;
 
   public async reload(): Promise<void> {
     const content = await fse.readJson(this.CONFIG_FILE);
@@ -41,6 +42,7 @@ export class Config {
     setIfSet("AGENT_KEY", false);
     setIfSet("TASK_ALIVE_FREQUENCY");
     setIfSet("OPENTELEMETRY_COLLECTOR_HTTP");
+    setIfSet("OPENTELEMETRY_COLLECTOR_AWS");
   }
 }
 

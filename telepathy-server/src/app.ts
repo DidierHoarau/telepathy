@@ -30,7 +30,7 @@ Promise.resolve().then(async () => {
     AppContext.getConfig().reload();
   });
 
-  StandardTracer.initTelemetry();
+  StandardTracer.initTelemetry(config);
 
   const span = StandardTracer.startSpan("init");
 
@@ -76,7 +76,13 @@ Promise.resolve().then(async () => {
   }
 
   fastify.addHook("onRequest", async (req) => {
-    const tracerSpanApi = StandardTracer.startSpan(`${req.method}-${req.url}`);
+    let spanName = `${req.method}-${req.url}`;
+    let urlName = req.url;
+    if (AppContext.getConfig().OPENTELEMETRY_COLLECTOR_AWS) {
+      spanName = `${AppContext.getConfig().SERVICE_ID}-${AppContext.getConfig().VERSION}`;
+      urlName = `${AppContext.getConfig().SERVICE_ID}-${AppContext.getConfig().VERSION}-${req.method}-${req.url}`;
+    }
+    const tracerSpanApi = StandardTracer.startSpan(spanName);
     let context: Span;
     if (req.headers.otel_context) {
       const spanContextHeaders = JSON.parse(req.headers.otel_context as string);
@@ -86,10 +92,7 @@ Promise.resolve().then(async () => {
     }
     tracerSpanApi.spanContext();
     tracerSpanApi.setAttribute(SemanticAttributes.HTTP_METHOD, req.method);
-    tracerSpanApi.setAttribute(
-      SemanticAttributes.HTTP_URL,
-      `${AppContext.getConfig().SERVICE_ID.toLowerCase()}-${AppContext.getConfig().VERSION}-${req.url}`
-    );
+    tracerSpanApi.setAttribute(SemanticAttributes.HTTP_URL, urlName);
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     (req as any).tracerSpanApi = tracerSpanApi;
   });

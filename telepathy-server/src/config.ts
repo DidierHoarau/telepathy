@@ -22,6 +22,7 @@ export class Config {
   public TASK_ALIVE_TIMEOUT = 100;
   public FILE_REDUNDANCY = 2;
   public OPENTELEMETRY_COLLECTOR_HTTP: string;
+  public OPENTELEMETRY_COLLECTOR_AWS = false;
 
   public async reload(): Promise<void> {
     const content = await fse.readJson(this.CONFIG_FILE);
@@ -49,5 +50,6 @@ export class Config {
     setIfSet("LOG_LEVEL");
     setIfSet("FILE_REDUNDANCY");
     setIfSet("OPENTELEMETRY_COLLECTOR_HTTP");
+    setIfSet("OPENTELEMETRY_COLLECTOR_AWS");
   }
 }
