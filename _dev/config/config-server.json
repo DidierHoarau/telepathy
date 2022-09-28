@@ -7,5 +7,6 @@
   "TASK_HISTORY_MAX_AGE_DAYS": "2",
   "LOG_LEVEL": "debug",
   "FILE_REDUNDANCY": "3",
-  "OPENTELEMETRY_COLLECTOR_HTTP": "http://localhost:4318/v1/traces"
+  "OPENTELEMETRY_COLLECTOR_HTTP": "http://localhost:4318/v1/traces",
+  "OPENTELEMETRY_COLLECTOR_AWS": false
 }

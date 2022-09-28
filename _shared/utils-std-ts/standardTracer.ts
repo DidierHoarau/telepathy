@@ -1,4 +1,3 @@
-import { FastifyInstance } from "fastify";
 import { BatchSpanProcessor, Span } from "@opentelemetry/sdk-trace-base";
 import { NodeTracerProvider } from "@opentelemetry/sdk-trace-node";
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
@@ -6,17 +5,16 @@ import { Resource } from "@opentelemetry/resources";
 import { AWSXRayIdGenerator } from "@opentelemetry/id-generator-aws-xray";
 
 import { SemanticAttributes, SemanticResourceAttributes } from "@opentelemetry/semantic-conventions";
-import opentelemetry, { SpanStatusCode } from "@opentelemetry/api";
+import opentelemetry from "@opentelemetry/api";
 import * as os from "os";
-import { AppContext } from "../appContext";
-import { Config } from "../config";
+import { ConfigInterface } from "./models/configInterface";
 
 let tracerInstance;
-let config: Config;
+let config: ConfigInterface;
 
 export class StandardTracer {
   //
-  public static initTelemetry(initConfig: Config) {
+  public static initTelemetry(initConfig: ConfigInterface) {
     config = initConfig;
     const provider = new NodeTracerProvider({
       idGenerator: new AWSXRayIdGenerator(),

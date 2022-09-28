@@ -115,6 +115,9 @@ export class TaskExecutions {
     command: ChildProcess,
     onCancelled: any
   ): Promise<void> {
+    if (taskExecution.dateExecuted) {
+      return;
+    }
     const span = StandardTracer.startSpan("TaskExecutions_monitorTaskExecutionDefinition", context);
     const taskExecutionServerDefinition = (
       await axios.get(

@@ -1,10 +1,11 @@
 import * as fse from "fs-extra";
 import { v4 as uuidv4 } from "uuid";
 import { Logger } from "./utils-std-ts/logger";
+import { ConfigInterface } from "./utils-std-ts/models/configInterface";
 
 const logger = new Logger("config");
 
-export class Config {
+export class Config implements ConfigInterface {
   //
   public readonly CONFIG_FILE: string = process.env.TELEPATHY_CONFIG || "";
   public readonly SERVICE_ID = "telepathy-server";

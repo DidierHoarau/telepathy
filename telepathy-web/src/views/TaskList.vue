@@ -1,5 +1,5 @@
 <template>
-  <div class="taskPanelWrapper">
+  <div :class="gettaskPanelWrapperClass()">
     <div class="pageContent taskListPanel">
       <div class="pageHeader">
         <h1>Tasks</h1>
@@ -82,6 +82,12 @@ export default {
     async onTaskClicked(id) {
       this.taskIdSelected = id;
     },
+    gettaskPanelWrapperClass() {
+      if (this.taskIdSelected) {
+        return "taskPanelWrapper taskPanelWrapper_showExecution";
+      }
+      return "taskPanelWrapper taskPanelWrapper_hideExecution";
+    },
   },
 };
 </script>
@@ -108,17 +114,17 @@ export default {
   overflow: hidden;
   overflow-y: scroll;
 }
+
 .taskPanelWrapper {
   display: grid;
   height: 100%;
 }
 
-.v-enter-active,
-.v-leave-active {
-  transition: height 0.3s ease;
+.taskPanelWrapper_hideExecution {
+  grid-template-rows: 1fr;
 }
-.v-enter-from,
-.v-leave-to {
-  height: 0;
+
+.taskPanelWrapper_showExecution {
+  grid-template-rows: 2fr 1fr;
 }
 </style>

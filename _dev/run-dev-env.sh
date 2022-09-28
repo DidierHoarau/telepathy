@@ -16,6 +16,7 @@ docker compose up -d || true
 # Server
 cd "${REPO_DIR}/telepathy-server"
 if [ ! -f package-lock.json ]; then
+    rm -fr node_modules
     npm install
 fi
 if [ ! -d node_modules ]; then
@@ -25,6 +26,7 @@ fi
 # Agent
 cd "${REPO_DIR}/telepathy-agent"
 if [ ! -f package-lock.json ]; then
+    rm -fr node_modules
     npm install
 fi
 if [ ! -d node_modules ]; then
@@ -34,6 +36,7 @@ fi
 # Web
 cd "${REPO_DIR}/telepathy-web"
 if [ ! -f package-lock.json ]; then
+    rm -fr node_modules
     npm install
 fi
 if [ ! -d node_modules ]; then
@@ -43,4 +46,4 @@ fi
 # Start
 cd "${REPO_DIR}"
 pm2 start ecosystem.config.js --env development
-pm2 logs telepathy-server
+pm2 logs
