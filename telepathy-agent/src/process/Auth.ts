@@ -1,25 +1,31 @@
 import { SpanStatusCode } from "@opentelemetry/api";
 import { Span } from "@opentelemetry/sdk-trace-base";
 import axios from "axios";
-import { AppContext } from "../appContext";
-import { Logger } from "../utils-std-ts/logger";
-import { StandardTracer } from "../utils-std-ts/standardTracer";
-import { Timeout } from "../utils-std-ts/timeout";
+import { Config } from "../Config";
+import { Logger } from "../utils-std-ts/Logger";
+import { StandardTracer } from "../utils-std-ts/StandardTracer";
+import { Timeout } from "../utils-std-ts/Timeout";
 
 const logger = new Logger("agents/auth");
 
 let token = "";
+let config: Config;
 
 export class Auth {
+  //
+  public static init(configIn: Config) {
+    config = configIn;
+  }
+
   //
   public static async check(): Promise<void> {
     const span = StandardTracer.startSpan("Auth_check");
     await axios
       .post(
-        `${AppContext.getConfig().SERVER}/agents/${AppContext.getConfig().AGENT_ID}/session`,
+        `${config.SERVER}/agents/${config.AGENT_ID}/session`,
         {
-          key: AppContext.getConfig().AGENT_KEY,
-          tags: AppContext.getConfig().TAGS,
+          key: config.AGENT_KEY,
+          tags: config.TAGS,
         },
         { headers: StandardTracer.appendHeader(span) }
       )
@@ -33,7 +39,7 @@ export class Auth {
         logger.error(`Error authenticating to server: ${error}`);
       });
     span.end();
-    await Timeout.wait(AppContext.getConfig().HEARTBEAT_CYCLE * 1000);
+    await Timeout.wait(config.HEARTBEAT_CYCLE * 1000);
     Auth.check();
   }
 

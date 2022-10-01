@@ -1,10 +1,9 @@
 import { watchFile } from "fs-extra";
-import { Auth } from "./process/auth";
-import { Config } from "./config";
-import { TaskExecutions } from "./process/taskExecutions";
-import { Logger } from "./utils-std-ts/logger";
-import { StandardTracer } from "./utils-std-ts/standardTracer";
-import { AppContext } from "./appContext";
+import { Auth } from "./process/Auth";
+import { Config } from "./Config";
+import { TaskExecutions } from "./process/TaskExecutions";
+import { Logger } from "./utils-std-ts/Logger";
+import { StandardTracer } from "./utils-std-ts/StandardTracer";
 
 const logger = new Logger("app");
 
@@ -14,13 +13,15 @@ Promise.resolve().then(async () => {
   //
   const config = new Config();
   await config.reload();
-  AppContext.setConfig(config);
-  watchFile(AppContext.getConfig().CONFIG_FILE, () => {
-    logger.info(`Config updated: ${AppContext.getConfig().CONFIG_FILE}`);
-    AppContext.getConfig().reload();
+  watchFile(config.CONFIG_FILE, () => {
+    logger.info(`Config updated: ${config.CONFIG_FILE}`);
+    config.reload();
   });
 
   StandardTracer.initTelemetry(config);
+
+  Auth.init(config);
+  TaskExecutions.init(config);
 
   setTimeout(() => {
     Auth.check();

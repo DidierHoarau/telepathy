@@ -5,12 +5,16 @@ import { Resource } from "@opentelemetry/resources";
 import { AWSXRayIdGenerator } from "@opentelemetry/id-generator-aws-xray";
 
 import { SemanticAttributes, SemanticResourceAttributes } from "@opentelemetry/semantic-conventions";
-import opentelemetry from "@opentelemetry/api";
+import opentelemetry, { Context } from "@opentelemetry/api";
 import * as os from "os";
-import { ConfigInterface } from "./models/configInterface";
+import { ConfigInterface } from "./models/ConfigInterface";
+import { defaultTextMapSetter, trace, ROOT_CONTEXT } from "@opentelemetry/api";
+import { W3CTraceContextPropagator } from "@opentelemetry/core";
+import { AsyncHooksContextManager } from "@opentelemetry/context-async-hooks";
 
 let tracerInstance;
 let config: ConfigInterface;
+const propagator = new W3CTraceContextPropagator();
 
 export class StandardTracer {
   //
@@ -33,31 +37,38 @@ export class StandardTracer {
       });
       provider.addSpanProcessor(new BatchSpanProcessor(exporter));
     }
+    const contextManager = new AsyncHooksContextManager();
+    contextManager.enable();
+    opentelemetry.context.setGlobalContextManager(contextManager);
   }
 
   public static getSpanFromRequest(req: any): Span {
     return (req as any).tracerSpanApi as Span;
   }
 
-  public static startSpan(name, parentContext?: Span): Span {
+  public static startSpan(name, parentSpan?: Span, parentContext?: Context): Span {
     const tracer = StandardTracer.getTracer();
-    let span;
     let spanName = name;
     if (config.OPENTELEMETRY_COLLECTOR_AWS) {
       spanName = `${config.SERVICE_ID}-${config.VERSION}`;
     }
-    if (parentContext) {
-      span = tracer.startSpan(
+    if (!parentContext) {
+      return tracer.startSpan(spanName, undefined, parentContext) as Span;
+    }
+
+    if (parentSpan) {
+      return tracer.startSpan(
         spanName,
         undefined,
-        opentelemetry.trace.setSpan(opentelemetry.context.active(), parentContext)
+        opentelemetry.trace.setSpan(opentelemetry.context.active(), parentSpan)
       ) as Span;
-    } else {
-      span = tracer.startSpan(spanName) as Span;
-      if (config.OPENTELEMETRY_COLLECTOR_AWS) {
-        span.setAttribute(SemanticAttributes.HTTP_URL, `${config.SERVICE_ID}-${config.VERSION}-${name}`);
-      }
     }
+
+    const span = tracer.startSpan(spanName) as Span;
+    if (config.OPENTELEMETRY_COLLECTOR_AWS) {
+      span.setAttribute(SemanticAttributes.HTTP_URL, `${config.SERVICE_ID}-${config.VERSION}-${name}`);
+    }
+
     return span;
   }
 
@@ -72,6 +83,7 @@ export class StandardTracer {
     if (!headers) {
       headers = {};
     }
+    propagator.inject(trace.setSpanContext(ROOT_CONTEXT, context.spanContext()), headers as any, defaultTextMapSetter);
     headers["OTEL_CONTEXT"] = JSON.stringify(context.spanContext());
     return headers;
   }

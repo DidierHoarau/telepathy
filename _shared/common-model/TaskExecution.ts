@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import { TaskOutput } from "./taskOutput";
+import { TaskOutput } from "./TaskOutput";
 
 export class TaskExecution {
   //

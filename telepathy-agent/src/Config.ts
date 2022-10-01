@@ -1,8 +1,8 @@
 import * as fse from "fs-extra";
 import * as os from "os";
-import { Logger } from "./utils-std-ts/logger";
+import { Logger } from "./utils-std-ts/Logger";
 import { v4 as uuidv4 } from "uuid";
-import { ConfigInterface } from "./utils-std-ts/models/configInterface";
+import { ConfigInterface } from "./utils-std-ts/models/ConfigInterface";
 
 const logger = new Logger("config");
 

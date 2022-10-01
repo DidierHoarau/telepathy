@@ -1,5 +1,5 @@
-import { User } from "../common-model/user";
-import { UserPassword } from "./userPassword";
+import { User } from "../common-model/User";
+import { UserPassword } from "./UserPassword";
 
 test("Password should be successfully verified if it's the same", async () => {
   const password = "testPassword1234";

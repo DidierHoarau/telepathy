@@ -1,28 +1,33 @@
 import * as jwt from "jsonwebtoken";
 import * as path from "path";
-import { AppContext } from "../appContext";
-import { User } from "../common-model/user";
-import { UserSession } from "../common-model/userSession";
-import { Logger } from "../utils-std-ts/logger";
+import { User } from "../common-model/User";
+import { UserSession } from "../common-model/UserSession";
+import { Config } from "../Config";
+import { Logger } from "../utils-std-ts/Logger";
 
 const logger = new Logger(path.basename(__filename));
+let config: Config;
 
 export class Auth {
   //
+  public static init(configIn: Config) {
+    config = configIn;
+  }
+
   public static async generateJWT(user: User): Promise<string> {
     return jwt.sign(
       {
-        exp: Math.floor(Date.now() / 1000) + AppContext.getConfig().JWT_VALIDITY_DURATION,
+        exp: Math.floor(Date.now() / 1000) + config.JWT_VALIDITY_DURATION,
         user_id: user.id,
         user_name: user.name,
       },
-      AppContext.getConfig().JWT_KEY
+      config.JWT_KEY
     );
   }
 
   public static async checkToken(token: string): Promise<any> {
     try {
-      const info = jwt.verify(token, AppContext.getConfig().JWT_KEY);
+      const info = jwt.verify(token, config.JWT_KEY);
       return { authenticated: true, info };
     } catch (err) {
       return {
@@ -35,7 +40,7 @@ export class Auth {
     let authenticated = false;
     if (req.headers.authorization) {
       try {
-        jwt.verify(req.headers.authorization.split(" ")[1], AppContext.getConfig().JWT_KEY);
+        jwt.verify(req.headers.authorization.split(" ")[1], config.JWT_KEY);
         authenticated = true;
       } catch (err) {
         authenticated = false;

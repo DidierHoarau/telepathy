@@ -1,19 +1,27 @@
 import { Span } from "@opentelemetry/sdk-trace-base";
 import * as fs from "fs-extra";
 import * as _ from "lodash";
-import { AppContext } from "../appContext";
-import { TaskExecution } from "../common-model/taskExecution";
-import { TaskExecutionStatus } from "../common-model/taskExecutionStatus";
-import { TaskOutput } from "../common-model/taskOutput";
-import { StandardTracer } from "../utils-std-ts/standardTracer";
-import { Logger } from "../utils-std-ts/logger";
-import { FileDBUtils } from "./fileDbUtils";
+import { TaskExecution } from "../common-model/TaskExecution";
+import { TaskExecutionStatus } from "../common-model/TaskExecutionStatus";
+import { TaskOutput } from "../common-model/TaskOutput";
+import { StandardTracer } from "../utils-std-ts/StandardTracer";
+import { Logger } from "../utils-std-ts/Logger";
+import { FileDBUtils } from "./FileDbUtils";
+import { Config } from "../Config";
+import { TasksData } from "./TasksData";
 
 const logger = new Logger("data/taskExecution");
 
-export class TaskExecutions {
+export class TaskExecutionsData {
   //
-  public taskExecutions: TaskExecution[];
+  constructor(config: Config, tasksData: TasksData) {
+    this.config = config;
+    this.tasksData = tasksData;
+  }
+
+  private config: Config;
+  private tasksData: TasksData;
+  private taskExecutions: TaskExecution[];
 
   public async load(context: Span): Promise<void> {
     this.taskExecutions = await FileDBUtils.load(context, "task-executions", []);
@@ -62,7 +70,7 @@ export class TaskExecutions {
       // Delay to wait for the log to be stable
       setTimeout(async () => {
         taskExecution.outputs = [];
-        const task = await AppContext.getTasks().get(span, taskExecution.taskId);
+        const task = await this.tasksData.get(span, taskExecution.taskId);
         const logs = await this.getLogs(span, taskExecution.id, taskExecution.taskId);
         for (const outputDefinition of task.outputDefinitions) {
           try {
@@ -87,7 +95,7 @@ export class TaskExecutions {
 
   public async createFromTaskId(context: Span, taskId: string): Promise<TaskExecution> {
     const span = StandardTracer.startSpan("TaskExecutions_createFromTaskId", context);
-    const task = await AppContext.getTasks().get(span, taskId);
+    const task = await this.tasksData.get(span, taskId);
     const newTaskExecution = new TaskExecution();
     newTaskExecution.taskId = taskId;
     newTaskExecution.script = task.script;
@@ -101,23 +109,23 @@ export class TaskExecutions {
   }
 
   public async getLogs(context: Span, id: string, taskId: string): Promise<Buffer> {
-    if (fs.existsSync(`${AppContext.getConfig().DATA_DIR}/logs/${taskId}_${id}.log`)) {
-      return await fs.readFile(`${AppContext.getConfig().DATA_DIR}/logs/${taskId}_${id}.log`);
+    if (fs.existsSync(`${this.config.DATA_DIR}/logs/${taskId}_${id}.log`)) {
+      return await fs.readFile(`${this.config.DATA_DIR}/logs/${taskId}_${id}.log`);
     } else {
       return Buffer.from("");
     }
   }
 
   public async deleteLogs(context: Span, id: string, taskId: string): Promise<void> {
-    if (fs.existsSync(`${AppContext.getConfig().DATA_DIR}/logs/${taskId}_${id}.log`)) {
-      await fs.remove(`${AppContext.getConfig().DATA_DIR}/logs/${taskId}_${id}.log`);
+    if (fs.existsSync(`${this.config.DATA_DIR}/logs/${taskId}_${id}.log`)) {
+      await fs.remove(`${this.config.DATA_DIR}/logs/${taskId}_${id}.log`);
     }
   }
 
   public async updateLogs(context: Span, taskExecutionId: string, taskId: string, logs: Buffer): Promise<void> {
     const span = StandardTracer.startSpan("TaskExecutions_updateLogs", context);
-    await fs.ensureDir(`${AppContext.getConfig().DATA_DIR}/logs`);
-    await fs.writeFile(`${AppContext.getConfig().DATA_DIR}/logs/${taskId}_${taskExecutionId}.log`, logs);
+    await fs.ensureDir(`${this.config.DATA_DIR}/logs`);
+    await fs.writeFile(`${this.config.DATA_DIR}/logs/${taskId}_${taskExecutionId}.log`, logs);
     span.end();
   }
 

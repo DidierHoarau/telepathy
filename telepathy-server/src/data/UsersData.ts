@@ -1,9 +1,9 @@
 import { Span } from "@opentelemetry/sdk-trace-base";
 import * as _ from "lodash";
-import { User } from "../common-model/user";
-import { FileDBUtils } from "./fileDbUtils";
+import { User } from "../common-model/User";
+import { FileDBUtils } from "./FileDbUtils";
 
-export class Users {
+export class UsersData {
   //
   public users: User[];
 

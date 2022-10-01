@@ -1,6 +1,6 @@
 import { Span } from "@opentelemetry/sdk-trace-base";
 import * as bcrypt from "bcrypt";
-import { User } from "../common-model/user";
+import { User } from "../common-model/User";
 
 export class UserPassword {
   //

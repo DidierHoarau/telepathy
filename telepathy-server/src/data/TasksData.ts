@@ -1,10 +1,10 @@
 import { Span } from "@opentelemetry/sdk-trace-base";
 import * as _ from "lodash";
-import { Task } from "../common-model/task";
-import { StandardTracer } from "../utils-std-ts/standardTracer";
-import { FileDBUtils } from "./fileDbUtils";
+import { Task } from "../common-model/Task";
+import { StandardTracer } from "../utils-std-ts/StandardTracer";
+import { FileDBUtils } from "./FileDbUtils";
 
-export class Tasks {
+export class TasksData {
   //
   public tasks: Task[];
 

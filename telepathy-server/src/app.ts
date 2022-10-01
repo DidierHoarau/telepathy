@@ -1,20 +1,28 @@
 import Fastify from "fastify";
-import { SemanticAttributes } from "@opentelemetry/semantic-conventions";
-import { SpanContext, SpanStatusCode } from "@opentelemetry/api";
-
 import { watchFile } from "fs-extra";
-import { AppContext } from "./appContext";
-import { Agent } from "./common-model/agent";
-import { Config } from "./config";
-import { Agents } from "./data/agents";
-import { Scheduler } from "./data/scheduler";
-import { TaskCleanup } from "./data/taskCleanup";
-import { TaskExecutions } from "./data/taskExecutions";
-import { Tasks } from "./data/tasks";
-import { Users } from "./data/users";
-import { Logger } from "./utils-std-ts/logger";
-import { StandardTracer } from "./utils-std-ts/standardTracer";
-import { Span } from "@opentelemetry/sdk-trace-base";
+import { Agent } from "./common-model/Agent";
+import { Config } from "./Config";
+import { AgentsData } from "./data/AgentsData";
+import { Scheduler } from "./process/Scheduler";
+import { TaskCleanup } from "./process/TaskCleanup";
+import { TaskExecutionsData } from "./data/TaskExecutionsData";
+import { TasksData } from "./data/TasksData";
+import { UsersData } from "./data/UsersData";
+import { Logger } from "./utils-std-ts/Logger";
+import { StandardTracer } from "./utils-std-ts/StandardTracer";
+import { TasksRoutes } from "./routes/TasksRoutes";
+import { AgentsRoutes } from "./routes/AgentsRoutes";
+import { UserRoutes } from "./routes/UsersRoutes";
+import { TaskIdRoutes } from "./routes/TaskIdRoutes";
+import { AgentIdRoutes } from "./routes/AgentIdRoutes";
+import { TasksExecutuionsRoutes } from "./routes/TasksExecutionsRoutes";
+import { TasksExecutionsForAgentsRoutes } from "./routes/TasksExecutionsForAgentsRoutes";
+import { UserIdRoutes } from "./routes/UserIdRoutes";
+import { TasksWebhooksRoutes } from "./routes/TasksWebhooksRoutes";
+import { TasksExecutionIdRoutes } from "./routes/TasksExecutionIdRoutes";
+import { FileDBUtils } from "./data/FileDbUtils";
+import { Auth } from "./data/Auth";
+import { StandardTracerApi } from "./StandardTracerApi";
 
 const logger = new Logger("app");
 
@@ -24,112 +32,72 @@ Promise.resolve().then(async () => {
   //
   const config = new Config();
   await config.reload();
-  AppContext.setConfig(config);
-  watchFile(AppContext.getConfig().CONFIG_FILE, () => {
-    logger.info(`Config updated: ${AppContext.getConfig().CONFIG_FILE}`);
-    AppContext.getConfig().reload();
+  watchFile(config.CONFIG_FILE, () => {
+    logger.info(`Config updated: ${config.CONFIG_FILE}`);
+    config.reload();
   });
 
   StandardTracer.initTelemetry(config);
 
   const span = StandardTracer.startSpan("init");
 
-  const users = new Users();
-  await users.load(span);
-  AppContext.setUsers(users);
+  FileDBUtils.init(config);
+  Auth.init(config);
 
-  const tasks = new Tasks();
-  await tasks.load(span);
-  AppContext.setTasks(tasks);
+  const usersData = new UsersData();
+  await usersData.load(span);
 
-  const taskExecutions = new TaskExecutions();
-  await taskExecutions.load(span);
-  AppContext.setTaskExecutions(taskExecutions);
+  const tasksData = new TasksData();
+  await tasksData.load(span);
+
+  const taskExecutionsData = new TaskExecutionsData(config, tasksData);
+  await taskExecutionsData.load(span);
 
   const registeredAgents: Agent[] = [];
-  const agentRegistration = new Agents(registeredAgents);
-  AppContext.setAgents(agentRegistration);
-  agentRegistration.waitRegistrations();
+  const agentsData = new AgentsData(config, registeredAgents);
+  agentsData.waitRegistrations();
 
-  const scheduler = new Scheduler();
-  AppContext.setScheduler(scheduler);
+  const scheduler = new Scheduler(tasksData, taskExecutionsData);
   scheduler.calculate(span);
 
-  TaskCleanup.startMaintenance();
-  TaskCleanup.monitorTimeouts();
+  const taskCleanup = new TaskCleanup(config, tasksData, taskExecutionsData);
+  taskCleanup.startMaintenance();
+  taskCleanup.monitorTimeouts();
 
   span.end();
 
   // API
-  /* eslint-disable @typescript-eslint/no-var-requires */
 
   const fastify = Fastify({
-    logger: AppContext.getConfig().LOG_LEVEL === "debug_tmp",
+    logger: config.LOG_LEVEL === "debug_tmp",
     ignoreTrailingSlash: true,
   });
 
-  if (AppContext.getConfig().CORS_POLICY_ORIGIN) {
+  if (config.CORS_POLICY_ORIGIN) {
     fastify.register(require("@fastify/cors"), {
-      origin: AppContext.getConfig().CORS_POLICY_ORIGIN,
+      origin: config.CORS_POLICY_ORIGIN,
       methods: "GET,PUT,POST,DELETE",
     });
   }
 
-  fastify.addHook("onRequest", async (req) => {
-    let spanName = `${req.method}-${req.url}`;
-    let urlName = req.url;
-    if (AppContext.getConfig().OPENTELEMETRY_COLLECTOR_AWS) {
-      spanName = `${AppContext.getConfig().SERVICE_ID}-${AppContext.getConfig().VERSION}`;
-      urlName = `${AppContext.getConfig().SERVICE_ID}-${AppContext.getConfig().VERSION}-${req.method}-${req.url}`;
-    }
-    const tracerSpanApi = StandardTracer.startSpan(spanName);
-    let context: Span;
-    if (req.headers.otel_context) {
-      const spanContextHeaders = JSON.parse(req.headers.otel_context as string);
-      tracerSpanApi.spanContext().traceId = spanContextHeaders.traceId;
-      tracerSpanApi.spanContext().spanId = spanContextHeaders.spanId;
-      tracerSpanApi.spanContext().isRemote = true;
-    }
-    tracerSpanApi.spanContext();
-    tracerSpanApi.setAttribute(SemanticAttributes.HTTP_METHOD, req.method);
-    tracerSpanApi.setAttribute(SemanticAttributes.HTTP_URL, urlName);
-    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    (req as any).tracerSpanApi = tracerSpanApi;
-  });
+  StandardTracerApi.registerHooks(fastify, config);
 
-  fastify.addHook("onResponse", async (req, reply, payload) => {
-    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    const tracerSpanApi = (req as any).tracerSpanApi as Span;
-    if (reply.statusCode > 299) {
-      tracerSpanApi.status.code = SpanStatusCode.ERROR;
-    } else {
-      tracerSpanApi.status.code = SpanStatusCode.OK;
-    }
-    tracerSpanApi.setAttribute(SemanticAttributes.HTTP_STATUS_CODE, reply.statusCode);
-    tracerSpanApi.end();
+  fastify.register(new AgentsRoutes(agentsData).getRoutes, { prefix: "/agents" });
+  fastify.register(new AgentIdRoutes(config, agentsData, taskExecutionsData).getRoutes, { prefix: "/agents/:agentId" });
+  fastify.register(new TasksRoutes(tasksData, scheduler).getRoutes, { prefix: "/tasks" });
+  fastify.register(new TaskIdRoutes(tasksData, scheduler).getRoutes, { prefix: "/tasks/:taskId" });
+  fastify.register(new TasksExecutuionsRoutes(taskExecutionsData).getRoutes, { prefix: "/tasks/:taskId/executions" });
+  fastify.register(new TasksExecutionsForAgentsRoutes(taskExecutionsData).getRoutes, {
+    prefix: "/tasks/:taskId/executions/agent",
   });
-
-  fastify.addHook("onError", async (req, reply, error) => {
-    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    const tracerSpanApi = (req as any).tracerSpanApi as Span;
-    tracerSpanApi.status.code = SpanStatusCode.ERROR;
-    tracerSpanApi.recordException(error);
-  });
-
-  fastify.register(require("./routes/agents"), { prefix: "/agents" });
-  fastify.register(require("./routes/agentsAgentId"), { prefix: "/agents/:agentId" });
-  fastify.register(require("./routes/tasks"), { prefix: "/tasks" });
-  fastify.register(require("./routes/tasksTaskId"), { prefix: "/tasks/:taskId" });
-  fastify.register(require("./routes/tasksTaskIdExecutions"), { prefix: "/tasks/:taskId/executions" });
-  fastify.register(require("./routes/tasksTaskIdExecutionsAgent"), { prefix: "/tasks/:taskId/executions/agent" });
-  fastify.register(require("./routes/tasksTaskIdExecutionsExecutionId"), {
+  fastify.register(new TasksExecutionIdRoutes(taskExecutionsData).getRoutes, {
     prefix: "/tasks/:taskId/executions/:taskExecutionId",
   });
-  fastify.register(require("./routes/tasksWebhooks"), { prefix: "/tasks/webhooks" });
-  fastify.register(require("./routes/users"), { prefix: "/users" });
-  fastify.register(require("./routes/usersUserId"), { prefix: "/users/:userId" });
+  fastify.register(new TasksWebhooksRoutes(tasksData, taskExecutionsData).getRoutes, { prefix: "/tasks/webhooks" });
+  fastify.register(new UserRoutes(usersData).getRoutes, { prefix: "/users" });
+  fastify.register(new UserIdRoutes(usersData).getRoutes, { prefix: "/users/:userId" });
 
-  fastify.listen({ port: AppContext.getConfig().API_PORT, host: "0.0.0.0" }, (err) => {
+  fastify.listen({ port: config.API_PORT, host: "0.0.0.0" }, (err) => {
     if (err) {
       logger.error(err);
       fastify.log.error(err);

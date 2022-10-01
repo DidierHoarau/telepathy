@@ -1,27 +1,29 @@
 import axios from "axios";
 import * as _ from "lodash";
-import { Auth } from "./auth";
-import { TaskExecution } from "../common-model/taskExecution";
-import { TaskExecutionStatus } from "../common-model/taskExecutionStatus";
-import { Logger } from "../utils-std-ts/logger";
-import { Timeout } from "../utils-std-ts/timeout";
+import { Auth } from "./Auth";
+import { TaskExecution } from "../common-model/TaskExecution";
+import { TaskExecutionStatus } from "../common-model/TaskExecutionStatus";
+import { Logger } from "../utils-std-ts/Logger";
+import { Timeout } from "../utils-std-ts/Timeout";
 import { ChildProcess, exec } from "child_process";
-import { AppContext } from "../appContext";
-import { StandardTracer } from "../utils-std-ts/standardTracer";
+import { StandardTracer } from "../utils-std-ts/StandardTracer";
 import { Span } from "@opentelemetry/sdk-trace-base";
 import { SpanStatusCode } from "@opentelemetry/api";
+import { Config } from "../Config";
 
 const logger = new Logger("tasks/taskExecutions");
+let config: Config;
 
 export class TaskExecutions {
   //
+  public static init(configIn: Config) {
+    config = configIn;
+  }
+
   public static async check(): Promise<void> {
     const span = StandardTracer.startSpan("TaskExecutions_check");
     await axios
-      .get(
-        `${AppContext.getConfig().SERVER}/agents/${AppContext.getConfig().AGENT_ID}/tasks/executions`,
-        await Auth.getAuthHeader(span)
-      )
+      .get(`${config.SERVER}/agents/${config.AGENT_ID}/tasks/executions`, await Auth.getAuthHeader(span))
       .then(async (res) => {
         if (_.isArray(res.data.task_executions) && res.data.task_executions.length > 0) {
           for (const taskExecution of res.data.task_executions as TaskExecution[]) {
@@ -36,7 +38,7 @@ export class TaskExecutions {
         logger.error(`Error processing task executions: ${error}`);
       });
     span.end();
-    await Timeout.wait(AppContext.getConfig().HEARTBEAT_CYCLE * 1000);
+    await Timeout.wait(config.HEARTBEAT_CYCLE * 1000);
     TaskExecutions.check();
   }
 
@@ -45,10 +47,10 @@ export class TaskExecutions {
     span.setAttribute("process", "TaskExecutions_processExecution");
     span.setAttribute("taskExecution", taskExecution.id);
     taskExecution.status = TaskExecutionStatus.executing;
-    taskExecution.agentId = AppContext.getConfig().AGENT_ID;
+    taskExecution.agentId = config.AGENT_ID;
     taskExecution.dateExecuting = new Date();
     await axios.put(
-      `${AppContext.getConfig().SERVER}/tasks/${taskExecution.taskId}/executions/agent/${taskExecution.id}`,
+      `${config.SERVER}/tasks/${taskExecution.taskId}/executions/agent/${taskExecution.id}`,
       taskExecution,
       await Auth.getAuthHeader(span)
     );
@@ -65,7 +67,7 @@ export class TaskExecutions {
     command.stdout.on("data", async (data) => {
       outputRaw += data;
       await axios.put(
-        `${AppContext.getConfig().SERVER}/tasks/${taskExecution.taskId}/executions/agent/${taskExecution.id}/logs`,
+        `${config.SERVER}/tasks/${taskExecution.taskId}/executions/agent/${taskExecution.id}/logs`,
         { logs: outputRaw },
         await Auth.getAuthHeader(span)
       );
@@ -74,7 +76,7 @@ export class TaskExecutions {
     command.stderr.on("data", async (data) => {
       outputRaw += data;
       await axios.put(
-        `${AppContext.getConfig().SERVER}/tasks/${taskExecution.taskId}/executions/agent/${taskExecution.id}/logs`,
+        `${config.SERVER}/tasks/${taskExecution.taskId}/executions/agent/${taskExecution.id}/logs`,
         { logs: outputRaw },
         await Auth.getAuthHeader(span)
       );
@@ -89,7 +91,7 @@ export class TaskExecutions {
       span.setAttribute("TaskExecutionStatus", TaskExecutionStatus.failed);
       span.status.code = SpanStatusCode.ERROR;
       await axios.put(
-        `${AppContext.getConfig().SERVER}/tasks/${taskExecution.taskId}/executions/agent/${taskExecution.id}/logs`,
+        `${config.SERVER}/tasks/${taskExecution.taskId}/executions/agent/${taskExecution.id}/logs`,
         { logs: outputRaw },
         await Auth.getAuthHeader(span)
       );
@@ -101,7 +103,7 @@ export class TaskExecutions {
       taskExecution.success = true;
       taskExecution.status = finalStatus;
       await axios.put(
-        `${AppContext.getConfig().SERVER}/tasks/${taskExecution.taskId}/executions/agent/${taskExecution.id}`,
+        `${config.SERVER}/tasks/${taskExecution.taskId}/executions/agent/${taskExecution.id}`,
         taskExecution,
         await Auth.getAuthHeader(span)
       );
@@ -121,7 +123,7 @@ export class TaskExecutions {
     const span = StandardTracer.startSpan("TaskExecutions_monitorTaskExecutionDefinition", context);
     const taskExecutionServerDefinition = (
       await axios.get(
-        `${AppContext.getConfig().SERVER}/tasks/${taskExecution.taskId}/executions/agent/${taskExecution.id}`,
+        `${config.SERVER}/tasks/${taskExecution.taskId}/executions/agent/${taskExecution.id}`,
         await Auth.getAuthHeader(span)
       )
     ).data;
@@ -137,7 +139,7 @@ export class TaskExecutions {
     ) {
       setTimeout(() => {
         this.monitorTaskExecutionDefinition(context, taskExecution, command, onCancelled);
-      }, AppContext.getConfig().TASK_ALIVE_FREQUENCY * 1000);
+      }, config.TASK_ALIVE_FREQUENCY * 1000);
     }
   }
 }
