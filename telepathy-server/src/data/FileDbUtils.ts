@@ -37,13 +37,11 @@ export class FileDBUtils {
 
   /* eslint-disable @typescript-eslint/no-explicit-any */
   public static async save(context: Span, collection: string, content: any): Promise<void> {
-    const span = StandardTracer.startSpan("FileDBUtils_save", context);
     for (let i = 0; i < Math.max(config.FILE_REDUNDANCY, 1); i++) {
       if (i > 0) {
         await Timeout.wait(200);
       }
       await fs.writeJSON(`${config.DATA_DIR}/${collection}${i > 0 ? `.${i}` : ""}.json`, content);
     }
-    span.end();
   }
 }
