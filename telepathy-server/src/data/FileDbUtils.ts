@@ -1,6 +1,5 @@
 import { Span } from "@opentelemetry/sdk-trace-base";
 import * as fs from "fs-extra";
-import * as _ from "lodash";
 import { StandardTracer } from "../utils-std-ts/StandardTracer";
 import { Logger } from "../utils-std-ts/Logger";
 import { Timeout } from "../utils-std-ts/Timeout";

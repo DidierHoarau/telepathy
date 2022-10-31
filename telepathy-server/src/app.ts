@@ -74,6 +74,7 @@ Promise.resolve().then(async () => {
   });
 
   if (config.CORS_POLICY_ORIGIN) {
+    /* eslint-disable-next-line */
     fastify.register(require("@fastify/cors"), {
       origin: config.CORS_POLICY_ORIGIN,
       methods: "GET,PUT,POST,DELETE",

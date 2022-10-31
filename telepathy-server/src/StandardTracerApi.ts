@@ -22,7 +22,7 @@ export class StandardTracerApi {
       }
       const callerContext = propagator.extract(ROOT_CONTEXT, req.headers, defaultTextMapGetter);
       api.context.with(callerContext, () => {
-        let span = StandardTracer.startSpan(spanName);
+        const span = StandardTracer.startSpan(spanName);
         span.setAttribute(SemanticAttributes.HTTP_METHOD, req.method);
         span.setAttribute(SemanticAttributes.HTTP_URL, urlName);
         /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
