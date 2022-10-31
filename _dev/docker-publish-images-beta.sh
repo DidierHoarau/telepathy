@@ -29,3 +29,4 @@ function buildService {
 
 buildService agent alpine
 buildService server alpine
+buildService web alpine
