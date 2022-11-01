@@ -46,14 +46,11 @@ export class StandardTracer {
     return (req as any).tracerSpanApi as Span;
   }
 
-  public static startSpan(name, parentSpan?: Span, parentContext?: Context): Span {
+  public static startSpan(name, parentSpan?: Span): Span {
     const tracer = StandardTracer.getTracer();
     let spanName = name;
     if (config.OPENTELEMETRY_COLLECTOR_AWS) {
       spanName = `${config.SERVICE_ID}-${config.VERSION}`;
-    }
-    if (!parentContext) {
-      return tracer.startSpan(spanName, undefined, parentContext) as Span;
     }
 
     if (parentSpan) {
@@ -84,7 +81,6 @@ export class StandardTracer {
       headers = {};
     }
     propagator.inject(trace.setSpanContext(ROOT_CONTEXT, context.spanContext()), headers as any, defaultTextMapSetter);
-    headers["OTEL_CONTEXT"] = JSON.stringify(context.spanContext());
     return headers;
   }
 }
