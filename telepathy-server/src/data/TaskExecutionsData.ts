@@ -69,7 +69,7 @@ export class TaskExecutionsData {
     if (taskExecution.status === TaskExecutionStatus.executed) {
       // Delay to wait for the log to be stable
       setTimeout(async () => {
-        taskExecution.outputs = [];
+        const outputs = [];
         const task = await this.tasksData.get(span, taskExecution.taskId);
         const logs = await this.getLogs(span, taskExecution.id, taskExecution.taskId);
         for (const outputDefinition of task.outputDefinitions) {
@@ -81,14 +81,15 @@ export class TaskExecutionsData {
               taskOutput.name = outputDefinition.name;
               taskOutput.value = match[1];
               taskOutput.taskOutputDefinitionId = outputDefinition.id;
-              taskExecution.outputs.push(taskOutput);
+              outputs.push(taskOutput);
             }
-            await this.save(span);
           } catch (error) {
             span.recordException(error);
             logger.error(`Output Pattern Matching Failed: ${error}`);
           }
         }
+        taskExecution.outputs = outputs;
+        await this.save(span);
       }, 1000);
     }
   }
