@@ -2,9 +2,9 @@ import * as cron from "node-cron";
 import { FastifyInstance, RequestGenericInterface } from "fastify";
 import { Auth } from "../data/Auth";
 import { Task } from "../common-model/Task";
-import { StandardTracer } from "../utils-std-ts/StandardTracer";
 import { TasksData } from "../data/TasksData";
 import { Scheduler } from "../process/Scheduler";
+import { StandardTracerGetSpanFromRequest } from "../utils-std-ts/StandardTracer";
 
 let taskData: TasksData;
 let scheduler: Scheduler;
@@ -20,7 +20,7 @@ export class TasksRoutes {
     //
     fastify.get("/", async (req, res) => {
       await Auth.mustBeAuthenticated(req, res);
-      const tasks = await taskData.list(StandardTracer.getSpanFromRequest(req));
+      const tasks = await taskData.list(StandardTracerGetSpanFromRequest(req));
       res.status(200).send({
         tasks,
       });
@@ -46,8 +46,8 @@ export class TasksRoutes {
       }
 
       const newTask = Task.fromJson(req.body);
-      await taskData.add(StandardTracer.getSpanFromRequest(req), newTask);
-      scheduler.calculate(StandardTracer.getSpanFromRequest(req));
+      await taskData.add(StandardTracerGetSpanFromRequest(req), newTask);
+      scheduler.calculate(StandardTracerGetSpanFromRequest(req));
       res.status(201).send(newTask.toJson());
     });
   }

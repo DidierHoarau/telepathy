@@ -3,7 +3,7 @@ import { Auth } from "./process/Auth";
 import { Config } from "./Config";
 import { TaskExecutions } from "./process/TaskExecutions";
 import { Logger } from "./utils-std-ts/Logger";
-import { StandardTracer } from "./utils-std-ts/StandardTracer";
+import { StandardTracerInitTelemetry } from "./utils-std-ts/StandardTracer";
 
 const logger = new Logger("app");
 
@@ -18,7 +18,7 @@ Promise.resolve().then(async () => {
     config.reload();
   });
 
-  StandardTracer.initTelemetry(config);
+  StandardTracerInitTelemetry(config);
 
   Auth.init(config);
   TaskExecutions.init(config);

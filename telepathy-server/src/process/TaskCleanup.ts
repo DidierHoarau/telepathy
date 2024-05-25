@@ -1,12 +1,12 @@
 import { Span } from "@opentelemetry/sdk-trace-base";
 import * as _ from "lodash";
 import { TaskExecutionStatus } from "../common-model/TaskExecutionStatus";
-import { StandardTracer } from "../utils-std-ts/StandardTracer";
 import { Logger } from "../utils-std-ts/Logger";
-import { Timeout } from "../utils-std-ts/Timeout";
 import { Config } from "../Config";
 import { TaskExecutionsData } from "../data/TaskExecutionsData";
 import { TasksData } from "../data/TasksData";
+import { StandardTracerStartSpan } from "../utils-std-ts/StandardTracer";
+import { TimeoutWait } from "../utils-std-ts/Timeout";
 
 const logger = new Logger("data/taskCleanup");
 
@@ -23,7 +23,7 @@ export class TaskCleanup {
   private taskExecutionsData: TaskExecutionsData;
 
   public async startMaintenance(): Promise<void> {
-    const span = StandardTracer.startSpan("TaskCleanup_startMaintenance");
+    const span = StandardTracerStartSpan("TaskCleanup_startMaintenance");
     logger.info("Start Task execution maintenance");
     await this.cleanByDate(span).catch((error) => {
       logger.error(error);
@@ -32,22 +32,22 @@ export class TaskCleanup {
       logger.error(error);
     });
     span.end();
-    await Timeout.wait(1000 * 60 * 60);
+    await TimeoutWait(1000 * 60 * 60);
     this.startMaintenance();
   }
 
   public async monitorTimeouts(): Promise<void> {
-    const span = StandardTracer.startSpan("TaskCleanup_monitorTimeouts");
+    const span = StandardTracerStartSpan("TaskCleanup_monitorTimeouts");
     await this.cleanTimedOut(span).catch((error) => {
       logger.error(error);
     });
     span.end();
-    await Timeout.wait(this.config.TASK_ALIVE_TIMEOUT * 1000);
+    await TimeoutWait(this.config.TASK_ALIVE_TIMEOUT * 1000);
     this.monitorTimeouts();
   }
 
   private async cleanByDate(context: Span): Promise<void> {
-    const span = StandardTracer.startSpan("TaskCleanup_cleanByDate", context);
+    const span = StandardTracerStartSpan("TaskCleanup_cleanByDate", context);
     const taskExecutions = await this.taskExecutionsData.list(span);
     for (const taskExecution of taskExecutions) {
       if (!taskExecution.dateQueued) {
@@ -64,7 +64,7 @@ export class TaskCleanup {
   }
 
   private async cleanByCount(context: Span): Promise<void> {
-    const span = StandardTracer.startSpan("TaskCleanup_cleanByCount", context);
+    const span = StandardTracerStartSpan("TaskCleanup_cleanByCount", context);
     const taskExecutions = await this.taskExecutionsData.list(span);
     const tasks = await this.tasksData.list(span);
     for (const task of tasks) {
@@ -82,7 +82,7 @@ export class TaskCleanup {
   }
 
   private async cleanTimedOut(context: Span): Promise<void> {
-    const span = StandardTracer.startSpan("TaskCleanup_cleanTimedOut", context);
+    const span = StandardTracerStartSpan("TaskCleanup_cleanTimedOut", context);
     const taskExecutions = await this.taskExecutionsData.list(span);
     for (const taskExecution of taskExecutions) {
       if (

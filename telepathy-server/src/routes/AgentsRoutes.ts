@@ -1,7 +1,7 @@
 import { FastifyInstance } from "fastify";
 import { Auth } from "../data/Auth";
-import { StandardTracer } from "../utils-std-ts/StandardTracer";
 import { AgentsData } from "../data/AgentsData";
+import { StandardTracerGetSpanFromRequest } from "../utils-std-ts/StandardTracer";
 
 let agentData: AgentsData;
 
@@ -15,14 +15,14 @@ export class AgentsRoutes {
     //
     fastify.get("/", async (req, res) => {
       await Auth.mustBeAuthenticated(req, res);
-      const agents = await agentData.list(StandardTracer.getSpanFromRequest(req));
+      const agents = await agentData.list(StandardTracerGetSpanFromRequest(req));
       res.status(200).send({
         agents,
       });
     });
 
     fastify.get("/tags", async (req, res) => {
-      const agents = await agentData.list(StandardTracer.getSpanFromRequest(req));
+      const agents = await agentData.list(StandardTracerGetSpanFromRequest(req));
       const tags = [];
       for (const agent of agents) {
         for (const tag of agent.tags) {

@@ -4,12 +4,12 @@ import { Auth } from "./Auth";
 import { TaskExecution } from "../common-model/TaskExecution";
 import { TaskExecutionStatus } from "../common-model/TaskExecutionStatus";
 import { Logger } from "../utils-std-ts/Logger";
-import { Timeout } from "../utils-std-ts/Timeout";
 import { ChildProcess, exec } from "child_process";
-import { StandardTracer } from "../utils-std-ts/StandardTracer";
 import { Span } from "@opentelemetry/sdk-trace-base";
 import { SpanStatusCode } from "@opentelemetry/api";
 import { Config } from "../Config";
+import { TimeoutWait } from "../utils-std-ts/Timeout";
+import { StandardTracerStartSpan } from "../utils-std-ts/StandardTracer";
 
 const logger = new Logger("tasks/taskExecutions");
 let config: Config;
@@ -21,7 +21,7 @@ export class TaskExecutions {
   }
 
   public static async check(): Promise<void> {
-    const span = StandardTracer.startSpan("TaskExecutions_check");
+    const span = StandardTracerStartSpan("TaskExecutions_check");
     await axios
       .get(`${config.SERVER}/agents/${config.AGENT_ID}/tasks/executions`, await Auth.getAuthHeader(span))
       .then(async (res) => {
@@ -38,12 +38,12 @@ export class TaskExecutions {
         logger.error(`Error processing task executions: ${error}`);
       });
     span.end();
-    await Timeout.wait(config.HEARTBEAT_CYCLE * 1000);
+    await TimeoutWait(config.HEARTBEAT_CYCLE * 1000);
     TaskExecutions.check();
   }
 
   private static async processExecution(taskExecution: TaskExecution): Promise<void> {
-    const span = StandardTracer.startSpan("TaskExecutions_processExecution");
+    const span = StandardTracerStartSpan("TaskExecutions_processExecution");
     span.setAttribute("process", "TaskExecutions_processExecution");
     span.setAttribute("taskExecution", taskExecution.id);
     taskExecution.status = TaskExecutionStatus.executing;
@@ -120,7 +120,7 @@ export class TaskExecutions {
     if (taskExecution.dateExecuted) {
       return;
     }
-    const span = StandardTracer.startSpan("TaskExecutions_monitorTaskExecutionDefinition", context);
+    const span = StandardTracerStartSpan("TaskExecutions_monitorTaskExecutionDefinition", context);
     const taskExecutionServerDefinition = (
       await axios.get(
         `${config.SERVER}/tasks/${taskExecution.taskId}/executions/agent/${taskExecution.id}`,

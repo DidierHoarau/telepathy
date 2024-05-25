@@ -1,6 +1,14 @@
 module.exports = {
   apps: [
     {
+      name: "telepathy-proxy",
+      cwd: "telepathy-proxy",
+      script: "npm",
+      args: "run start",
+      autorestart: false,
+      ignore_watch: ["node_modules"],
+    },
+    {
       name: "telepathy-shared",
       cwd: "_shared",
       script: "npm",
