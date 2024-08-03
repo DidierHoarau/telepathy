@@ -62,7 +62,6 @@ import axios from "axios";
 import Config from "~~/services/Config.ts";
 import { EventBus, EventTypes, handleError } from "../../services/EventBus";
 import { AuthService } from "../../services/AuthService";
-import router from "../router";
 
 export default {
   name: "TaskEdit",

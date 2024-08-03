@@ -1,0 +1,49 @@
+# BUILD
+FROM node:20 AS builder
+
+WORKDIR /opt/app
+
+COPY telepathy-server telepathy-server
+COPY telepathy-agent telepathy-agent
+COPY telepathy-web telepathy-web
+COPY _shared _shared
+
+RUN cd telepathy-server && \
+    npm ci && \
+    npm run build
+
+RUN cd telepathy-agent && \
+    npm ci && \
+    npm run build
+
+RUN cd telepathy-web && \
+    export CYPRESS_INSTALL_BINARY=0 && \
+    npm ci && \
+    npm run generate
+
+# RUN
+FROM node:20
+
+RUN apt-get update && \
+    apt-get install -y nginx && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    npm install -g pm2 && \
+    mkdir -p /data && \
+    mkdir -p /config
+
+COPY config-docker/ecosystem.config.js /opt/app/ecosystem.config.js
+COPY config-docker/default.conf /etc/nginx/http.d/default.conf
+COPY config-docker/entrypoint.sh /opt/app/entrypoint.sh
+
+COPY --from=builder /opt/app/telepathy-server/dist /opt/app/telepathy-server/dist
+COPY --from=builder /opt/app/telepathy-server/node_modules /opt/app/telepathy-server/node_modules
+
+COPY --from=builder /opt/app/telepathy-agent/dist /opt/app/telepathy-agent/dist
+COPY --from=builder /opt/app/telepathy-agent/node_modules /opt/app/telepathy-agent/node_modules
+
+COPY --from=builder /opt/app/telepathy-web/.output/public /opt/app/telepathy-web
+
+WORKDIR /opt/app
+
+CMD [ "./entrypoint.sh" ]
