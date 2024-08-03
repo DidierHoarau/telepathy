@@ -15,6 +15,13 @@ echo "Building ${SERVICE_NAME}/${SERVICE_VERSION}"
 docker buildx build \
   --platform linux/arm64/v8,linux/amd64 \
    --push \
-  -f Dockerfile \
+  -f Dockerfile-server \
   -t didierhoarau/${SERVICE_NAME}:beta \
+  .
+
+docker buildx build \
+  --platform linux/arm64/v8,linux/amd64 \
+   --push \
+  -f Dockerfile-agent \
+  -t didierhoarau/${SERVICE_NAME}-agent:beta \
   .
