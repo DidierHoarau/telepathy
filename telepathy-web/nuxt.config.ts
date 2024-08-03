@@ -12,7 +12,6 @@ export default defineNuxtConfig({
         { name: "theme-color", content: "#212121" },
       ],
       link: [
-        { rel: "manifest", href: "/manifest.json" },
         { rel: "icon", href: "/icon.png" },
         { rel: "stylesheet", href: "/styles.css" },
       ],
