@@ -1,12 +1,14 @@
 <template>
   <div>
     <VitePwaManifest />
-    <div class="page_container">
+    <div id="page_container">
       <header class="page_header">
         <a href="/"><h1>Telepathy</h1></a>
       </header>
       <NavigationPanel class="page_menu" />
-      <NuxtPage class="page_content" />
+      <div class="page_content">
+        <NuxtPage class="page_content" />
+      </div>
       <div class="page_footer" />
     </div>
     <div class="alert-messages"><AlertMessages /></div>
@@ -16,12 +18,12 @@
 <style>
 /* Layout */
 
-#page-layout {
+#page_container {
   width: auto;
   height: 100vh;
   display: grid;
   overflow: hidden;
-  grid-template-rows: 4em 1fr;
+  grid-template-rows: 3em 3em 1fr;
 }
 
 header,

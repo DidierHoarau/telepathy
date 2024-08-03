@@ -1,6 +1,6 @@
 <template>
   <div class="pageContent">
-    <div class="pageHeader">
+    <div class="page_header">
       <h1>Users</h1>
       <router-link to="/users/new"><em class="bi bi-plus-square icon-button"></em></router-link>
     </div>

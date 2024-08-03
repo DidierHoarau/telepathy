@@ -1,6 +1,6 @@
 <template>
   <div class="pageContent">
-    <div class="pageHeader">
+    <div class="page_header">
       <h1>Agents</h1>
     </div>
     <div class="cardList">

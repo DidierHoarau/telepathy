@@ -40,6 +40,7 @@ export default {
 .navigation_container {
   display: grid;
   align-items: center;
+  width: 100%;
 }
 .navigation_item {
   color: #eee;
@@ -59,6 +60,7 @@ export default {
 
 @media (min-width: 700px) {
   .navigation_container {
+    grid-auto-columns: 1fr;
     grid-auto-rows: 4em;
     grid-auto-flow: row;
   }

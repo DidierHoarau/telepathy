@@ -1,10 +1,10 @@
 <template>
-  <div :class="gettaskPanelWrapperClass()">
-    <div class="pageContent taskListPanel">
-      <div class="pageHeader">
-        <h1>Tasks</h1>
-        <router-link id="addTaskButton" to="/tasks/new"><em class="bi bi-plus-square icon-button"></em></router-link>
-      </div>
+  <div class="tasks_wrapper">
+    <div class="page_header">
+      <h2>Tasks</h2>
+      <router-link id="addTaskButton" to="/tasks/new"><em class="bi bi-plus-square icon-button"></em></router-link>
+    </div>
+    <div class="task_list">
       <div v-for="folder in taskFolders" v-bind:key="folder.name">
         <div class="pageSeparator" v-if="taskFolders.length > 0" />
         <h3 v-if="folder.name">{{ folder.name }}</h3>
@@ -18,22 +18,22 @@
         </div>
       </div>
     </div>
-    <Transition>
-      <div v-if="taskIdSelected" class="taskDetailPanel">
+    <div v-if="taskIdSelected" class="task_detail">
+      <Transition>
         <TaskExecutions :taskId="taskIdSelected" />
-      </div>
-    </Transition>
+      </Transition>
+    </div>
   </div>
 </template>
 
 <script>
 import axios from "axios";
 import * as _ from "lodash";
-import TaskCard from "../../components/TaskCard.vue";
-import TaskExecutions from "../../components/TaskExecutions.vue";
+import TaskCard from "~/components/TaskCard.vue";
+import TaskExecutions from "~/components/TaskExecutions.vue";
 import Config from "~~/services/Config.ts";
-import { EventBus, EventTypes, handleError } from "../../services/EventBus";
-import { AuthService } from "../../services/AuthService";
+import { EventBus, EventTypes, handleError } from "~/services/EventBus";
+import { AuthService } from "~/services/AuthService";
 
 export default {
   name: "TaskList",
@@ -82,49 +82,42 @@ export default {
     async onTaskClicked(id) {
       this.taskIdSelected = id;
     },
-    gettaskPanelWrapperClass() {
-      if (this.taskIdSelected) {
-        return "taskPanelWrapper taskPanelWrapper_showExecution";
-      }
-      return "taskPanelWrapper taskPanelWrapper_hideExecution";
-    },
   },
 };
 </script>
 
 <style scoped>
-.taskDetailPanel {
+.tasks_wrapper {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr auto;
+}
+
+.task_list {
+  overflow: hidden;
+  overflow-y: scroll;
+}
+
+.page_header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+}
+
+.task_detail {
   overflow-x: hidden;
   overflow-y: auto;
-  background-color: #efebe9;
+  background-color: #efebe933;
   border-top-style: solid;
-  border-top-color: #bcaaa4;
   border-top-width: 1px;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
-  grid-column: 1;
-  grid-row: 2;
-  height: 40vh;
+  height: 50vh;
   padding: 1em;
-}
-
-.taskListPanel {
-  grid-column: 1;
-  grid-row: 1;
-  overflow: hidden;
-  overflow-y: scroll;
 }
 
 .taskPanelWrapper {
   display: grid;
   height: 100%;
-}
-
-.taskPanelWrapper_hideExecution {
-  grid-template-rows: 1fr;
-}
-
-.taskPanelWrapper_showExecution {
-  grid-template-rows: 2fr 1fr;
 }
 </style>

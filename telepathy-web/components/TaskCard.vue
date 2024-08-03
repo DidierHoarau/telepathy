@@ -1,5 +1,5 @@
 <template>
-  <div class="cardLayout">
+  <article class="cardLayout">
     <div class="cardlayout_content">
       <h2 id="taskName">{{ task.name }}</h2>
       <div v-if="lastExecution">
@@ -22,7 +22,7 @@
         <em v-on:click="execute()" class="bi bi-play-circle icon-button"></em>
       </p>
     </div>
-  </div>
+  </article>
 </template>
 
 <script>

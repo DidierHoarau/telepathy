@@ -1,5 +1,5 @@
 <template>
-  <div class="cardLayout">
+  <article class="cardLayout">
     <div class="cardlayout_content">
       <h2>{{ user.name }}</h2>
     </div>
@@ -8,7 +8,7 @@
         <router-link :to="'/users/' + user.id + '/edit'"><em class="bi bi-pencil-square icon-button"></em></router-link>
       </p>
     </div>
-  </div>
+  </article>
 </template>
 
 <script>
