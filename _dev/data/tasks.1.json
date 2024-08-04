@@ -1,1 +1,0 @@
-[{"id":"e72d3bc7-f2bc-4f15-8af7-0f3cadd4b23a","outputDefinitions":[],"name":"test/test1","script":"ls -lsh","schedule":"* * * * *"},{"id":"d2620601-2715-49c0-b438-e93089364bb7","outputDefinitions":[],"name":"test/test2","script":"pwd","schedule":"* * * * *"}]
