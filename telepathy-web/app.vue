@@ -2,14 +2,15 @@
   <div>
     <VitePwaManifest />
     <div id="page_container">
-      <header class="page_header">
+      <div id="page_header">
         <a href="/"><h1>Telepathy</h1></a>
-      </header>
-      <NavigationPanel class="page_menu" />
-      <div class="page_content">
-        <NuxtPage class="page_content" />
       </div>
-      <div class="page_footer" />
+      <div id="page_menu">
+        <NavigationPanel />
+      </div>
+      <div id="page_content">
+        <NuxtPage />
+      </div>
     </div>
     <div class="alert-messages"><AlertMessages /></div>
   </div>
@@ -23,12 +24,12 @@
   height: 100vh;
   display: grid;
   overflow: hidden;
-  grid-template-rows: 3em 3em 1fr;
+  grid-template-rows: auto auto 1fr;
 }
 
-header,
-main {
-  padding: 0.5em;
+#page_content {
+  max-height: 100%;
+  overflow: hidden;
 }
 
 #page-alert-messages {
@@ -36,6 +37,33 @@ main {
   right: 3rem;
   bottom: 3rem;
   max-width: 80vw;
+}
+
+@media (min-width: 700px) {
+  #page_container {
+    width: auto;
+    height: 100vh;
+    display: grid;
+    overflow: hidden;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
+  #page_menu {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  #page_header {
+    grid-column-start: 1;
+    grid-column-end: 2;
+    grid-row: 1;
+  }
+
+  #page_content {
+    grid-column: 2;
+    grid-row: 2;
+  }
 }
 
 /* Common Component */

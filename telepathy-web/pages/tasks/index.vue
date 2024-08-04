@@ -94,14 +94,15 @@ export default {
   grid-template-rows: auto 1fr auto;
 }
 
-.task_list {
-  overflow: hidden;
-  overflow-y: scroll;
-}
-
 .page_header {
   display: grid;
   grid-template-columns: 1fr auto;
+  padding: 1em;
+}
+
+.task_list {
+  height: 100%;
+  overflow: auto;
 }
 
 .task_detail {
