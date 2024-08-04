@@ -8,6 +8,6 @@ docker rm -f telepathy > /dev/null || true
 
 docker build -t telepathy -f Dockerfile-server .
 
-docker run --name telepathy -d telepathy
+docker run --name telepathy -d -p 80:80 telepathy
 
-docker logs -f telepathy
+docker exec -ti telepathy pm2 logs
