@@ -32,7 +32,7 @@ export default {
   },
   async created() {
     await axios
-      .get(`${(await Config.get()).SERVER_URL}/users/status/initialization`)
+      .get(`/api/users/status/initialization`)
       .then((res) => {
         if (!res.data.initialized) {
           useRouter().push({ path: "/users/new" });
@@ -47,7 +47,7 @@ export default {
     async login() {
       if (this.user.name && this.user.password) {
         await axios
-          .post(`${(await Config.get()).SERVER_URL}/users/session`, this.user)
+          .post(`/api/users/session`, this.user)
           .then((res) => {
             AuthService.saveToken(res.data.token);
             EventBus.emit(EventTypes.AUTH_UPDATED, {});

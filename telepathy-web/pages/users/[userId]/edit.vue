@@ -42,7 +42,7 @@ export default {
   async created() {
     this.userId = this.$route.params.userId;
     axios
-      .get(`${(await Config.get()).SERVER_URL}/users/${this.userId}`, await AuthService.getAuthHeader())
+      .get(`/api/users/${this.userId}`, await AuthService.getAuthHeader())
       .then((res) => {
         this.user = res.data;
       })
@@ -52,7 +52,7 @@ export default {
     async saveNew() {
       if (this.user.name && this.user.password) {
         await axios
-          .post(`${(await Config.get()).SERVER_URL}/users`, this.user, await AuthService.getAuthHeader())
+          .post(`/api/users`, this.user, await AuthService.getAuthHeader())
           .then((res) => {
             EventBus.emit(EventTypes.ALERT_MESSAGE, {
               type: "info",
@@ -82,7 +82,7 @@ export default {
         });
       } else {
         axios
-          .put(`${(await Config.get()).SERVER_URL}/users/${this.userId}`, this.user, await AuthService.getAuthHeader())
+          .put(`/api/users/${this.userId}`, this.user, await AuthService.getAuthHeader())
           .then((res) => {
             EventBus.emit(EventTypes.ALERT_MESSAGE, {
               type: "info",
@@ -97,7 +97,7 @@ export default {
       const confirmation = confirm("Delete the user?");
       if (confirmation == true) {
         axios
-          .delete(`${(await Config.get()).SERVER_URL}/users/${this.userId}`, await AuthService.getAuthHeader())
+          .delete(`/api/users/${this.userId}`, await AuthService.getAuthHeader())
           .then((res) => {
             EventBus.emit(EventTypes.ALERT_MESSAGE, {
               type: "info",

@@ -74,7 +74,7 @@ export default {
   },
   async created() {
     axios
-      .get(`${(await Config.get()).SERVER_URL}/agents/tags`, await AuthService.getAuthHeader())
+      .get(`/api/agents/tags`, await AuthService.getAuthHeader())
       .then((res) => {
         this.tags = res.data;
       })
@@ -99,7 +99,7 @@ export default {
     async saveNew() {
       if (this.task.name && this.task.script) {
         axios
-          .post(`${(await Config.get()).SERVER_URL}/tasks`, this.task, await AuthService.getAuthHeader())
+          .post(`/api/tasks`, this.task, await AuthService.getAuthHeader())
           .then((res) => {
             EventBus.emit(EventTypes.ALERT_MESSAGE, {
               type: "info",

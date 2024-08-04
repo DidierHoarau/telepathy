@@ -34,7 +34,7 @@ export default {
   methods: {
     async load() {
       axios
-        .get(`${(await Config.get()).SERVER_URL}/agents`, await AuthService.getAuthHeader())
+        .get(`/api/agents`, await AuthService.getAuthHeader())
         .then((res) => {
           this.agents = res.data.agents;
         })

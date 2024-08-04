@@ -31,7 +31,7 @@ export default {
   },
   async created() {
     axios
-      .get(`${(await Config.get()).SERVER_URL}/users`, await AuthService.getAuthHeader())
+      .get(`/api/users`, await AuthService.getAuthHeader())
       .then((res) => {
         this.users = res.data.users;
       })

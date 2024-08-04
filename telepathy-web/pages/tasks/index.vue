@@ -59,7 +59,7 @@ export default {
   methods: {
     async load() {
       axios
-        .get(`${(await Config.get()).SERVER_URL}/tasks`, await AuthService.getAuthHeader())
+        .get(`/api/tasks`, await AuthService.getAuthHeader())
         .then((res) => {
           const folders = [];
           const sortedTasks = _.sortBy(res.data.tasks, "name");

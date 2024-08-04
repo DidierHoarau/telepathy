@@ -77,14 +77,14 @@ export default {
   },
   async created() {
     axios
-      .get(`${(await Config.get()).SERVER_URL}/agents/tags`, await AuthService.getAuthHeader())
+      .get(`/api/agents/tags`, await AuthService.getAuthHeader())
       .then((res) => {
         this.tags = res.data;
       })
       .catch(handleError);
     if (this.taskId) {
       axios
-        .get(`${(await Config.get()).SERVER_URL}/tasks/${this.taskId}`, await AuthService.getAuthHeader())
+        .get(`/api/tasks/${this.taskId}`, await AuthService.getAuthHeader())
         .then((res) => {
           this.task = res.data;
           if (this.task.webhook) {
@@ -115,7 +115,7 @@ export default {
     async saveUpdate() {
       if (this.task.name && this.task.script) {
         axios
-          .put(`${(await Config.get()).SERVER_URL}/tasks/${this.taskId}`, this.task, await AuthService.getAuthHeader())
+          .put(`/api/tasks/${this.taskId}`, this.task, await AuthService.getAuthHeader())
           .then((res) => {
             EventBus.emit(EventTypes.ALERT_MESSAGE, {
               type: "info",
@@ -129,7 +129,7 @@ export default {
     async saveNew() {
       if (this.task.name && this.task.script) {
         axios
-          .post(`${(await Config.get()).SERVER_URL}/tasks`, this.task, await AuthService.getAuthHeader())
+          .post(`/api/tasks`, this.task, await AuthService.getAuthHeader())
           .then((res) => {
             EventBus.emit(EventTypes.ALERT_MESSAGE, {
               type: "info",
@@ -145,7 +145,7 @@ export default {
       const confirmation = confirm("Delete the task?");
       if (confirmation == true) {
         axios
-          .delete(`${(await Config.get()).SERVER_URL}/tasks/${this.taskId}`, await AuthService.getAuthHeader())
+          .delete(`/api/tasks/${this.taskId}`, await AuthService.getAuthHeader())
           .then((res) => {
             EventBus.emit(EventTypes.ALERT_MESSAGE, {
               type: "info",
