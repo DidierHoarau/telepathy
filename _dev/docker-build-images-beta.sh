@@ -22,6 +22,6 @@ docker buildx build \
 docker buildx build \
   --platform linux/arm64/v8,linux/amd64 \
    --push \
-  -f Dockerfile-agent \
+  -f Dockerfile-agent-alpine \
   -t didierhoarau/${SERVICE_NAME}-agent:beta \
   .

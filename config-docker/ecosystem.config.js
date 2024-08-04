@@ -15,8 +15,7 @@ module.exports = {
       autorestart: false,
       env: {
         NODE_ENV: "production",
-        TELEPATHY_CONFIG: "/config/config-server.json",
-        TELEPATHY_DATA_DIR: "/data/server",
+        TELEPATHY_DATA_DIR: "/data",
       },
     },
     {
@@ -26,7 +25,6 @@ module.exports = {
       autorestart: false,
       env: {
         NODE_ENV: "production",
-        TELEPATHY_CONFIG: "/config/config-agent.json",
       },
     },
   ],
