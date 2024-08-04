@@ -9,6 +9,8 @@
 
 .page_content_container {
   padding: 1.4rem;
+  height: 100%;
+  overflow-y: auto;
 }
 
 .card-body {

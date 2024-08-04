@@ -1,21 +1,15 @@
 <template>
   <div class="page_content_container">
-    <div v-if="!isAuthenticated">
-      <h1>Login</h1>
-      <div class="mb-3">
-        <label class="form-label">Name</label>
-        <input id="username" v-model="user.name" type="text" class="form-control" />
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Password</label>
-        <input id="password" v-model="user.password" type="password" class="form-control" />
-      </div>
-      <button id="loginButton" v-on:click="login()" class="btn btn-primary">Login</button>
+    <h1>Login</h1>
+    <div class="mb-3">
+      <label class="form-label">Name</label>
+      <input id="username" v-model="user.name" type="text" class="form-control" />
     </div>
-    <div v-if="isAuthenticated">
-      <h1>Logged in</h1>
-      <button id="logoutButton" v-if="isAuthenticated" v-on:click="logout()" class="btn btn-primary">Logout</button>
+    <div class="mb-3">
+      <label class="form-label">Password</label>
+      <input id="password" v-model="user.password" type="password" class="form-control" />
     </div>
+    <button id="loginButton" v-on:click="login()" class="btn btn-primary">Login</button>
   </div>
 </template>
 
@@ -45,7 +39,9 @@ export default {
         }
       })
       .catch(handleError);
-    this.isAuthenticated = await AuthService.isAuthenticated();
+    if (await AuthService.isAuthenticated()) {
+      useRouter().push({ path: "/tasks" });
+    }
   },
   methods: {
     async login() {
@@ -59,6 +55,7 @@ export default {
               type: "info",
               text: "Authentication successful",
             });
+            useRouter().push({ path: "/tasks" });
           })
           .catch(handleError);
       } else {
