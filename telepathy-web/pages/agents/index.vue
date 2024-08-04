@@ -13,10 +13,9 @@
 
 <script>
 import axios from "axios";
-import AgentCard from "../../components/AgentCard.vue";
-import Config from "~~/services/Config.ts";
-import { AuthService } from "../../services/AuthService";
-import { handleError } from "../../services/EventBus";
+import AgentCard from "~/components/AgentCard.vue";
+import { AuthService } from "~/services/AuthService";
+import { handleError } from "~/services/EventBus";
 
 export default {
   name: "AgentList",

@@ -67,9 +67,8 @@
 
 <script>
 import axios from "axios";
-import Config from "~~/services/Config.ts";
-import { AuthService } from "../services/AuthService";
-import { EventBus, EventTypes, handleError } from "../services/EventBus";
+import { AuthService } from "~/services/AuthService";
+import { EventBus, EventTypes, handleError } from "~/services/EventBus";
 
 export default {
   name: "TaskExecutions",
@@ -112,13 +111,13 @@ export default {
   methods: {
     async loadTaskExecutionHistory() {
       axios
-        .get(`${(await Config.get()).SERVER_URL}/tasks/${this.taskId}`, await AuthService.getAuthHeader())
+        .get(`/api/tasks/${this.taskId}`, await AuthService.getAuthHeader())
         .then((res) => {
           this.task = res.data;
         })
         .catch(handleError);
       axios
-        .get(`${(await Config.get()).SERVER_URL}/tasks/${this.taskId}/executions`, await AuthService.getAuthHeader())
+        .get(`/api/tasks/${this.taskId}/executions`, await AuthService.getAuthHeader())
         .then((res) => {
           this.taskExecutionPosition = 0;
           this.taskExecutions = res.data.task_executions;
@@ -130,7 +129,7 @@ export default {
       if (this.currentTaskExecution) {
         axios
           .get(
-            `${(await Config.get()).SERVER_URL}/tasks/${this.taskId}/executions/${this.currentTaskExecution.id}`,
+            `/api/tasks/${this.taskId}/executions/${this.currentTaskExecution.id}`,
             await AuthService.getAuthHeader()
           )
           .then((res) => {
@@ -163,10 +162,7 @@ export default {
     },
     async getExecutionLogs(taskId, executionId) {
       axios
-        .get(
-          `${(await Config.get()).SERVER_URL}/tasks/${taskId}/executions/${executionId}/logs`,
-          await AuthService.getAuthHeader()
-        )
+        .get(`/api/tasks/${taskId}/executions/${executionId}/logs`, await AuthService.getAuthHeader())
         .then((res) => {
           this.logs = res.data.logs;
         })
@@ -176,11 +172,7 @@ export default {
       const confirmation = confirm("Cancel the task execution?");
       if (confirmation == true) {
         axios
-          .post(
-            `${(await Config.get()).SERVER_URL}/tasks/${taskId}/executions/${executionId}/cancellation`,
-            {},
-            await AuthService.getAuthHeader()
-          )
+          .post(`/api/tasks/${taskId}/executions/${executionId}/cancellation`, {}, await AuthService.getAuthHeader())
           .then((res) => {
             this.logs = res.data.logs;
           })

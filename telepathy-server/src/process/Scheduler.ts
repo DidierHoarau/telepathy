@@ -22,7 +22,7 @@ export class Scheduler {
     const span = StandardTracerStartSpan("Scheduler_calculate", context);
     logger.info("Re-calculating schedules");
     for (const scheduledCron of this.scheduledCrons) {
-      scheduledCron.destroy();
+      scheduledCron.stop();
     }
     this.scheduledCrons = [];
     const tasks = await this.tasksData.list(context);

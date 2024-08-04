@@ -27,9 +27,8 @@
 
 <script>
 import axios from "axios";
-import Config from "~~/services/Config.ts";
-import { EventBus, EventTypes, handleError } from "../services/EventBus";
-import { AuthService } from "../services/AuthService";
+import { EventBus, EventTypes, handleError } from "~/services/EventBus";
+import { AuthService } from "~/services/AuthService";
 
 export default {
   name: "TaskCard",
@@ -55,15 +54,11 @@ export default {
   },
   methods: {
     edit() {
-      router.push({ path: `/tasks/${this.task.id}/edit` });
+      useRouter().push({ path: `/tasks/${this.task.id}/edit` });
     },
     async execute() {
       axios
-        .post(
-          `${(await Config.get()).SERVER_URL}/tasks/${this.task.id}/executions`,
-          {},
-          await AuthService.getAuthHeader()
-        )
+        .post(`/api/tasks/${this.task.id}/executions`, {}, await AuthService.getAuthHeader())
         .then((res) => {
           EventBus.emit(EventTypes.TASK_UPDATED, { taskId: this.task.id });
           EventBus.emit(EventTypes.TASK_EXECUTION_TRIGGERED, {
@@ -74,7 +69,7 @@ export default {
     },
     async checkExecutions() {
       axios
-        .get(`${(await Config.get()).SERVER_URL}/tasks/${this.task.id}/executions`, await AuthService.getAuthHeader())
+        .get(`/api/tasks/${this.task.id}/executions`, await AuthService.getAuthHeader())
         .then((res) => {
           if (res.data.task_executions.length > 0) {
             this.lastExecution = res.data.task_executions[0];

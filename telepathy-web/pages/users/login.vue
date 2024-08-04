@@ -15,7 +15,6 @@
 
 <script>
 import axios from "axios";
-import Config from "~~/services/Config.ts";
 import { AuthService } from "~~/services/AuthService";
 import { EventBus, EventTypes, handleError } from "~~/services/EventBus";
 

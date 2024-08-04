@@ -22,7 +22,7 @@ export class Auth {
     const span = StandardTracerStartSpan("Auth_check");
     await axios
       .post(
-        `${config.SERVER}/agents/${config.AGENT_ID}/session`,
+        `${config.SERVER}/api/agents/${config.AGENT_ID}/session`,
         {
           key: config.AGENT_KEY,
           tags: config.TAGS,

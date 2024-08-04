@@ -14,10 +14,9 @@
 
 <script>
 import axios from "axios";
-import Config from "~~/services/Config.ts";
-import UserCard from "../../components/UserCard.vue";
-import { AuthService } from "../../services/AuthService";
-import { handleError } from "../../services/EventBus";
+import UserCard from "~/components/UserCard.vue";
+import { AuthService } from "~/services/AuthService";
+import { handleError } from "~/services/EventBus";
 
 export default {
   name: "UserList",

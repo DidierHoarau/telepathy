@@ -23,7 +23,7 @@ export class TaskExecutions {
   public static async check(): Promise<void> {
     const span = StandardTracerStartSpan("TaskExecutions_check");
     await axios
-      .get(`${config.SERVER}/agents/${config.AGENT_ID}/tasks/executions`, await Auth.getAuthHeader(span))
+      .get(`${config.SERVER}/api/agents/${config.AGENT_ID}/tasks/executions`, await Auth.getAuthHeader(span))
       .then(async (res) => {
         if (_.isArray(res.data.task_executions) && res.data.task_executions.length > 0) {
           for (const taskExecution of res.data.task_executions as TaskExecution[]) {
@@ -50,7 +50,7 @@ export class TaskExecutions {
     taskExecution.agentId = config.AGENT_ID;
     taskExecution.dateExecuting = new Date();
     await axios.put(
-      `${config.SERVER}/tasks/${taskExecution.taskId}/executions/agent/${taskExecution.id}`,
+      `${config.SERVER}/api/tasks/${taskExecution.taskId}/executions/agent/${taskExecution.id}`,
       taskExecution,
       await Auth.getAuthHeader(span)
     );
@@ -67,7 +67,7 @@ export class TaskExecutions {
     command.stdout.on("data", async (data) => {
       outputRaw += data;
       await axios.put(
-        `${config.SERVER}/tasks/${taskExecution.taskId}/executions/agent/${taskExecution.id}/logs`,
+        `${config.SERVER}/api/tasks/${taskExecution.taskId}/executions/agent/${taskExecution.id}/logs`,
         { logs: outputRaw },
         await Auth.getAuthHeader(span)
       );
@@ -76,7 +76,7 @@ export class TaskExecutions {
     command.stderr.on("data", async (data) => {
       outputRaw += data;
       await axios.put(
-        `${config.SERVER}/tasks/${taskExecution.taskId}/executions/agent/${taskExecution.id}/logs`,
+        `${config.SERVER}/api/tasks/${taskExecution.taskId}/executions/agent/${taskExecution.id}/logs`,
         { logs: outputRaw },
         await Auth.getAuthHeader(span)
       );
@@ -91,7 +91,7 @@ export class TaskExecutions {
       span.setAttribute("TaskExecutionStatus", TaskExecutionStatus.failed);
       span.status.code = SpanStatusCode.ERROR;
       await axios.put(
-        `${config.SERVER}/tasks/${taskExecution.taskId}/executions/agent/${taskExecution.id}/logs`,
+        `${config.SERVER}/api/tasks/${taskExecution.taskId}/executions/agent/${taskExecution.id}/logs`,
         { logs: outputRaw },
         await Auth.getAuthHeader(span)
       );
@@ -103,7 +103,7 @@ export class TaskExecutions {
       taskExecution.success = true;
       taskExecution.status = finalStatus;
       await axios.put(
-        `${config.SERVER}/tasks/${taskExecution.taskId}/executions/agent/${taskExecution.id}`,
+        `${config.SERVER}/api/tasks/${taskExecution.taskId}/executions/agent/${taskExecution.id}`,
         taskExecution,
         await Auth.getAuthHeader(span)
       );
@@ -123,7 +123,7 @@ export class TaskExecutions {
     const span = StandardTracerStartSpan("TaskExecutions_monitorTaskExecutionDefinition", context);
     const taskExecutionServerDefinition = (
       await axios.get(
-        `${config.SERVER}/tasks/${taskExecution.taskId}/executions/agent/${taskExecution.id}`,
+        `${config.SERVER}/api/tasks/${taskExecution.taskId}/executions/agent/${taskExecution.id}`,
         await Auth.getAuthHeader(span)
       )
     ).data;

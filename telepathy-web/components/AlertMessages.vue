@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { EventBus, EventTypes } from "../services/EventBus";
+import { EventBus, EventTypes } from "~/services/EventBus";
 
 export default {
   name: "AlertMessages",

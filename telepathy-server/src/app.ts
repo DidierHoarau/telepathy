@@ -83,20 +83,24 @@ Promise.resolve().then(async () => {
 
   StandardTracerApiRegisterHooks(fastify, config);
 
-  fastify.register(new AgentsRoutes(agentsData).getRoutes, { prefix: "/agents" });
-  fastify.register(new AgentIdRoutes(config, agentsData, taskExecutionsData).getRoutes, { prefix: "/agents/:agentId" });
-  fastify.register(new TasksRoutes(tasksData, scheduler).getRoutes, { prefix: "/tasks" });
-  fastify.register(new TaskIdRoutes(tasksData, scheduler).getRoutes, { prefix: "/tasks/:taskId" });
-  fastify.register(new TasksExecutuionsRoutes(taskExecutionsData).getRoutes, { prefix: "/tasks/:taskId/executions" });
+  fastify.register(new AgentsRoutes(agentsData).getRoutes, { prefix: "/api/agents" });
+  fastify.register(new AgentIdRoutes(config, agentsData, taskExecutionsData).getRoutes, {
+    prefix: "/api/agents/:agentId",
+  });
+  fastify.register(new TasksRoutes(tasksData, scheduler).getRoutes, { prefix: "/api/tasks" });
+  fastify.register(new TaskIdRoutes(tasksData, scheduler).getRoutes, { prefix: "/api/tasks/:taskId" });
+  fastify.register(new TasksExecutuionsRoutes(taskExecutionsData).getRoutes, {
+    prefix: "/api/tasks/:taskId/executions",
+  });
   fastify.register(new TasksExecutionsForAgentsRoutes(taskExecutionsData).getRoutes, {
-    prefix: "/tasks/:taskId/executions/agent",
+    prefix: "/api/tasks/:taskId/executions/agent",
   });
   fastify.register(new TasksExecutionIdRoutes(taskExecutionsData).getRoutes, {
-    prefix: "/tasks/:taskId/executions/:taskExecutionId",
+    prefix: "/api/tasks/:taskId/executions/:taskExecutionId",
   });
-  fastify.register(new TasksWebhooksRoutes(tasksData, taskExecutionsData).getRoutes, { prefix: "/tasks/webhooks" });
-  fastify.register(new UserRoutes(usersData).getRoutes, { prefix: "/users" });
-  fastify.register(new UserIdRoutes(usersData).getRoutes, { prefix: "/users/:userId" });
+  fastify.register(new TasksWebhooksRoutes(tasksData, taskExecutionsData).getRoutes, { prefix: "/api/tasks/webhooks" });
+  fastify.register(new UserRoutes(usersData).getRoutes, { prefix: "/api/users" });
+  fastify.register(new UserIdRoutes(usersData).getRoutes, { prefix: "/api/users/:userId" });
 
   fastify.listen({ port: config.API_PORT, host: "0.0.0.0" }, (err) => {
     if (err) {

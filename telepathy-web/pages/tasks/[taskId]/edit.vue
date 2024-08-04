@@ -1,7 +1,6 @@
 <template>
   <div class="page_content_container">
-    <h1 v-if="taskId">Edit Task</h1>
-    <h1 v-if="!taskId">New Task</h1>
+    <h1>Edit Task</h1>
 
     <label class="form-label">Name</label>
     <input id="taskName" v-model="task.name" type="text" class="form-control" />
@@ -50,51 +49,44 @@
       <label class="form-check-label">Webhook call: {API}/tasks/webhooks/{WEBHOOK_ID}</label>
     </div>
 
-    <br />
-    <button v-if="taskId" v-on:click="saveUpdate()" id="saveTaskButton" class="btn btn-primary">Save</button>&nbsp;
-    <button v-if="taskId" v-on:click="remove()" id="deleteButton" class="btn btn-primary">Delete</button>
-    <button v-if="!taskId" v-on:click="saveNew()" id="saveTaskButton" class="btn btn-primary">Save</button>
+    <button v-on:click="saveUpdate()" id="saveTaskButton" class="btn btn-primary">Save</button>&nbsp;
+    <button v-on:click="remove()" id="deleteButton" class="btn btn-primary">Delete</button>
   </div>
 </template>
 
 <script>
 import axios from "axios";
-import Config from "~~/services/Config.ts";
-import { EventBus, EventTypes, handleError } from "../../services/EventBus";
-import { AuthService } from "../../services/AuthService";
+import { EventBus, EventTypes, handleError } from "~/services/EventBus";
+import { AuthService } from "~/services/AuthService";
 
 export default {
-  name: "TaskEdit",
-  props: {
-    taskId: String,
-  },
   data() {
     return {
+      taskId: null,
       task: { name: "", script: "", outputDefinitions: [] },
       webhookEnabled: false,
       tags: [],
     };
   },
   async created() {
+    this.taskId = this.$route.params.taskId;
     axios
       .get(`/api/agents/tags`, await AuthService.getAuthHeader())
       .then((res) => {
         this.tags = res.data;
       })
       .catch(handleError);
-    if (this.taskId) {
-      axios
-        .get(`/api/tasks/${this.taskId}`, await AuthService.getAuthHeader())
-        .then((res) => {
-          this.task = res.data;
-          if (this.task.webhook) {
-            this.webhookEnabled = true;
-          } else {
-            this.webhookEnabled = false;
-          }
-        })
-        .catch(handleError);
-    }
+    axios
+      .get(`/api/tasks/${this.taskId}`, await AuthService.getAuthHeader())
+      .then((res) => {
+        this.task = res.data;
+        if (this.task.webhook) {
+          this.webhookEnabled = true;
+        } else {
+          this.webhookEnabled = false;
+        }
+      })
+      .catch(handleError);
   },
   methods: {
     async webhookSwitched() {
@@ -121,21 +113,6 @@ export default {
               type: "info",
               text: "Task updated",
             });
-          })
-          .catch(handleError);
-      }
-    },
-
-    async saveNew() {
-      if (this.task.name && this.task.script) {
-        axios
-          .post(`/api/tasks`, this.task, await AuthService.getAuthHeader())
-          .then((res) => {
-            EventBus.emit(EventTypes.ALERT_MESSAGE, {
-              type: "info",
-              text: "Task created",
-            });
-            router.push({ path: "/tasks" });
           })
           .catch(handleError);
       }

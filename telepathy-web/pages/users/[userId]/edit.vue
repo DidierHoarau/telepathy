@@ -6,7 +6,7 @@
     <label class="form-label">Name</label>
     <input v-model="user.name" type="text" class="form-control" />
 
-    <div v-if="userId" class="form-check form-switch formSection">
+    <div class="form-check form-switch formSection">
       <input
         class="form-check-input checkbox"
         type="checkbox"
@@ -20,15 +20,13 @@
     <input v-model="user.password" type="password" class="form-control" :disabled="!passwordEnabled" />
 
     <br />
-    <button v-if="userId" v-on:click="saveUpdate()" class="btn btn-primary">Save</button>&nbsp;
-    <button v-if="userId" v-on:click="remove()" class="btn btn-primary">Delete</button>
-    <button v-if="!userId" v-on:click="saveNew()" class="btn btn-primary">Save</button>
+    <button v-on:click="saveUpdate()" class="btn btn-primary">Save</button>&nbsp;
+    <button v-on:click="remove()" class="btn btn-primary">Delete</button>
   </div>
 </template>
 
 <script>
 import axios from "axios";
-import Config from "~~/services/Config.ts";
 import { AuthService } from "~/services/AuthService";
 import { handleError, EventBus, EventTypes } from "~/services/EventBus";
 

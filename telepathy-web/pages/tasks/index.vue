@@ -31,7 +31,6 @@ import axios from "axios";
 import * as _ from "lodash";
 import TaskCard from "~/components/TaskCard.vue";
 import TaskExecutions from "~/components/TaskExecutions.vue";
-import Config from "~~/services/Config.ts";
 import { EventBus, EventTypes, handleError } from "~/services/EventBus";
 import { AuthService } from "~/services/AuthService";
 

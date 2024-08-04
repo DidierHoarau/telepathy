@@ -1,10 +1,14 @@
 <template>
   <nav>
     <div class="navigation_container" v-if="isAuthenticated">
-      <router-link class="navigation_item" id="navigationTaskList" to="/tasks">Tasks</router-link>
-      <router-link class="navigation_item" to="/agents">Agents</router-link>
-      <router-link class="navigation_item" to="/users">Users</router-link>
-      <router-link class="navigation_item" to="/users/login">Logout</router-link>
+      <router-link class="navigation_item" id="navigationTaskList" to="/tasks"
+        ><i class="bi bi-gear-wide-connected"></i>&nbsp;Tasks</router-link
+      >
+      <router-link class="navigation_item" to="/agents"><i class="bi bi-pc"></i>&nbsp;Agents</router-link>
+      <router-link class="navigation_item" to="/users"><i class="bi bi-people-fill"></i>&nbsp;Users</router-link>
+      <router-link class="navigation_item" to="/users/profile"
+        ><i class="bi bi-person-fill"></i>&nbsp;Profile</router-link
+      >
     </div>
     <div class="navigation_container" v-if="!isAuthenticated">
       <router-link class="navigation_item" to="/users/login">Login</router-link>
@@ -13,8 +17,9 @@
 </template>
 
 <script>
-import { EventBus, EventTypes } from "~~/services/EventBus";
+import { EventBus, EventTypes, handleError } from "~~/services/EventBus";
 import { AuthService } from "~~/services/AuthService";
+import axios from "axios";
 
 export default {
   name: "NavigationPanel",
@@ -24,6 +29,14 @@ export default {
     };
   },
   async created() {
+    await axios
+      .get(`/api/users/status/initialization`)
+      .then((res) => {
+        if (!res.data.initialized) {
+          useRouter().push({ path: "/users/new" });
+        }
+      })
+      .catch(handleError);
     EventBus.on(EventTypes.AUTH_UPDATED, async () => {
       this.isAuthenticated = await AuthService.isAuthenticated();
     });
