@@ -6,8 +6,7 @@
     </div>
     <div class="task_list">
       <div v-for="folder in taskFolders" v-bind:key="folder.name">
-        <div class="pageSeparator" v-if="taskFolders.length > 0" />
-        <h3 v-if="folder.name">{{ folder.name }}</h3>
+        <h3 v-if="folder.name" class="task_folder">{{ folder.name }}</h3>
         <div id="taskList" class="cardList">
           <TaskCard
             v-for="task in folder.tasks"
@@ -93,12 +92,6 @@ export default {
   grid-template-rows: auto 1fr auto;
 }
 
-.page_header {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  padding: 1em;
-}
-
 .task_list {
   height: 100%;
   overflow: auto;
@@ -119,5 +112,12 @@ export default {
 .taskPanelWrapper {
   display: grid;
   height: 100%;
+}
+.task_folder {
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+  opacity: 0.3;
+  border-bottom: 2px dashed;
+  font-size: 1rem;
 }
 </style>

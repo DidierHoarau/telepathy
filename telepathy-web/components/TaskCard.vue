@@ -1,7 +1,7 @@
 <template>
   <article class="cardLayout">
     <div class="cardlayout_content">
-      <h2 id="taskName">{{ task.name }}</h2>
+      <h3 id="taskName">{{ task.name }}</h3>
       <div v-if="lastExecution">
         <p>
           {{ lastExecution.status }}

@@ -1,6 +1,6 @@
 <template>
   <div class="page_content_container">
-    <h1>New Task</h1>
+    <h2>New Task</h2>
 
     <label class="form-label">Name</label>
     <input id="taskName" v-model="task.name" type="text" class="form-control" />

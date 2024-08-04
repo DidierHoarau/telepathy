@@ -6,9 +6,9 @@ export default defineNuxtConfig({
       charset: "utf-16",
       viewport:
         "width=device-width, initial-scale=1, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no",
-      title: "FeedWatcher",
+      title: "Telepathy",
       meta: [
-        { name: "description", content: "FeedWatcher" },
+        { name: "description", content: "Telepathy" },
         { name: "theme-color", content: "#212121" },
       ],
       link: [

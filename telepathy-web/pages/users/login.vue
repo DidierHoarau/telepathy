@@ -1,6 +1,6 @@
 <template>
   <div class="page_content_container">
-    <h1>Login</h1>
+    <h2>Login</h2>
     <div class="mb-3">
       <label class="form-label">Name</label>
       <input id="username" v-model="user.name" type="text" class="form-control" />

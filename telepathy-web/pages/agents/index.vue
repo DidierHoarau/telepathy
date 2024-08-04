@@ -1,7 +1,7 @@
 <template>
   <div class="pageContent">
     <div class="page_header">
-      <h1>Agents</h1>
+      <h2>Agents</h2>
     </div>
     <div class="cardList">
       <div v-for="agent in agents" v-bind:key="agent.id">

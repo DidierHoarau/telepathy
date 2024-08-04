@@ -1,7 +1,7 @@
 <template>
   <div class="pageContent">
     <div class="page_header">
-      <h1>Users</h1>
+      <h2>Users</h2>
       <router-link to="/users/new"><em class="bi bi-plus-square icon-button"></em></router-link>
     </div>
     <div class="cardList">

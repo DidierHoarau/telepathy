@@ -23,14 +23,11 @@
   grid-template-rows: 1fr;
   box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.2);
   transition: 0.3s;
-  margin: 0.6rem;
 }
 
 .cardlayout_actions {
   grid-column: 2;
   grid-row: 1;
-  padding: 0.8rem;
-  padding-left: 0rem;
 }
 
 .taskoutput {
@@ -71,10 +68,11 @@ label {
 .pageContent {
   padding: 1em;
 }
+
 .page_header {
   display: grid;
   grid-template-columns: 1fr auto;
-  margin-bottom: 1em;
+  padding: 1em;
 }
 
 .pageSeparator {
@@ -109,6 +107,5 @@ label {
 .cardlayout_content {
   grid-column: 1;
   grid-row: 1;
-  padding: 0.8rem;
   overflow: hidden;
 }
