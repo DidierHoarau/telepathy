@@ -18,6 +18,12 @@ Promise.resolve().then(async () => {
     config.reload();
   });
 
+  console.log("foo", config.AGENT_ENABLE);
+  if (!config.AGENT_ENABLE) {
+    logger.info("AGENT_ENABLE set to false. Shutting down");
+    process.exit(0);
+  }
+
   StandardTracerInitTelemetry(config);
 
   Auth.init(config);

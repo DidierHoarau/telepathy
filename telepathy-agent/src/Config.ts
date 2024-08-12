@@ -20,11 +20,13 @@ export class Config implements ConfigInterface {
   public TASK_ALIVE_FREQUENCY = 10;
   public OPENTELEMETRY_COLLECTOR_HTTP: string;
   public OPENTELEMETRY_COLLECTOR_AWS = false;
+  public STARTUP_DELAY = 1;
+  public AGENT_ENABLE = true;
 
   public async reload(): Promise<void> {
     const content = await fse.readJson(this.CONFIG_FILE);
     const setIfSet = (field: string, displayLog = true) => {
-      if (content[field]) {
+      if (content[field] || content[field] === false) {
         this[field] = content[field];
       }
       if (displayLog) {
@@ -37,6 +39,7 @@ export class Config implements ConfigInterface {
     logger.info(`Configuration Value: VERSION: ${this.VERSION}`);
     setIfSet("SERVER");
     setIfSet("AGENT_ID");
+    setIfSet("AGENT_ENABLE");
     setIfSet("TAGS");
     setIfSet("HEARTBEAT_CYCLE");
     setIfSet("LOG_DEBUG");

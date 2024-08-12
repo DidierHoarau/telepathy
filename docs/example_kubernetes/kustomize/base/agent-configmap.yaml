@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: telepathy-agent-config
+data:
+  config.json: |
+    {
+      "SERVER": "http://telepathy-server:8080",
+      "AGENT_KEY": "TO_CHANGE",
+      "TAGS": ["kubernetes"]
+    }

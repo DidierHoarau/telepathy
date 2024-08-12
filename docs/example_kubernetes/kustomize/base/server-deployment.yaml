@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: telepathy-server
+  labels:
+    app: telepathy-server
+spec:
+  replicas: 1
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+      app: telepathy-server
+  template:
+    metadata:
+      labels:
+        app: telepathy-server
+    spec:
+      containers:
+        - image: didierhoarau/telepathy-server
+          name: telepathy-server
+          ports:
+            - containerPort: 8080
+          env:
+            - name: TELEPATHY_CONFIG
+              value: /etc/telepathy/config.json
+          volumeMounts:
+            - name: config
+              mountPath: /etc/telepathy
+      volumes:
+        - name: config
+          configMap:
+            name: telepathy-server-config

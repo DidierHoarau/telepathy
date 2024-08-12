@@ -27,13 +27,12 @@ More functions will be added with time but the core philosophy of this applicati
 
 - Server: Stores the data, schedules the tasks to be executed, API for the web interface
 - Agent: Executes the tasks
-- Web: User Interface
 
 # Setup
 
 ## Configuration File
 
-Server, Agents and Web Interface need a configuration file.
+Server and Agents need a configuration file.
 
 ### Server
 
@@ -63,22 +62,13 @@ config.json:
   "AGENT_ID": "agent_name",            // Name of the agent. Default: hostname
   "SERVER": "http://localhost:8080",   // Url of the server
   "HEARTBEAT_CYCLE": 60,               // Frequency (in seconds) at which the agent will connect to the server. Default: 60
+  "AGENT_ENABLE": true                 // Enable the agent (can be used to disable the agent provided by default with the server)
   "AGENT_KEY": "TO_CHANGE",            // Key needed for Agents to connect to Server (must be same as the one defined on the Server)
   "TAGS": ["linux_x86", "cloud"]       // Tags associated to this agent. Default: [] (no tag)
 }
 ```
 
 The path of the configuration file must be given with the environment vairiable: `TELEPATHY_CONFIG`
-
-### Web
-
-config.json:
-
-```
-{
-  "SERVER_URL": "http://localhost:30000"   // Url of the server
-}
-```
 
 ## Run the Services
 
@@ -92,8 +82,7 @@ The services can be executed either
 
 Images are available on Docker Hub:
 
-- https://hub.docker.com/r/didierhoarau/telepathy-web
-- https://hub.docker.com/r/didierhoarau/telepathy-server
+- https://hub.docker.com/r/didierhoarau/telepathy
 - https://hub.docker.com/r/didierhoarau/telepathy-agent
 
 Example of Kubernetes confirmation:
@@ -137,8 +126,7 @@ npm build
 TELEPATHY_CONFIG=../../config-agent.json node dist/app.js &
 
 # Web
-cd ../telepathy-agent
-# Update telepathy-web/public/config/config.json
+cd ../telepathy-web
 npm ci
 npm run dev &
 ```

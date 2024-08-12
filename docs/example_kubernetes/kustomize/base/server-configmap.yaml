@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: telepathy-server-config
+data:
+  config.json: |
+    {
+      "DATA_DIR": "/data",
+      "CORS_POLICY_ORIGIN": "*",
+      "AGENT_KEY": "TO_CHANGE",
+      "TASK_HISTORY_MAX_COUNT": "5",
+      "TASK_HISTORY_MAX_AGE_DAYS": "5"
+    }
