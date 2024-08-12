@@ -1,19 +1,21 @@
 <template>
-  <nav class="navigation_container">
-    <router-link class="navigation_item" id="page_header" to="/"><img src="/icon.png" />&nbsp;Telepathy</router-link>
-    <router-link v-if="isAuthenticated" class="navigation_item" id="navigationTaskList" to="/tasks"
-      ><i class="bi bi-gear-wide-connected"></i>&nbsp;Tasks</router-link
-    >
-    <router-link v-if="isAuthenticated" class="navigation_item" to="/agents"
-      ><i class="bi bi-pc"></i>&nbsp;Agents</router-link
-    >
-    <router-link v-if="isAuthenticated" class="navigation_item" to="/users"
-      ><i class="bi bi-people-fill"></i>&nbsp;Users</router-link
-    >
-    <router-link v-if="isAuthenticated" class="navigation_item" to="/users/profile"
-      ><i class="bi bi-person-fill"></i>&nbsp;Profile</router-link
-    >
-    <router-link v-if="!isAuthenticated" class="navigation_item" to="/users/login">Login</router-link>
+  <nav>
+    <div class="navigation_item_list">
+      <router-link class="navigation_item" id="page_header" to="/"><img src="/icon.png" /></router-link>
+      <router-link v-if="isAuthenticated" class="navigation_item" id="navigationTaskList" to="/tasks"
+        ><i class="bi bi-gear-wide-connected"></i>&nbsp;Tasks</router-link
+      >
+      <router-link v-if="isAuthenticated" class="navigation_item" to="/agents"
+        ><i class="bi bi-pc"></i>&nbsp;Agents</router-link
+      >
+      <router-link v-if="isAuthenticated" class="navigation_item" to="/users"
+        ><i class="bi bi-people-fill"></i>&nbsp;Users</router-link
+      >
+      <router-link v-if="isAuthenticated" class="navigation_item" to="/users/profile"
+        ><i class="bi bi-person-fill"></i>&nbsp;Profile</router-link
+      >
+      <router-link v-if="!isAuthenticated" class="navigation_item" to="/users/login">Login</router-link>
+    </div>
   </nav>
 </template>
 
@@ -58,11 +60,17 @@ export default {
   font-size: 1.1em;
 }
 
+.navigation_item_list {
+  display: grid;
+  align-items: center;
+}
+
 nav {
   display: grid;
   align-items: center;
   width: 100%;
   background-color: #525f7a;
+  grid-template-rows: auto 1fr;
 }
 
 .navigation_item {
@@ -76,26 +84,28 @@ nav {
 }
 
 @media (max-width: 700px) {
-  nav {
-    grid-template-columns: auto 1fr;
-  }
-
-  .navigation_container {
+  .navigation_item_list {
     grid-auto-columns: minmax(0, 1fr);
     grid-auto-flow: column;
-    height: 100%;
+    width: 100vw;
+  }
+
+  #navigatiion-padding {
+    display: none;
   }
 }
 
 @media (min-width: 700px) {
-  nav {
-    grid-template-rows: auto auto;
+  .navigation_item_list {
+    grid-template-rows: repeat(auto-fill, 1fr);
   }
 
-  .navigation_container {
+  nav {
     grid-auto-columns: 1fr;
     grid-auto-rows: 4em;
     grid-auto-flow: row;
+    height: 100%;
+    width: 7em;
   }
 }
 </style>
