@@ -31,10 +31,10 @@
 }
 
 .taskoutput {
+  border-bottom: 2px dashed;
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1.6rem;
-  border-radius: 100px;
   font-size: 90%;
   margin-bottom: 0.4rem;
 }

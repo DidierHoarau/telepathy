@@ -1,7 +1,7 @@
 <template>
   <div class="taskexec_layout">
     <div class="taskexec_layout_title">
-      <h2 class="card-title"><span class="title-type">Task:</span> {{ task.name }}</h2>
+      <h4 class="card-title"><span class="title-type">Task:</span> {{ task.name }}</h4>
     </div>
     <div class="taskexec_layout_close">
       <em v-on:click="closeTaskExecution()" class="bi bi-x icon-button"></em>
@@ -15,7 +15,7 @@
     </div>
     <div class="taskexec_layout_exec_current text-center">
       <div class="execution-header" v-if="currentTaskExecution">
-        <h3>
+        <b>
           <span v-if="currentTaskExecution.dateExecuted">
             ({{ new Date(currentTaskExecution.dateExecuted).toLocaleString() }})
           </span>
@@ -26,7 +26,7 @@
             ({{ new Date(currentTaskExecution.dateQueued).toLocaleString() }})
           </span>
           {{ currentTaskExecution.status }}
-        </h3>
+        </b>
       </div>
     </div>
     <div class="taskexec_layout_exec_older text-end">
@@ -189,6 +189,7 @@ export default {
 <style scoped>
 .execution-header {
   margin-top: 0.6rem;
+  font-size: 0.9em;
 }
 
 .taskexec_layout {

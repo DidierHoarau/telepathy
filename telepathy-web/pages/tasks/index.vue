@@ -90,6 +90,7 @@ export default {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: auto 1fr auto;
+  padding: 0.5em 0.5em 0em 0.5em;
 }
 
 .task_list {

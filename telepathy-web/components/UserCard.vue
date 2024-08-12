@@ -1,7 +1,7 @@
 <template>
   <article class="cardLayout">
     <div class="cardlayout_content">
-      <h2>{{ user.name }}</h2>
+      <h3>{{ user.name }}</h3>
     </div>
     <div class="cardlayout_actions">
       <p class="text-end">

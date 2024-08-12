@@ -2,9 +2,6 @@
   <div>
     <VitePwaManifest />
     <div id="page_container">
-      <div id="page_header">
-        <a href="/"><h1>Telepathy</h1></a>
-      </div>
       <div id="page_menu">
         <NavigationPanel />
       </div>
@@ -24,7 +21,7 @@
   height: 100vh;
   display: grid;
   overflow: hidden;
-  grid-template-rows: auto auto 1fr;
+  grid-template-rows: auto 1fr;
 }
 
 #page_content {
@@ -46,23 +43,16 @@
     display: grid;
     overflow: hidden;
     grid-template-columns: auto 1fr;
-    grid-template-rows: auto 1fr;
+    grid-template-rows: 1fr;
   }
 
   #page_menu {
     grid-column: 1;
-    grid-row: 2;
-  }
-
-  #page_header {
-    grid-column-start: 1;
-    grid-column-end: 2;
-    grid-row: 1;
   }
 
   #page_content {
     grid-column: 2;
-    grid-row: 2;
+    grid-row: 1;
   }
 }
 

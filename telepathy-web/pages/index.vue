@@ -29,12 +29,11 @@ export default {
     };
   },
   async created() {
-    axios
-      .get(`/api/users`, await AuthService.getAuthHeader())
-      .then((res) => {
-        this.users = res.data.users;
-      })
-      .catch(handleError);
+    if (await AuthService.isAuthenticated()) {
+      useRouter().push({ path: "/tasks" });
+    } else {
+      useRouter().push({ path: "/users/login" });
+    }
   },
 };
 </script>

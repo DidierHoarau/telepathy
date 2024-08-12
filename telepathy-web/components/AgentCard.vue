@@ -1,5 +1,5 @@
 <template>
-  <div class="cardLayout">
+  <article class="cardLayout">
     <div class="cardlayout_content">
       <h2 class="card-title">{{ agent.id }}</h2>
       <p>
@@ -9,7 +9,7 @@
         </span>
       </p>
     </div>
-  </div>
+  </article>
 </template>
 
 <script>
