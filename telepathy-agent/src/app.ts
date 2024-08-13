@@ -3,7 +3,7 @@ import { Auth } from "./process/Auth";
 import { Config } from "./Config";
 import { TaskExecutions } from "./process/TaskExecutions";
 import { Logger } from "./utils-std-ts/Logger";
-import { StandardTracer } from "./utils-std-ts/StandardTracer";
+import { StandardTracerInitTelemetry } from "./utils-std-ts/StandardTracer";
 
 const logger = new Logger("app");
 
@@ -18,7 +18,13 @@ Promise.resolve().then(async () => {
     config.reload();
   });
 
-  StandardTracer.initTelemetry(config);
+  console.log("foo", config.AGENT_ENABLE);
+  if (!config.AGENT_ENABLE) {
+    logger.info("AGENT_ENABLE set to false. Shutting down");
+    process.exit(0);
+  }
+
+  StandardTracerInitTelemetry(config);
 
   Auth.init(config);
   TaskExecutions.init(config);

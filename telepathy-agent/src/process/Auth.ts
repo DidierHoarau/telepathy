@@ -3,8 +3,8 @@ import { Span } from "@opentelemetry/sdk-trace-base";
 import axios from "axios";
 import { Config } from "../Config";
 import { Logger } from "../utils-std-ts/Logger";
-import { StandardTracer } from "../utils-std-ts/StandardTracer";
-import { Timeout } from "../utils-std-ts/Timeout";
+import { StandardTracerAppendHeader, StandardTracerStartSpan } from "../utils-std-ts/StandardTracer";
+import { TimeoutWait } from "../utils-std-ts/Timeout";
 
 const logger = new Logger("agents/auth");
 
@@ -19,15 +19,15 @@ export class Auth {
 
   //
   public static async check(): Promise<void> {
-    const span = StandardTracer.startSpan("Auth_check");
+    const span = StandardTracerStartSpan("Auth_check");
     await axios
       .post(
-        `${config.SERVER}/agents/${config.AGENT_ID}/session`,
+        `${config.SERVER}/api/agents/${config.AGENT_ID}/session`,
         {
           key: config.AGENT_KEY,
           tags: config.TAGS,
         },
-        { headers: StandardTracer.appendHeader(span) }
+        { headers: StandardTracerAppendHeader(span) }
       )
       .then(async (res) => {
         token = res.data.token;
@@ -39,7 +39,7 @@ export class Auth {
         logger.error(`Error authenticating to server: ${error}`);
       });
     span.end();
-    await Timeout.wait(config.HEARTBEAT_CYCLE * 1000);
+    await TimeoutWait(config.HEARTBEAT_CYCLE * 1000);
     Auth.check();
   }
 
@@ -47,7 +47,7 @@ export class Auth {
   public static async getAuthHeader(context: Span): Promise<any> {
     if (token) {
       return {
-        headers: StandardTracer.appendHeader(context, {
+        headers: StandardTracerAppendHeader(context, {
           Authorization: `Bearer ${token}`,
         }),
       };

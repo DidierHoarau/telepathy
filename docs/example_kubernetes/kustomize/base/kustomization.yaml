@@ -4,6 +4,3 @@ resources:
   - server-service.yaml
   - agent-deployment.yaml
   - agent-configmap.yaml
-  - web-deployment.yaml
-  - web-configmap.yaml
-  - web-service.yaml

@@ -4,7 +4,7 @@ import { Auth } from "../data/Auth";
 import { Agent } from "../common-model/Agent";
 import { User } from "../common-model/User";
 import { TaskExecutionStatus } from "../common-model/TaskExecutionStatus";
-import { StandardTracer } from "../utils-std-ts/StandardTracer";
+import { StandardTracerGetSpanFromRequest } from "../utils-std-ts/StandardTracer";
 import { AgentsData } from "../data/AgentsData";
 import { Config } from "../Config";
 import { TaskExecutionsData } from "../data/TaskExecutionsData";
@@ -42,7 +42,7 @@ export class AgentIdRoutes {
         if (req.body.tags) {
           agent.tags = req.body.tags;
         }
-        await agentData.register(StandardTracer.getSpanFromRequest(req), agent);
+        await agentData.register(StandardTracerGetSpanFromRequest(req), agent);
         const userAgent = new User();
         userAgent.name = req.params.agentId;
         res.status(201).send({ success: true, token: await Auth.generateJWT(userAgent) });
@@ -56,10 +56,10 @@ export class AgentIdRoutes {
     }
     fastify.get<GetTaskExecutions>("/tasks/executions", async (req, res) => {
       await Auth.mustBeAuthenticated(req, res);
-      const taskExecutionsQueued = _.filter(await taskExecutionsData.list(StandardTracer.getSpanFromRequest(req)), {
+      const taskExecutionsQueued = _.filter(await taskExecutionsData.list(StandardTracerGetSpanFromRequest(req)), {
         status: TaskExecutionStatus.queued,
       });
-      const agent = await agentData.get(StandardTracer.getSpanFromRequest(req), req.params.agentId);
+      const agent = await agentData.get(StandardTracerGetSpanFromRequest(req), req.params.agentId);
       const taskExecutionCompatible = [];
       for (const taskExecution of taskExecutionsQueued) {
         if (!taskExecution.tag || agent.tags.indexOf(taskExecution.tag) >= 0) {

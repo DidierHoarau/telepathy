@@ -1,11 +1,6 @@
 .icon-button {
   font-size: 1.4rem;
-  color: #333;
   cursor: pointer;
-}
-
-div {
-  width: 100%;
 }
 
 .page-content {
@@ -14,26 +9,8 @@ div {
 
 .page_content_container {
   padding: 1.4rem;
-}
-
-h1 {
-  font-size: 1.4rem;
-}
-
-h2 {
-  font-size: 1.2rem;
-}
-
-h3 {
-  font-size: 1rem;
-}
-
-h4 {
-  font-size: 0.9rem;
-}
-
-h5 {
-  font-size: 0.8rem;
+  height: 100%;
+  overflow-y: auto;
 }
 
 .card-body {
@@ -45,26 +22,19 @@ h5 {
   grid-template-columns: 1fr 2rem;
   grid-template-rows: 1fr;
   box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.2);
-  background-color: #f5f5f5;
   transition: 0.3s;
-  border: 1px solid #e0e0e0;
-  margin: 0.6rem;
 }
 
 .cardlayout_actions {
   grid-column: 2;
   grid-row: 1;
-  padding: 0.8rem;
-  padding-left: 0rem;
 }
 
 .taskoutput {
+  border-bottom: 2px dashed;
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1.6rem;
-  border: 2px dashed #9f9f9f;
-  color: #9f9f9f;
-  border-radius: 100px;
   font-size: 90%;
   margin-bottom: 0.4rem;
 }
@@ -77,10 +47,6 @@ h5 {
 .taskoutput_value {
   grid-column: 2;
   padding-left: 1rem;
-}
-
-div {
-  /* border: 1px solid red; */
 }
 
 /* Form */
@@ -102,14 +68,14 @@ label {
 .pageContent {
   padding: 1em;
 }
-.pageHeader {
+
+.page_header {
   display: grid;
   grid-template-columns: 1fr auto;
-  margin-bottom: 1em;
+  padding: 1em;
 }
 
 .pageSeparator {
-  border-top: 2px solid #aaa;
   margin-top: 1.6em;
   margin-bottom: 0.8em;
 }
@@ -128,9 +94,7 @@ label {
   grid-template-columns: 1fr auto;
   grid-template-rows: 1fr;
   box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.2);
-  background-color: #f5f5f5;
   transition: 0.3s;
-  border: 1px solid #e0e0e0;
   width: 100%;
 }
 
@@ -143,6 +107,5 @@ label {
 .cardlayout_content {
   grid-column: 1;
   grid-row: 1;
-  padding: 0.8rem;
   overflow: hidden;
 }

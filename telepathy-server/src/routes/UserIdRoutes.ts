@@ -2,8 +2,8 @@ import { FastifyInstance, RequestGenericInterface } from "fastify";
 import { Auth } from "../data/Auth";
 import { UserPassword } from "../data/UserPassword";
 import { User } from "../common-model/User";
-import { StandardTracer } from "../utils-std-ts/StandardTracer";
 import { UsersData } from "../data/UsersData";
+import { StandardTracerGetSpanFromRequest } from "../utils-std-ts/StandardTracer";
 
 let usersData: UsersData;
 
@@ -22,7 +22,7 @@ export class UserIdRoutes {
     }
     fastify.get<GetUserRequest>("/", async (req, res) => {
       Auth.mustBeAuthenticated(req, res);
-      const user = await usersData.get(StandardTracer.getSpanFromRequest(req), req.params.userId);
+      const user = await usersData.get(StandardTracerGetSpanFromRequest(req), req.params.userId);
       if (!user) {
         return res.status(404).send({ error: "Not Found" });
       }
@@ -41,7 +41,7 @@ export class UserIdRoutes {
     }
     fastify.put<PutUserRequest>("/", async (req, res) => {
       Auth.mustBeAuthenticated(req, res);
-      const user = await usersData.get(StandardTracer.getSpanFromRequest(req), req.params.userId);
+      const user = await usersData.get(StandardTracerGetSpanFromRequest(req), req.params.userId);
       if (!user) {
         return res.status(404).send({ error: "Not Found" });
       }
@@ -51,9 +51,9 @@ export class UserIdRoutes {
       }
       userUpddate.name = req.body.name;
       if (req.body.password) {
-        await UserPassword.setPassword(StandardTracer.getSpanFromRequest(req), userUpddate, req.body.password);
+        await UserPassword.setPassword(StandardTracerGetSpanFromRequest(req), userUpddate, req.body.password);
       }
-      await usersData.update(StandardTracer.getSpanFromRequest(req), user.id, userUpddate);
+      await usersData.update(StandardTracerGetSpanFromRequest(req), user.id, userUpddate);
       res.status(201).send({});
     });
 
@@ -64,11 +64,11 @@ export class UserIdRoutes {
     }
     fastify.delete<DeleteUserRequest>("/", async (req, res) => {
       Auth.mustBeAuthenticated(req, res);
-      const user = await usersData.get(StandardTracer.getSpanFromRequest(req), req.params.userId);
+      const user = await usersData.get(StandardTracerGetSpanFromRequest(req), req.params.userId);
       if (!user) {
         return res.status(404).send({ error: "Not Found" });
       }
-      await usersData.delete(StandardTracer.getSpanFromRequest(req), user.id);
+      await usersData.delete(StandardTracerGetSpanFromRequest(req), user.id);
       res.status(201).send({});
     });
   }

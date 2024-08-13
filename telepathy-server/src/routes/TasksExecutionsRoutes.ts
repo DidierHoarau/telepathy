@@ -3,8 +3,8 @@ import { FastifyInstance, RequestGenericInterface } from "fastify";
 import { Auth } from "../data/Auth";
 import { TaskExecution } from "../common-model/TaskExecution";
 import { TaskExecutionStatus } from "../common-model/TaskExecutionStatus";
-import { StandardTracer } from "../utils-std-ts/StandardTracer";
 import { TaskExecutionsData } from "../data/TaskExecutionsData";
+import { StandardTracerGetSpanFromRequest } from "../utils-std-ts/StandardTracer";
 
 let taskExecutionsData: TaskExecutionsData;
 
@@ -23,7 +23,7 @@ export class TasksExecutuionsRoutes {
     }
     fastify.get<GetTaskExecutions>("/", async (req, res) => {
       await Auth.mustBeAuthenticated(req, res);
-      const tasksExecutions = await taskExecutionsData.list(StandardTracer.getSpanFromRequest(req));
+      const tasksExecutions = await taskExecutionsData.list(StandardTracerGetSpanFromRequest(req));
       const output: TaskExecution[] = [];
       for (const tasksExecution of tasksExecutions) {
         if (tasksExecution.taskId === req.params.taskId) {
@@ -41,7 +41,7 @@ export class TasksExecutuionsRoutes {
     }
     fastify.post<PostTaskExecutions>("/", async (req, res) => {
       const taskExecutionAlreadyQueued = _.filter(
-        await taskExecutionsData.list(StandardTracer.getSpanFromRequest(req)),
+        await taskExecutionsData.list(StandardTracerGetSpanFromRequest(req)),
         {
           status: TaskExecutionStatus.queued,
           taskId: req.params.taskId,
@@ -52,7 +52,7 @@ export class TasksExecutuionsRoutes {
         return;
       }
       const newTaskExecution = await taskExecutionsData.createFromTaskId(
-        StandardTracer.getSpanFromRequest(req),
+        StandardTracerGetSpanFromRequest(req),
         req.params.taskId
       );
       res.status(201).send(newTaskExecution.toJson());

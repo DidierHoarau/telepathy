@@ -9,7 +9,6 @@ import { TaskExecutionsData } from "./data/TaskExecutionsData";
 import { TasksData } from "./data/TasksData";
 import { UsersData } from "./data/UsersData";
 import { Logger } from "./utils-std-ts/Logger";
-import { StandardTracer } from "./utils-std-ts/StandardTracer";
 import { TasksRoutes } from "./routes/TasksRoutes";
 import { AgentsRoutes } from "./routes/AgentsRoutes";
 import { UserRoutes } from "./routes/UsersRoutes";
@@ -22,7 +21,8 @@ import { TasksWebhooksRoutes } from "./routes/TasksWebhooksRoutes";
 import { TasksExecutionIdRoutes } from "./routes/TasksExecutionIdRoutes";
 import { FileDBUtils } from "./data/FileDbUtils";
 import { Auth } from "./data/Auth";
-import { StandardTracerApi } from "./StandardTracerApi";
+import { StandardTracerInitTelemetry, StandardTracerStartSpan } from "./utils-std-ts/StandardTracer";
+import { StandardTracerApiRegisterHooks } from "./StandardTracerApi";
 
 const logger = new Logger("app");
 
@@ -37,9 +37,9 @@ Promise.resolve().then(async () => {
     config.reload();
   });
 
-  StandardTracer.initTelemetry(config);
+  StandardTracerInitTelemetry(config);
 
-  const span = StandardTracer.startSpan("init");
+  const span = StandardTracerStartSpan("init");
 
   FileDBUtils.init(config);
   Auth.init(config);
@@ -81,22 +81,26 @@ Promise.resolve().then(async () => {
     });
   }
 
-  StandardTracerApi.registerHooks(fastify, config);
+  StandardTracerApiRegisterHooks(fastify, config);
 
-  fastify.register(new AgentsRoutes(agentsData).getRoutes, { prefix: "/agents" });
-  fastify.register(new AgentIdRoutes(config, agentsData, taskExecutionsData).getRoutes, { prefix: "/agents/:agentId" });
-  fastify.register(new TasksRoutes(tasksData, scheduler).getRoutes, { prefix: "/tasks" });
-  fastify.register(new TaskIdRoutes(tasksData, scheduler).getRoutes, { prefix: "/tasks/:taskId" });
-  fastify.register(new TasksExecutuionsRoutes(taskExecutionsData).getRoutes, { prefix: "/tasks/:taskId/executions" });
+  fastify.register(new AgentsRoutes(agentsData).getRoutes, { prefix: "/api/agents" });
+  fastify.register(new AgentIdRoutes(config, agentsData, taskExecutionsData).getRoutes, {
+    prefix: "/api/agents/:agentId",
+  });
+  fastify.register(new TasksRoutes(tasksData, scheduler).getRoutes, { prefix: "/api/tasks" });
+  fastify.register(new TaskIdRoutes(tasksData, scheduler).getRoutes, { prefix: "/api/tasks/:taskId" });
+  fastify.register(new TasksExecutuionsRoutes(taskExecutionsData).getRoutes, {
+    prefix: "/api/tasks/:taskId/executions",
+  });
   fastify.register(new TasksExecutionsForAgentsRoutes(taskExecutionsData).getRoutes, {
-    prefix: "/tasks/:taskId/executions/agent",
+    prefix: "/api/tasks/:taskId/executions/agent",
   });
   fastify.register(new TasksExecutionIdRoutes(taskExecutionsData).getRoutes, {
-    prefix: "/tasks/:taskId/executions/:taskExecutionId",
+    prefix: "/api/tasks/:taskId/executions/:taskExecutionId",
   });
-  fastify.register(new TasksWebhooksRoutes(tasksData, taskExecutionsData).getRoutes, { prefix: "/tasks/webhooks" });
-  fastify.register(new UserRoutes(usersData).getRoutes, { prefix: "/users" });
-  fastify.register(new UserIdRoutes(usersData).getRoutes, { prefix: "/users/:userId" });
+  fastify.register(new TasksWebhooksRoutes(tasksData, taskExecutionsData).getRoutes, { prefix: "/api/tasks/webhooks" });
+  fastify.register(new UserRoutes(usersData).getRoutes, { prefix: "/api/users" });
+  fastify.register(new UserIdRoutes(usersData).getRoutes, { prefix: "/api/users/:userId" });
 
   fastify.listen({ port: config.API_PORT, host: "0.0.0.0" }, (err) => {
     if (err) {
