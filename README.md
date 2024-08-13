@@ -36,6 +36,8 @@ Server and Agents need a configuration file.
 
 ### Server
 
+Note: the server also bundle an agent so both agent and server parameters are supported
+
 config.json:
 
 ```
@@ -89,10 +91,6 @@ Example of Kubernetes confirmation:
 
 [Kubernetes Example](docs/example_kubernetes)[]
 
-Example of Docker Swarm (or Docker Compose) configuration:
-
-TODO
-
 ### Binaries
 
 Binary are available only for agent for now. Server and Web Interface have to be deployed with Docker or source
@@ -107,7 +105,7 @@ TELEPATHY_CONFIG=./config-agent.json
 
 ```
 
-### Sources
+### Sources & Development
 
 ```bash
 git clone https://github.com/DidierHoarau/telepathy

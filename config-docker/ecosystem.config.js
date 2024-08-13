@@ -21,6 +21,7 @@ module.exports = {
       name: "agent",
       cwd: "/opt/app/telepathy-agent",
       script: "dist/app.js",
+      start_delay: 30000,
       env: {
         NODE_ENV: "production",
       },

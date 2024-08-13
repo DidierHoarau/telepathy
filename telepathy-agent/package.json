@@ -1,6 +1,6 @@
 {
   "name": "telepathy-agent",
-  "version": "1.3.1",
+  "version": "2.0.0",
   "author": "",
   "license": "MIT",
   "scripts": {
@@ -16,8 +16,8 @@
     "dev:test": "NODE_ENV=dev jest --watch --coverage",
     "binary:alpine:x64": "npm run build && pkg dist/app.js --target node16-alpine-x64 --output ./dist/telepathy-agent-linux-alpine",
     "binary:linux:x64": "npm run build && pkg dist/app.js --target node16-linux-x64 --output ./dist/telepathy-agent-linux-x64",
-    "binary:linux:armv6": "npm run build && pkg dist/app.js --target node12-linux-armv6 --output ./dist/telepathy-agent-linux-armv6",
-    "binary:linux:arm64": "npm run build && pkg dist/app.js --target node12-linux-arm64 --output ./dist/telepathy-agent-linux-arm64"
+    "binary:linux:armv6": "npm run build && pkg dist/app.js --target node16-linux-armv6 --output ./dist/telepathy-agent-linux-armv6",
+    "binary:linux:arm64": "npm run build && pkg dist/app.js --target node16-linux-arm64 --output ./dist/telepathy-agent-linux-arm64"
   },
   "dependencies": {
     "@opentelemetry/api": "^1.9.0",
