@@ -30,4 +30,3 @@ jobs:
           set -e
           chmod +x _dev/*.sh
           ./_dev/docker-build-images.sh
-          ./_dev/docker-publish-images.sh
