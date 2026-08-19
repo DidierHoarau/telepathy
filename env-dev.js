@@ -1,0 +1,5 @@
+module.exports = {
+  OPENTELEMETRY_COLLECTOR_HTTP: "http://localhost:4318/v1/traces",
+  OPENTELEMETRY_COLLECT_AUTHORIZATION_HEADER: "",
+  OPENTELEMETRY_COLLECTOR_AWS: false,
+};

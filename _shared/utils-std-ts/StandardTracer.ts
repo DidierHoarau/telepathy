@@ -1,7 +1,7 @@
 import { BatchSpanProcessor, Span } from "@opentelemetry/sdk-trace-base";
 import { NodeTracerProvider } from "@opentelemetry/sdk-trace-node";
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
-import { Resource } from "@opentelemetry/resources";
+import { resourceFromAttributes } from "@opentelemetry/resources";
 import { AWSXRayIdGenerator } from "@opentelemetry/id-generator-aws-xray";
 
 import { SemanticAttributes, SemanticResourceAttributes } from "@opentelemetry/semantic-conventions";
@@ -19,23 +19,25 @@ const propagator = new W3CTraceContextPropagator();
 //
 export function StandardTracerInitTelemetry(initConfig: ConfigInterface) {
   config = initConfig;
-  const provider = new NodeTracerProvider({
-    idGenerator: new AWSXRayIdGenerator(),
-    resource: new Resource({
-      [SemanticResourceAttributes.SERVICE_NAME]: `${config.SERVICE_ID}`,
-      [SemanticResourceAttributes.SERVICE_VERSION]: `${config.VERSION}`,
-      [SemanticResourceAttributes.SERVICE_NAMESPACE]: "feedwatcher",
-      [SemanticResourceAttributes.HOST_NAME]: os.hostname(),
-    }),
-  });
-  provider.register();
+  const spanProcessors = [];
   if (config.OPENTELEMETRY_COLLECTOR_HTTP) {
     const exporter = new OTLPTraceExporter({
       url: config.OPENTELEMETRY_COLLECTOR_HTTP,
       headers: {},
     });
-    provider.addSpanProcessor(new BatchSpanProcessor(exporter));
+    spanProcessors.push(new BatchSpanProcessor(exporter));
   }
+  const provider = new NodeTracerProvider({
+    idGenerator: new AWSXRayIdGenerator(),
+    resource: resourceFromAttributes({
+      [SemanticResourceAttributes.SERVICE_NAME]: `${config.SERVICE_ID}`,
+      [SemanticResourceAttributes.SERVICE_VERSION]: `${config.VERSION}`,
+      [SemanticResourceAttributes.SERVICE_NAMESPACE]: "feedwatcher",
+      [SemanticResourceAttributes.HOST_NAME]: os.hostname(),
+    }),
+    spanProcessors,
+  });
+  provider.register();
   const contextManager = new AsyncHooksContextManager();
   contextManager.enable();
   opentelemetry.context.setGlobalContextManager(contextManager);
