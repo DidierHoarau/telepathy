@@ -1,5 +1,5 @@
 # BUILD
-FROM node:20 AS builder
+FROM node:22 AS builder
 
 WORKDIR /opt/app
 
@@ -22,7 +22,7 @@ RUN cd telepathy-web && \
     npm run generate
 
 # RUN
-FROM node:20
+FROM node:22
 
 RUN apt-get update && \
     apt-get install -y nginx && \
