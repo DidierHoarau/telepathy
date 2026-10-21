@@ -46,6 +46,22 @@ export class UserRoutes {
       }
     });
 
+    fastify.post("/session/refresh", async (req, res) => {
+      const authorization = req.headers.authorization;
+      if (!authorization) {
+        return res.status(403).send({ error: "Access Denied" });
+      }
+      const session = await Auth.checkToken(authorization.split(" ")[1]);
+      if (!session.authenticated) {
+        return res.status(403).send({ error: "Access Denied" });
+      }
+      const user = await usersData.get(OTelRequestSpan(req), session.info.user_id);
+      if (!user) {
+        return res.status(403).send({ error: "Access Denied" });
+      }
+      res.status(201).send({ token: await Auth.generateJWT(user) });
+    });
+
     fastify.get("/", async (req, res) => {
       await Auth.mustBeAuthenticated(req, res);
       const users = await usersData.list(OTelRequestSpan(req));

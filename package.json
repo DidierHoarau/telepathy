@@ -1,6 +1,6 @@
 {
   "name": "telepathy",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Lightweight automation tool",
   "main": "ecosystem.config.js",
   "scripts": {

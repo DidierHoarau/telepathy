@@ -1,25 +1,28 @@
 <template>
-  <article class="cardLayout">
-    <div class="cardlayout_content">
-      <h3>{{ user.name }}</h3>
+  <article class="user-card">
+    <span class="avatar" aria-hidden="true">{{ initials }}</span>
+    <div class="user-card-body">
+      <h3 :title="user.name">{{ user.name }}</h3>
+      <p>Member</p>
     </div>
-    <div class="cardlayout_actions">
-      <p class="text-end">
-        <router-link :to="'/users/' + user.id + '/edit'"><em class="bi bi-pencil-square icon-button"></em></router-link>
-      </p>
-    </div>
+    <NuxtLink
+      :to="`/users/${user.id}/edit`"
+      class="icon-button"
+      :aria-label="`Edit ${user.name}`"
+      title="Edit user"
+    >
+      <i class="bi bi-pencil" aria-hidden="true"></i>
+    </NuxtLink>
   </article>
 </template>
 
-<script>
-export default {
-  name: "UserCard",
-  props: {
-    user: Object,
-  },
-  data() {
-    return {};
-  },
-  methods: {},
-};
+<script setup lang="ts">
+import type { User } from "~/types/telepathy";
+
+const props = defineProps<{ user: User }>();
+
+const initials = computed(() => {
+  const name = props.user.name?.trim();
+  return name ? name.slice(0, 2).toUpperCase() : "?";
+});
 </script>

@@ -1,124 +1,131 @@
 <template>
-  <div class="tasks_wrapper">
-    <div class="page_header">
-      <h2>Tasks</h2>
-      <router-link id="addTaskButton" to="/tasks/new"><em class="bi bi-plus-square icon-button"></em></router-link>
-    </div>
-    <div class="task_list">
-      <div v-for="folder in taskFolders" v-bind:key="folder.name">
-        <h3 v-if="folder.name" class="task_folder">{{ folder.name }}</h3>
-        <div id="taskList" class="cardList">
-          <TaskCard
-            v-for="task in folder.tasks"
-            v-bind:key="task.id"
-            v-on:click="onTaskClicked(task.id)"
-            :task="task"
-          />
-        </div>
+  <div class="page">
+    <PageHeader
+      eyebrow="Automation"
+      title="Tasks"
+      description="Shell scripts scheduled on your agents, triggered by cron or on demand."
+    >
+      <NuxtLink to="/tasks/new" class="btn btn-primary">
+        <i class="bi bi-plus-lg" aria-hidden="true"></i>
+        New task
+      </NuxtLink>
+    </PageHeader>
+
+    <div class="toolbar">
+      <div class="search-field">
+        <i class="bi bi-search" aria-hidden="true"></i>
+        <input
+          v-model="search"
+          type="search"
+          placeholder="Search tasks, tags or schedules"
+          aria-label="Search tasks"
+        />
       </div>
+      <span class="toolbar-count">{{ tasks.length }} task{{ tasks.length === 1 ? "" : "s" }}</span>
     </div>
-    <div v-if="taskIdSelected" class="task_detail">
-      <Transition>
-        <TaskExecutions :taskId="taskIdSelected" />
-      </Transition>
+
+    <div v-if="loading" class="page-loading">
+      <Loading size="small" label="Loading tasks" />
     </div>
+
+    <template v-else>
+      <EmptyState
+        v-if="tasks.length === 0"
+        icon="bi bi-terminal"
+        title="No tasks yet"
+        description="Create your first task to run a script on an agent, on a schedule or from a webhook."
+      >
+        <NuxtLink to="/tasks/new" class="btn btn-primary">
+          <i class="bi bi-plus-lg" aria-hidden="true"></i>
+          Create a task
+        </NuxtLink>
+      </EmptyState>
+
+      <EmptyState
+        v-else-if="groups.length === 0"
+        icon="bi bi-search"
+        title="No matching tasks"
+        :description="`Nothing matches “${search}”. Try another name or tag.`"
+      />
+
+      <div v-else class="task-groups">
+        <section v-for="group in groups" :key="group.name || 'ungrouped'">
+          <header class="task-group-header">
+            <div class="task-group-title">
+              <i
+                :class="group.name ? 'bi bi-folder2-open' : 'bi bi-collection'"
+                aria-hidden="true"
+              ></i>
+              <h2>{{ group.name || "General" }}</h2>
+              <span class="count-badge">{{ group.tasks.length }}</span>
+            </div>
+          </header>
+          <div class="task-grid">
+            <TaskCard
+              v-for="task in group.tasks"
+              :key="task.id"
+              :task="task"
+              @open="openTask(task)"
+              @edit="editTask(task)"
+            />
+          </div>
+        </section>
+      </div>
+    </template>
+
+    <TaskExecutions
+      v-if="selectedTask"
+      :key="selectedTask.id"
+      :task="selectedTask"
+      @close="selectedTask = null"
+    />
   </div>
 </template>
 
-<script>
-import axios from "axios";
-import * as _ from "lodash";
-import TaskCard from "~/components/TaskCard.vue";
-import TaskExecutions from "~/components/TaskExecutions.vue";
-import { EventBus, EventTypes, handleError } from "~/services/EventBus";
-import { AuthService } from "~/services/AuthService";
+<script setup lang="ts">
+import type { Task } from "~/types/telepathy";
+import { api } from "~/services/Api";
+import { groupTasks } from "~/utils/taskFolders";
+import { notifyError } from "~/utils/notify";
 
-export default {
-  name: "TaskList",
-  components: {
-    TaskCard,
-    TaskExecutions,
-  },
-  data() {
-    return {
-      taskFolders: [],
-      taskIdSelected: null,
-    };
-  },
-  created() {
-    this.load();
-    EventBus.on(EventTypes.TASK_UPDATED, (event) => {
-      this.load();
-    });
-    EventBus.on(EventTypes.TASK_EXECUTION_CLOSED, (event) => {
-      this.taskIdSelected = null;
-    });
-  },
-  methods: {
-    async load() {
-      axios
-        .get(`/api/tasks`, await AuthService.getAuthHeader())
-        .then((res) => {
-          const folders = [];
-          const sortedTasks = _.sortBy(res.data.tasks, "name");
-          for (let i = 0; i < sortedTasks.length; i++) {
-            let folderName = "";
-            if (sortedTasks[i].name.indexOf("/") > 0) {
-              folderName = sortedTasks[i].name.substring(0, sortedTasks[i].name.indexOf("/"));
-            }
-            let folder = _.find(folders, { name: folderName });
-            if (!folder) {
-              folder = { name: folderName, tasks: [] };
-              folders.push(folder);
-            }
-            folder.tasks.push(sortedTasks[i]);
-            this.taskFolders = folders;
-          }
-        })
-        .catch(handleError);
-    },
-    async onTaskClicked(id) {
-      this.taskIdSelected = id;
-    },
-  },
-};
+useHead({ title: "Tasks · Telepathy" });
+
+const tasks = ref<Task[]>([]);
+const loading = ref(true);
+const search = ref("");
+const selectedTask = ref<Task | null>(null);
+
+const groups = computed(() => {
+  const query = search.value.trim().toLowerCase();
+  const filtered = query
+    ? tasks.value.filter((task) =>
+        [task.name, task.tag, task.schedule]
+          .filter(Boolean)
+          .some((value) => String(value).toLowerCase().includes(query)),
+      )
+    : tasks.value;
+  return groupTasks(filtered);
+});
+
+async function load(): Promise<void> {
+  loading.value = true;
+  try {
+    const { data } = await api.get("/tasks");
+    tasks.value = data?.tasks ?? [];
+  } catch (error) {
+    notifyError(error);
+  } finally {
+    loading.value = false;
+  }
+}
+
+function openTask(task: Task): void {
+  selectedTask.value = task;
+}
+
+function editTask(task: Task): void {
+  navigateTo(`/tasks/${task.id}/edit`);
+}
+
+onMounted(load);
 </script>
-
-<style scoped>
-.tasks_wrapper {
-  height: 100%;
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: auto 1fr auto;
-  padding: 0.5em 0.5em 0em 0.5em;
-}
-
-.task_list {
-  height: 100%;
-  overflow: auto;
-}
-
-.task_detail {
-  overflow-x: hidden;
-  overflow-y: auto;
-  background-color: #efebe933;
-  border-top-style: solid;
-  border-top-width: 1px;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
-  height: 50vh;
-  padding: 1em;
-}
-
-.taskPanelWrapper {
-  display: grid;
-  height: 100%;
-}
-.task_folder {
-  margin-left: 0.5em;
-  margin-right: 0.5em;
-  opacity: 0.3;
-  border-bottom: 2px dashed;
-  font-size: 1rem;
-}
-</style>

@@ -1,27 +1,31 @@
 {
   "private": true,
+  "type": "module",
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "lint": "echo TODO",
-    "test": "echo TODO"
+    "lint": "oxlint components composables middleware pages services stores types utils tests nuxt.config.ts vitest.config.ts",
+    "typecheck": "nuxt typecheck",
+    "test": "npm run typecheck && vitest run"
   },
   "devDependencies": {
-    "@vite-pwa/nuxt": "^0.9.1",
-    "nuxt": "3.12.4"
+    "@types/node": "^26.6.5",
+    "@vite-pwa/nuxt": "^1.1.1",
+    "nuxt": "^4.6.1",
+    "oxlint": "^1.88.0",
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.5",
+    "vue-tsc": "^3.3.13"
   },
   "dependencies": {
-    "@picocss/pico": "^2.0.6",
-    "@pinia/nuxt": "^0.5.3",
-    "@vueuse/core": "^10.11.1",
-    "axios": "^1.7.3",
-    "bootstrap-icons": "^1.11.3",
+    "@devopsplaybook.io/common-web": "^0.3.0",
+    "@pinia/nuxt": "^1.0.3",
+    "axios": "^1.20.0",
+    "bootstrap-icons": "^1.13.2",
     "jwt-decode": "^4.0.0",
-    "lodash": "^4.17.21",
-    "mitt": "^3.0.1",
-    "pinia": "^2.2.1"
+    "pinia": "^4.1.0"
   }
 }

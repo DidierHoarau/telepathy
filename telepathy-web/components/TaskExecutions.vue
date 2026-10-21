@@ -1,249 +1,336 @@
 <template>
-  <div class="taskexec_layout">
-    <div class="taskexec_layout_title">
-      <h4 class="card-title"><span class="title-type">Task:</span> {{ task.name }}</h4>
-    </div>
-    <div class="taskexec_layout_close">
-      <em v-on:click="closeTaskExecution()" class="bi bi-x icon-button"></em>
-    </div>
-    <div class="taskexec_layout_exec_newer">
-      <em
-        v-if="taskExecutionHasNewer"
-        v-on:click="selectTaskExecution(taskExecutionPosition - 1)"
-        class="bi bi-arrow-left-circle icon-button"
-      ></em>
-    </div>
-    <div class="taskexec_layout_exec_current text-center">
-      <div class="execution-header" v-if="currentTaskExecution">
-        <b>
-          <span v-if="currentTaskExecution.dateExecuted">
-            ({{ new Date(currentTaskExecution.dateExecuted).toLocaleString() }})
-          </span>
-          <span v-else-if="currentTaskExecution.dateExecuting">
-            ({{ new Date(currentTaskExecution.dateExecuting).toLocaleString() }})
-          </span>
-          <span v-else-if="currentTaskExecution.dateQueued">
-            ({{ new Date(currentTaskExecution.dateQueued).toLocaleString() }})
-          </span>
-          {{ currentTaskExecution.status }}
-        </b>
-      </div>
-    </div>
-    <div class="taskexec_layout_exec_older text-end">
-      <em
-        v-if="taskExecutionHasOlder"
-        v-on:click="selectTaskExecution(taskExecutionPosition + 1)"
-        class="bi bi-arrow-right-circle icon-button"
-      ></em>
-    </div>
+  <Teleport to="body">
+    <Transition name="backdrop">
+      <div class="drawer-backdrop" @click="emit('close')" />
+    </Transition>
+    <Transition name="drawer" appear>
+      <aside
+        class="drawer"
+        role="dialog"
+        aria-modal="true"
+        :aria-label="`Executions of ${displayName}`"
+      >
+        <div class="execution-panel">
+          <header class="execution-header">
+            <div class="execution-heading">
+              <p class="eyebrow">Execution history</p>
+              <h2>{{ displayName }}</h2>
+              <p v-if="folder" class="execution-task-path">{{ folder }}/</p>
+            </div>
+            <div class="execution-header-actions">
+              <button
+                type="button"
+                class="icon-button"
+                aria-label="Close execution panel"
+                title="Close"
+                @click="emit('close')"
+              >
+                <i class="bi bi-x-lg" aria-hidden="true"></i>
+              </button>
+            </div>
+          </header>
 
-    <div class="taskexec_layout_exec_details">
-      <div v-if="currentTaskExecution">
-        <div
-          class="taskexec_cancel"
-          v-if="currentTaskExecution.status === 'queued' || currentTaskExecution.status === 'executing'"
-          v-on:click="cancelExecution(this.taskId, this.currentTaskExecution.id)"
-        >
-          <em class="bi bi-stop-circle"></em>&nbsp;Cancel Execution
-        </div>
+          <div class="execution-content">
+            <div v-if="loading"><Loading size="small" label="Loading executions" /></div>
 
-        <div v-for="output in currentTaskExecution.outputs" v-bind:key="output.id" class="taskoutput">
-          <div class="taskoutput_name">{{ output.name }}:</div>
-          <div class="taskoutput_value">
-            {{ output.value }}
+            <template v-else-if="executions.length === 0">
+              <div class="execution-empty">
+                <span class="empty-state-icon"><i class="bi bi-inbox" aria-hidden="true"></i></span>
+                <h3>No executions yet</h3>
+                <p>Run this task to see its outputs and logs here.</p>
+                <button type="button" class="btn btn-primary" :disabled="running" @click="run">
+                  <i class="bi bi-play-fill" aria-hidden="true"></i>
+                  {{ running ? "Starting…" : "Run task" }}
+                </button>
+              </div>
+            </template>
+
+            <template v-else>
+              <div class="execution-toolbar">
+                <div class="execution-nav" role="group" aria-label="Execution navigation">
+                  <button
+                    type="button"
+                    class="icon-button"
+                    aria-label="Newer execution"
+                    title="Newer"
+                    :disabled="position === 0"
+                    @click="select(position - 1)"
+                  >
+                    <i class="bi bi-chevron-left" aria-hidden="true"></i>
+                  </button>
+                  <span class="execution-counter">{{ position + 1 }} / {{ executions.length }}</span>
+                  <button
+                    type="button"
+                    class="icon-button"
+                    aria-label="Older execution"
+                    title="Older"
+                    :disabled="position >= executions.length - 1"
+                    @click="select(position + 1)"
+                  >
+                    <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                  </button>
+                </div>
+
+                <div class="execution-toolbar-actions">
+                  <button
+                    type="button"
+                    class="btn btn-ghost btn-sm"
+                    :disabled="!logs"
+                    @click="copyLogs"
+                  >
+                    <i class="bi bi-clipboard" aria-hidden="true"></i>
+                    Copy logs
+                  </button>
+                  <button
+                    v-if="cancelable"
+                    type="button"
+                    class="btn btn-danger-ghost btn-sm"
+                    :disabled="cancelling"
+                    @click="cancel"
+                  >
+                    <i class="bi bi-stop-circle" aria-hidden="true"></i>
+                    {{ confirmingCancel ? "Confirm cancel" : "Cancel" }}
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-primary btn-sm"
+                    :disabled="running || isRunning"
+                    @click="run"
+                  >
+                    <i class="bi bi-play-fill" aria-hidden="true"></i>
+                    {{ running ? "Starting…" : "Run again" }}
+                  </button>
+                </div>
+              </div>
+
+              <div v-if="current" class="execution-summary">
+                <span class="status-pill" :class="`status-${tone}`">
+                  <span class="status-dot" aria-hidden="true"></span>
+                  {{ label }}
+                </span>
+                <span class="execution-time">
+                  <i class="bi bi-calendar3" aria-hidden="true"></i>
+                  {{ formatDateTime(executionTimestamp(current)) }}
+                </span>
+                <span v-if="current.agentId" class="execution-agent">
+                  <i class="bi bi-cpu" aria-hidden="true"></i>
+                  {{ current.agentId }}
+                </span>
+                <span v-if="current.tag" class="chip">{{ current.tag }}</span>
+              </div>
+
+              <section v-if="outputs.length" class="execution-outputs">
+                <h3>Outputs</h3>
+                <dl class="output-grid">
+                  <div v-for="output in outputs" :key="output.id" class="output-item">
+                    <dt>{{ output.name }}</dt>
+                    <dd>{{ output.value }}</dd>
+                  </div>
+                </dl>
+              </section>
+
+              <section class="execution-logs">
+                <div class="section-title">
+                  <h3>Logs</h3>
+                  <span v-if="logsLoading" class="helper-text">Refreshing…</span>
+                </div>
+                <pre v-if="logs">{{ logs }}</pre>
+                <p v-else class="helper-text">No logs recorded for this execution.</p>
+              </section>
+            </template>
           </div>
         </div>
-      </div>
-      <div v-if="currentTaskExecution" class="col-12 p-0 m-0">
-        <br />
-        <pre>{{ logs }}</pre>
-      </div>
-      <div v-else class="col-12 p-0 m-0">
-        <p>No execution yet</p>
-      </div>
-    </div>
-  </div>
+      </aside>
+    </Transition>
+  </Teleport>
 </template>
 
-<script>
-import axios from "axios";
-import { AuthService } from "~/services/AuthService";
-import { EventBus, EventTypes, handleError } from "~/services/EventBus";
+<script setup lang="ts">
+import type { Task, TaskExecution } from "~/types/telepathy";
+import { api } from "~/services/Api";
+import {
+  executionLabel,
+  executionState,
+  executionTimestamp,
+  isExecutionActive,
+} from "~/utils/execution";
+import { formatDateTime } from "~/utils/time";
+import { taskDisplayName, taskFolderName } from "~/utils/taskFolders";
+import { notifyError, notifySuccess } from "~/utils/notify";
 
-export default {
-  name: "TaskExecutions",
-  props: {
-    taskId: String,
-  },
-  watch: {
-    async taskId(newValue) {
-      this.loadTaskExecutionHistory();
-    },
-  },
-  data() {
-    return {
-      task: {},
-      taskExecutions: [],
-      taskExecutionPosition: 0,
-      currentTaskExecution: null,
-      taskExecutionHasOlder: false,
-      taskExecutionHasNewer: false,
-      logs: "",
-      updateLoop: null,
-    };
-  },
-  created() {
-    this.loadTaskExecutionHistory();
-    this.updateLoop = setInterval(() => {
-      this.refreshTastExecutionInfo();
-    }, 5000);
-    EventBus.on(EventTypes.TASK_EXECUTION_TRIGGERED, async (event) => {
-      if (event.taskId === this.taskId) {
-        this.loadTaskExecutionHistory();
-      }
-    });
-  },
-  unmounted() {
-    if (this.updateLoop) {
-      clearInterval(this.updateLoop);
+const props = defineProps<{ task: Task }>();
+const emit = defineEmits<{ close: [] }>();
+
+const executions = ref<TaskExecution[]>([]);
+const current = ref<TaskExecution | null>(null);
+const position = ref(0);
+const logs = ref("");
+const loading = ref(true);
+const logsLoading = ref(false);
+const running = ref(false);
+const cancelling = ref(false);
+const confirmingCancel = ref(false);
+let pollTimer: ReturnType<typeof setInterval> | null = null;
+let confirmTimer: ReturnType<typeof setTimeout> | null = null;
+
+const displayName = computed(() => taskDisplayName(props.task.name));
+const folder = computed(() => taskFolderName(props.task.name));
+const outputs = computed(() => current.value?.outputs ?? []);
+const tone = computed(() => executionState(current.value));
+const label = computed(() => executionLabel(current.value));
+const isRunning = computed(() => isExecutionActive(current.value));
+const cancelable = computed(() => ["queued", "executing"].includes(current.value?.status ?? ""));
+
+async function loadHistory(): Promise<void> {
+  loading.value = true;
+  try {
+    const { data } = await api.get(`/tasks/${props.task.id}/executions`);
+    executions.value = data?.task_executions ?? [];
+    if (executions.value.length > 0) {
+      position.value = Math.min(position.value, executions.value.length - 1);
+      await select(position.value);
+    } else {
+      current.value = null;
+      logs.value = "";
     }
-  },
-  methods: {
-    async loadTaskExecutionHistory() {
-      axios
-        .get(`/api/tasks/${this.taskId}`, await AuthService.getAuthHeader())
-        .then((res) => {
-          this.task = res.data;
-        })
-        .catch(handleError);
-      axios
-        .get(`/api/tasks/${this.taskId}/executions`, await AuthService.getAuthHeader())
-        .then((res) => {
-          this.taskExecutionPosition = 0;
-          this.taskExecutions = res.data.task_executions;
-          this.selectTaskExecution(0);
-        })
-        .catch(handleError);
-    },
-    async refreshTastExecutionInfo() {
-      if (this.currentTaskExecution) {
-        axios
-          .get(
-            `/api/tasks/${this.taskId}/executions/${this.currentTaskExecution.id}`,
-            await AuthService.getAuthHeader()
-          )
-          .then((res) => {
-            this.currentTaskExecution = res.data;
-          })
-          .catch(handleError);
-        this.getExecutionLogs(this.taskId, this.currentTaskExecution.id);
+  } catch (error) {
+    notifyError(error);
+  } finally {
+    loading.value = false;
+  }
+}
+
+async function select(index: number): Promise<void> {
+  if (index < 0 || index >= executions.value.length) return;
+  const execution = executions.value[index];
+  if (!execution) return;
+  position.value = index;
+  current.value = execution;
+  await loadLogs();
+}
+
+async function loadLogs(): Promise<void> {
+  const execution = current.value;
+  if (!execution) return;
+  logsLoading.value = true;
+  try {
+    const { data } = await api.get(`/tasks/${props.task.id}/executions/${execution.id}/logs`);
+    if (current.value?.id === execution.id) logs.value = data?.logs ?? "";
+  } catch {
+    // Logs are best-effort; a deleted execution is reported by the refresh below.
+  } finally {
+    logsLoading.value = false;
+  }
+}
+
+async function refresh(): Promise<void> {
+  const execution = current.value;
+  if (!execution || document.visibilityState === "hidden") return;
+  try {
+    const { data } = await api.get<TaskExecution>(
+      `/tasks/${props.task.id}/executions/${execution.id}`,
+    );
+    if (current.value?.id === data.id) {
+      current.value = data;
+      if (!isExecutionActive(data)) {
+        const index = executions.value.findIndex((item) => item.id === data.id);
+        if (index !== -1) executions.value[index] = data;
       }
-    },
-    selectTaskExecution(position) {
-      if (this.taskExecutions.length === 0) {
-        this.currentTaskExecution = null;
-        this.taskExecutionHasOlder = false;
-        this.taskExecutionHasNewer = false;
-      } else {
-        if (position === 0) {
-          this.taskExecutionHasNewer = false;
-        } else {
-          this.taskExecutionHasNewer = true;
-        }
-        if (position === this.taskExecutions.length - 1) {
-          this.taskExecutionHasOlder = false;
-        } else {
-          this.taskExecutionHasOlder = true;
-        }
-        this.taskExecutionPosition = position;
-        this.currentTaskExecution = this.taskExecutions[position];
-        this.getExecutionLogs(this.taskId, this.currentTaskExecution.id);
-      }
-    },
-    async getExecutionLogs(taskId, executionId) {
-      axios
-        .get(`/api/tasks/${taskId}/executions/${executionId}/logs`, await AuthService.getAuthHeader())
-        .then((res) => {
-          this.logs = res.data.logs;
-        })
-        .catch(handleError);
-    },
-    async cancelExecution(taskId, executionId) {
-      const confirmation = confirm("Cancel the task execution?");
-      if (confirmation == true) {
-        axios
-          .post(`/api/tasks/${taskId}/executions/${executionId}/cancellation`, {}, await AuthService.getAuthHeader())
-          .then((res) => {
-            this.logs = res.data.logs;
-          })
-          .catch(handleError);
-      }
-    },
-    closeTaskExecution() {
-      EventBus.emit(EventTypes.TASK_EXECUTION_CLOSED, { taskId: this.taskId });
-    },
-  },
-};
+    }
+    if (isExecutionActive(data)) await loadLogs();
+  } catch {
+    // Keep the drawer stable; transient polling failures are retried.
+  }
+}
+
+async function run(): Promise<void> {
+  running.value = true;
+  try {
+    await api.post(`/tasks/${props.task.id}/executions`, {});
+    notifySuccess("Task queued");
+    position.value = 0;
+    await loadHistory();
+  } catch (error) {
+    notifyError(error);
+  } finally {
+    running.value = false;
+  }
+}
+
+async function cancel(): Promise<void> {
+  if (!current.value) return;
+  if (!confirmingCancel.value) {
+    confirmingCancel.value = true;
+    confirmTimer = setTimeout(() => {
+      confirmingCancel.value = false;
+    }, 4000);
+    return;
+  }
+  if (confirmTimer) clearTimeout(confirmTimer);
+  confirmingCancel.value = false;
+  cancelling.value = true;
+  try {
+    await api.post(`/tasks/${props.task.id}/executions/${current.value.id}/cancellation`, {});
+    notifySuccess("Cancellation requested");
+    await refresh();
+  } catch (error) {
+    notifyError(error);
+  } finally {
+    cancelling.value = false;
+  }
+}
+
+async function copyLogs(): Promise<void> {
+  try {
+    await navigator.clipboard.writeText(logs.value);
+    notifySuccess("Logs copied");
+  } catch {
+    notifyError(new Error("Unable to copy logs"));
+  }
+}
+
+function handleKeydown(event: KeyboardEvent): void {
+  if (event.key === "Escape") emit("close");
+}
+
+onMounted(() => {
+  loadHistory();
+  pollTimer = setInterval(refresh, 5000);
+  window.addEventListener("keydown", handleKeydown);
+});
+
+onUnmounted(() => {
+  if (pollTimer) clearInterval(pollTimer);
+  if (confirmTimer) clearTimeout(confirmTimer);
+  window.removeEventListener("keydown", handleKeydown);
+});
 </script>
 
 <style scoped>
-.execution-header {
-  margin-top: 0.6rem;
-  font-size: 0.9em;
+.execution-header-actions {
+  display: flex;
+  gap: 0.25rem;
 }
 
-.taskexec_layout {
-  display: grid;
-  grid-template-columns: 2rem 1fr 2rem;
-  grid-template-rows: 2.5rem 2.5rem 1fr;
-  width: 100%;
-  height: auto;
-  height: 100%;
-  overflow-x: hidden;
-  overflow-y: hidden;
+.execution-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: var(--space-2xl) var(--space-base);
+  text-align: center;
 }
 
-.taskexec_layout_title {
-  grid-column: 2;
-  grid-row: 1;
+.execution-empty h3 {
+  font-size: 1rem;
 }
 
-.taskexec_layout_close {
-  grid-column: 3;
-  grid-row: 1;
-  margin-top: -0.4rem;
+.execution-empty p {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
 }
 
-.taskexec_layout_exec_newer {
-  grid-column: 1;
-  grid-row: 2;
-}
-
-.taskexec_layout_exec_current {
-  grid-column: 2;
-  grid-row: 2;
-}
-
-.taskexec_layout_exec_older {
-  grid-column: 3;
-  grid-row: 2;
-}
-
-.taskexec_layout_exec_details {
-  grid-column: 1 / span 3;
-  grid-row: 3;
-  overflow-x: hidden;
-  overflow-y: auto;
-  padding-top: 0.5rem;
-}
-
-.title-type {
-  color: #aaa;
-}
-
-.taskexec_cancel {
-  color: #999;
-  font-size: 0.8em;
-  cursor: pointer;
+.execution-empty .btn {
+  margin-top: 0.75rem;
 }
 </style>
