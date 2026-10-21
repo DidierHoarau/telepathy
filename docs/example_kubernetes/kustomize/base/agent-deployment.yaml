@@ -16,7 +16,7 @@ spec:
         app: telepathy-agent
     spec:
       containers:
-        - image: didierhoarau/telepathy-agent
+        - image: devopsplaybookio/telepathy-agent
           name: telepathy-agent
           env:
             - name: TELEPATHY_CONFIG

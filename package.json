@@ -1,20 +1,21 @@
 {
   "name": "telepathy",
-  "version": "2.1.0",
-  "description": "",
+  "version": "2.2.0",
+  "description": "Lightweight automation tool",
   "main": "ecosystem.config.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "./_dev/run-dev-env.sh",
+    "dependencies": "./_dev/run-dev-dependencies-rebuild.sh"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/DidierHoarau/feedwatcher.git"
+    "url": "git+https://github.com/devopsplaybook-io/telepathy.git"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/DidierHoarau/feedwatcher/issues"
+    "url": "https://github.com/devopsplaybook-io/telepathy/issues"
   },
-  "homepage": "https://github.com/DidierHoarau/feedwatcher#readme"
+  "homepage": "https://github.com/devopsplaybook-io/telepathy#readme"
 }
