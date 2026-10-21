@@ -2,7 +2,7 @@ import { FastifyInstance, RequestGenericInterface } from "fastify";
 import { Auth } from "../data/Auth";
 import { TaskExecutionStatus } from "../common-model/TaskExecutionStatus";
 import { TaskExecutionsData } from "../data/TaskExecutionsData";
-import { StandardTracerGetSpanFromRequest } from "../utils-std-ts/StandardTracer";
+import { OTelRequestSpan } from "../OTelContext";
 
 let taskExecutionsData: TaskExecutionsData;
 
@@ -23,7 +23,7 @@ export class TasksExecutionIdRoutes {
     fastify.get<GetTaskExecutionRequest>("/", async (req, res) => {
       Auth.mustBeAuthenticated(req, res);
       const taskExecution = await taskExecutionsData.get(
-        StandardTracerGetSpanFromRequest(req),
+        OTelRequestSpan(req),
         req.params.taskExecutionId
       );
       res.status(200).send(taskExecution.toJson());
@@ -38,7 +38,7 @@ export class TasksExecutionIdRoutes {
     fastify.post<PostTaskExecutionCancellationRequest>("/cancellation", async (req, res) => {
       Auth.mustBeAuthenticated(req, res);
       const taskExecution = await taskExecutionsData.get(
-        StandardTracerGetSpanFromRequest(req),
+        OTelRequestSpan(req),
         req.params.taskExecutionId
       );
       if (taskExecution.status === TaskExecutionStatus.queued) {
@@ -48,7 +48,7 @@ export class TasksExecutionIdRoutes {
       } else {
         return res.status(403).send({ error: "Wrong Status" });
       }
-      await taskExecutionsData.update(StandardTracerGetSpanFromRequest(req), req.params.taskExecutionId, taskExecution);
+      await taskExecutionsData.update(OTelRequestSpan(req), req.params.taskExecutionId, taskExecution);
       res.status(202).send({});
     });
 
@@ -61,7 +61,7 @@ export class TasksExecutionIdRoutes {
     fastify.get<GetTaskExecutionLogRequest>("/logs", async (req, res) => {
       Auth.mustBeAuthenticated(req, res);
       const logs = await taskExecutionsData.getLogs(
-        StandardTracerGetSpanFromRequest(req),
+        OTelRequestSpan(req),
         req.params.taskExecutionId,
         req.params.taskId
       );

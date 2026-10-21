@@ -4,7 +4,7 @@ import { Auth } from "../data/Auth";
 import { TaskOutputDefinition } from "../common-model/TaskOutputDefinition";
 import { TasksData } from "../data/TasksData";
 import { Scheduler } from "../process/Scheduler";
-import { StandardTracerGetSpanFromRequest } from "../utils-std-ts/StandardTracer";
+import { OTelRequestSpan } from "../OTelContext";
 
 let taskData: TasksData;
 let scheduler: Scheduler;
@@ -25,7 +25,7 @@ export class TaskIdRoutes {
     }
     fastify.get<GetRequest>("/", async (req, res) => {
       Auth.mustBeAuthenticated(req, res);
-      const task = await taskData.get(StandardTracerGetSpanFromRequest(req), req.params.taskId);
+      const task = await taskData.get(OTelRequestSpan(req), req.params.taskId);
       res.status(200).send(task.toJson());
     });
 
@@ -36,7 +36,7 @@ export class TaskIdRoutes {
     }
     fastify.delete<DeleteRequest>("/", async (req, res) => {
       Auth.mustBeAuthenticated(req, res);
-      await taskData.delete(StandardTracerGetSpanFromRequest(req), req.params.taskId);
+      await taskData.delete(OTelRequestSpan(req), req.params.taskId);
       res.status(202).send({});
     });
 
@@ -55,7 +55,7 @@ export class TaskIdRoutes {
     }
     fastify.put<PutRequest>("/", async (req, res) => {
       Auth.mustBeAuthenticated(req, res);
-      const task = await taskData.get(StandardTracerGetSpanFromRequest(req), req.params.taskId);
+      const task = await taskData.get(OTelRequestSpan(req), req.params.taskId);
       if (!task) {
         return res.status(404).send({ error: "Not Found" });
       }
@@ -74,8 +74,8 @@ export class TaskIdRoutes {
       task.webhook = req.body.webhook;
       task.tag = req.body.tag;
       task.outputDefinitions = req.body.outputDefinitions;
-      await taskData.update(StandardTracerGetSpanFromRequest(req), req.params.taskId, task);
-      scheduler.calculate(StandardTracerGetSpanFromRequest(req));
+      await taskData.update(OTelRequestSpan(req), req.params.taskId, task);
+      scheduler.calculate(OTelRequestSpan(req));
       res.status(201).send(task);
     });
   }

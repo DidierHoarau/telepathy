@@ -3,9 +3,9 @@ import * as path from "path";
 import { User } from "../common-model/User";
 import { UserSession } from "../common-model/UserSession";
 import { Config } from "../Config";
-import { Logger } from "../utils-std-ts/Logger";
+import { OTelLogger } from "../OTelContext";
 
-const logger = new Logger(path.basename(__filename));
+const logger = OTelLogger().createModuleLogger(path.basename(__filename));
 let config: Config;
 
 export class Auth {
@@ -59,7 +59,7 @@ export class Auth {
         userSession.userId = await Auth.checkToken(req.headers.authorization.split(" ")[1]);
         userSession.isAuthenticated = true;
       } catch (err) {
-        logger.error(err);
+        logger.error("Failed to decode user session", err as Error);
       }
     }
     return userSession;

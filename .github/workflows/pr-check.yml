@@ -6,55 +6,65 @@ on:
 
   workflow_dispatch:
 
+concurrency:
+  group: pr-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  build:
+  verify:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
-          node-version: "22"
+          node-version: "24"
+          cache: "npm"
+          cache-dependency-path: |
+            telepathy-agent/package-lock.json
+            telepathy-server/package-lock.json
+            telepathy-web/package-lock.json
 
-      - name: Build Agent
+      - name: Build, lint and test Agent
+        working-directory: telepathy-agent
         run: |
-          cd telepathy-agent
           npm ci
           npm run build
           npm run lint
           npm run test
 
-      - name: Build Server
+      - name: Build, lint and test Server
+        working-directory: telepathy-server
         run: |
-          cd telepathy-server
           npm ci
           npm run build
           npm run lint
           npm run test
 
-      - name: Build Web
+      - name: Build, lint and test Web
+        working-directory: telepathy-web
         run: |
-          cd telepathy-web
           npm ci
           npm run build
           npm run lint
           npm run test
+
+  docker-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
-      - name: Login to Docker Hub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} # Runs a set of commands using the runners shell
-
-      - name: Build Docker Images
+      - name: Build Docker images
         run: |
           set -e
-          chmod +x _dev/*.sh
-          ./_dev/docker-build-images-beta.sh
+          docker buildx build --platform linux/amd64 --load -f Dockerfile-server -t telepathy:pr .
+          docker buildx build --platform linux/amd64 --load -f Dockerfile-agent-alpine -t telepathy-agent:pr .
+          docker buildx build --platform linux/amd64 --load -f Dockerfile-agent-ubuntu -t telepathy-agent:pr-ubuntu .

@@ -2,7 +2,7 @@ import * as _ from "lodash";
 import { FastifyInstance, RequestGenericInterface } from "fastify";
 import { TaskExecutionsData } from "../data/TaskExecutionsData";
 import { TasksData } from "../data/TasksData";
-import { StandardTracerGetSpanFromRequest } from "../utils-std-ts/StandardTracer";
+import { OTelRequestSpan } from "../OTelContext";
 
 let taskExecutionsData: TaskExecutionsData;
 let tasksData: TasksData;
@@ -22,7 +22,7 @@ export class TasksWebhooksRoutes {
       };
     }
     fastify.post<PostTaskWebhook>("/:webhookId", async (req, res) => {
-      const tasks = await tasksData.list(StandardTracerGetSpanFromRequest(req));
+      const tasks = await tasksData.list(OTelRequestSpan(req));
       const task = _.find(tasks, {
         webhook: req.params.webhookId,
       });
@@ -30,7 +30,7 @@ export class TasksWebhooksRoutes {
         return res.status(404).send({ error: "Not Found" });
       }
       const newTaskExecution = await taskExecutionsData.createFromTaskId(
-        StandardTracerGetSpanFromRequest(req),
+        OTelRequestSpan(req),
         task.id
       );
       res.status(201).send(newTaskExecution.toJson());

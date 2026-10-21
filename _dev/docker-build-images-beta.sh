@@ -6,6 +6,7 @@ REPO_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 cd ${REPO_DIR}
 
 SERVICE_NAME="telepathy"
+DOCKER_HUB_USERNAME="${DOCKER_HUB_USERNAME:?DOCKER_HUB_USERNAME is required}"
 SERVICE_VERSION=$(cat ${REPO_DIR}/package.json | jq -r '.version')
 SERVICE_VERSION_MAJOR=$(cat ${REPO_DIR}/package.json | grep \"version\" | cut -f4 -d"\"" | cut -f1 -d".")
 SERVICE_VERSION_MINOR=$(cat ${REPO_DIR}/package.json | grep \"version\" | cut -f4 -d"\"" | cut -f1-2 -d".")
@@ -16,12 +17,12 @@ docker buildx build \
   --platform linux/arm64/v8,linux/amd64 \
    --push \
   -f Dockerfile-server \
-  -t didierhoarau/${SERVICE_NAME}:beta \
+  -t ${DOCKER_HUB_USERNAME}/${SERVICE_NAME}:beta \
   .
 
 docker buildx build \
   --platform linux/arm64/v8,linux/amd64 \
    --push \
   -f Dockerfile-agent-alpine \
-  -t didierhoarau/${SERVICE_NAME}-agent:beta \
+  -t ${DOCKER_HUB_USERNAME}/${SERVICE_NAME}-agent:beta \
   .

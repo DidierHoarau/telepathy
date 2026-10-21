@@ -1,12 +1,11 @@
-import { Span } from "@opentelemetry/sdk-trace-base";
+import type { Span } from "@opentelemetry/sdk-trace-base";
 import * as _ from "lodash";
 import { Agent } from "../common-model/Agent";
-import { Logger } from "../utils-std-ts/Logger";
 import { Config } from "../Config";
-import { StandardTracerStartSpan } from "../utils-std-ts/StandardTracer";
+import { OTelLogger, OTelTracer } from "../OTelContext";
 import { TimeoutWait } from "../utils-std-ts/Timeout";
 
-const logger = new Logger("data/agentregistration");
+const logger = OTelLogger().createModuleLogger("data/agentregistration");
 
 export class AgentsData {
   //
@@ -29,7 +28,7 @@ export class AgentsData {
   }
 
   public async register(context: Span, newAgent: Agent): Promise<void> {
-    const span = StandardTracerStartSpan("Agents_register", context);
+    const span = OTelTracer().startSpan("Agents_register", context);
     const knownAgent: Agent = _.find(this.agents, {
       id: newAgent.id,
     }) as Agent;

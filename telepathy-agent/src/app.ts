@@ -1,13 +1,13 @@
+import { StandardMeter, StandardTracer } from "@devopsplaybook.io/otel-utils";
 import { watchFile } from "fs-extra";
-import { Auth } from "./process/Auth";
 import { Config } from "./Config";
+import { OTelLogger, OTelSetMeter, OTelSetTracer, OTelTracer } from "./OTelContext";
+import { Auth } from "./process/Auth";
 import { TaskExecutions } from "./process/TaskExecutions";
-import { Logger } from "./utils-std-ts/Logger";
-import { StandardTracerInitTelemetry } from "./utils-std-ts/StandardTracer";
 
-const logger = new Logger("app");
+const logger = OTelLogger().createModuleLogger("app");
 
-logger.info(`====== Starting Telepathy Agent ======`);
+logger.info("====== Starting Telepathy Agent ======");
 
 Promise.resolve().then(async () => {
   //
@@ -18,16 +18,21 @@ Promise.resolve().then(async () => {
     config.reload();
   });
 
-  console.log("foo", config.AGENT_ENABLE);
   if (!config.AGENT_ENABLE) {
     logger.info("AGENT_ENABLE set to false. Shutting down");
     process.exit(0);
   }
 
-  StandardTracerInitTelemetry(config);
+  OTelSetTracer(new StandardTracer(config));
+  OTelSetMeter(new StandardMeter(config));
+  OTelLogger().initOTel(config);
+
+  const span = OTelTracer().startSpan("init");
 
   Auth.init(config);
   TaskExecutions.init(config);
+
+  span.end();
 
   setTimeout(() => {
     Auth.check();

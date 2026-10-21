@@ -1,16 +1,15 @@
-import { Span } from "@opentelemetry/sdk-trace-base";
+import type { Span } from "@opentelemetry/sdk-trace-base";
 import * as fs from "fs-extra";
 import * as _ from "lodash";
 import { TaskExecution } from "../common-model/TaskExecution";
 import { TaskExecutionStatus } from "../common-model/TaskExecutionStatus";
 import { TaskOutput } from "../common-model/TaskOutput";
-import { Logger } from "../utils-std-ts/Logger";
-import { FileDBUtils } from "./FileDbUtils";
 import { Config } from "../Config";
+import { OTelLogger, OTelTracer } from "../OTelContext";
+import { FileDBUtils } from "./FileDbUtils";
 import { TasksData } from "./TasksData";
-import { StandardTracerStartSpan } from "../utils-std-ts/StandardTracer";
 
-const logger = new Logger("data/taskExecution");
+const logger = OTelLogger().createModuleLogger("data/taskExecution");
 
 export class TaskExecutionsData {
   //
@@ -36,7 +35,7 @@ export class TaskExecutionsData {
   }
 
   public async delete(context: Span, id: string): Promise<void> {
-    const span = StandardTracerStartSpan("TaskExecutions_delete", context);
+    const span = OTelTracer().startSpan("TaskExecutions_delete", context);
     const position = _.findIndex(this.taskExecutions, {
       id,
     });
@@ -53,7 +52,7 @@ export class TaskExecutionsData {
   }
 
   public async update(context: Span, id: string, taskExecutionUpdate: TaskExecution): Promise<void> {
-    const span = StandardTracerStartSpan("TaskExecutions_update", context);
+    const span = OTelTracer().startSpan("TaskExecutions_update", context);
     const taskExecution = _.find(this.taskExecutions, {
       id,
     });
@@ -84,7 +83,7 @@ export class TaskExecutionsData {
               outputs.push(taskOutput);
             }
           } catch (error) {
-            span.recordException(error);
+            span.recordException(error as Error);
             logger.error(`Output Pattern Matching Failed: ${error}`);
           }
         }
@@ -95,7 +94,7 @@ export class TaskExecutionsData {
   }
 
   public async createFromTaskId(context: Span, taskId: string): Promise<TaskExecution> {
-    const span = StandardTracerStartSpan("TaskExecutions_createFromTaskId", context);
+    const span = OTelTracer().startSpan("TaskExecutions_createFromTaskId", context);
     const task = await this.tasksData.get(span, taskId);
     const newTaskExecution = new TaskExecution();
     newTaskExecution.taskId = taskId;
@@ -124,7 +123,7 @@ export class TaskExecutionsData {
   }
 
   public async updateLogs(context: Span, taskExecutionId: string, taskId: string, logs: Buffer): Promise<void> {
-    const span = StandardTracerStartSpan("TaskExecutions_updateLogs", context);
+    const span = OTelTracer().startSpan("TaskExecutions_updateLogs", context);
     await fs.ensureDir(`${this.config.DATA_DIR}/logs`);
     await fs.writeFile(`${this.config.DATA_DIR}/logs/${taskId}_${taskExecutionId}.log`, logs);
     span.end();

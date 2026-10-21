@@ -16,7 +16,7 @@ spec:
         app: telepathy-server
     spec:
       containers:
-        - image: didierhoarau/telepathy-server
+        - image: devopsplaybookio/telepathy
           name: telepathy-server
           ports:
             - containerPort: 8080

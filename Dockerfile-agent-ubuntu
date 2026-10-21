@@ -1,22 +1,31 @@
 # BUILD
-FROM node:20 as builder
+FROM node:24 AS builder
 
 WORKDIR /opt/app
 
-COPY . .
+COPY telepathy-agent telepathy-agent
+COPY _shared _shared
 
 RUN cd telepathy-agent && \
     npm ci && \
-    npm run binary:linux:x64
+    npm run build
 
 
 # RUN
-FROM ubuntu
+FROM ubuntu:24.04
 
-COPY --from=builder /opt/app/telepathy-agent/dist/telepathy-agent-linux-x64 /usr/bin/telepathy-agent
+RUN apt-get update && \
+    apt-get install -y curl ca-certificates && \
+    curl -fsSL https://deb.nodesource.com/setup_24.x | bash - && \
+    apt-get install -y nodejs && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    mkdir /workspace
 
-RUN mkdir /workspace
+COPY --from=builder /opt/app/telepathy-agent/dist /opt/app/telepathy-agent/dist
+COPY --from=builder /opt/app/telepathy-agent/node_modules /opt/app/telepathy-agent/node_modules
+COPY --from=builder /opt/app/telepathy-agent/package.json /opt/app/telepathy-agent/package.json
 
 WORKDIR /workspace
 
-CMD [ "/usr/bin/telepathy-agent" ]
+CMD [ "node", "/opt/app/telepathy-agent/dist/app.js" ]

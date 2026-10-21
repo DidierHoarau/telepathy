@@ -1,11 +1,10 @@
-import { Span } from "@opentelemetry/sdk-trace-base";
+import type { Span } from "@opentelemetry/sdk-trace-base";
 import * as cron from "node-cron";
-import { Logger } from "../utils-std-ts/Logger";
-import { TasksData } from "../data/TasksData";
 import { TaskExecutionsData } from "../data/TaskExecutionsData";
-import { StandardTracerStartSpan } from "../utils-std-ts/StandardTracer";
+import { TasksData } from "../data/TasksData";
+import { OTelLogger, OTelTracer } from "../OTelContext";
 
-const logger = new Logger("data/scheduler");
+const logger = OTelLogger().createModuleLogger("data/scheduler");
 
 export class Scheduler {
   //
@@ -19,7 +18,7 @@ export class Scheduler {
   private scheduledCrons: any[] = [];
 
   public async calculate(context: Span): Promise<void> {
-    const span = StandardTracerStartSpan("Scheduler_calculate", context);
+    const span = OTelTracer().startSpan("Scheduler_calculate", context);
     logger.info("Re-calculating schedules");
     for (const scheduledCron of this.scheduledCrons) {
       scheduledCron.stop();
@@ -39,7 +38,7 @@ export class Scheduler {
   }
 
   private async execute(context: Span, taskId: string): Promise<void> {
-    const span = StandardTracerStartSpan("Scheduler_execute", context);
+    const span = OTelTracer().startSpan("Scheduler_execute", context);
     const task = await this.tasksData.get(span, taskId);
     logger.info(`Schedule reached for ${task.id}`);
     this.taskExecutionsData.createFromTaskId(span, taskId);
