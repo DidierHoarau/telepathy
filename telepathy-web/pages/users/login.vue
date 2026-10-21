@@ -1,79 +1,81 @@
 <template>
-  <div class="page_content_container">
-    <h2>Login</h2>
-    <div class="mb-3">
-      <label class="form-label">Name</label>
-      <input id="username" v-model="user.name" type="text" class="form-control" />
+  <div class="auth-page">
+    <div class="auth-card">
+      <div class="auth-brand">
+        <img src="/icon.png" alt="" />
+        <h1>Welcome back</h1>
+        <p>Sign in to Telepathy to manage tasks and agents.</p>
+      </div>
+
+      <form class="auth-form" @submit.prevent="login">
+        <div class="field">
+          <label for="username">Name</label>
+          <input
+            id="username"
+            v-model="name"
+            type="text"
+            autocomplete="username"
+            autofocus
+            required
+          />
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <input
+            id="password"
+            v-model="password"
+            type="password"
+            autocomplete="current-password"
+            required
+          />
+        </div>
+
+        <p v-if="error" class="form-error">{{ error }}</p>
+
+        <button id="loginButton" type="submit" class="btn btn-primary auth-submit" :disabled="submitting">
+          <i v-if="submitting" class="bi bi-arrow-repeat" aria-hidden="true"></i>
+          {{ submitting ? "Signing in…" : "Sign in" }}
+        </button>
+      </form>
     </div>
-    <div class="mb-3">
-      <label class="form-label">Password</label>
-      <input id="password" v-model="user.password" type="password" class="form-control" />
-    </div>
-    <button id="loginButton" v-on:click="login()" class="btn btn-primary">Login</button>
   </div>
 </template>
 
-<script>
-import axios from "axios";
-import { AuthService } from "~~/services/AuthService";
-import { EventBus, EventTypes, handleError } from "~~/services/EventBus";
+<script setup lang="ts">
+import { AuthService } from "@devopsplaybook.io/common-web/services/AuthService.ts";
+import {
+  EventBus,
+  EventTypes,
+} from "@devopsplaybook.io/common-web/composables/EventBus.ts";
+import { api } from "~/services/Api";
+import { AuthenticationStore } from "~/stores/AuthenticationStore";
+import { errorMessage, notifySuccess } from "~/utils/notify";
 
-export default {
-  name: "UserLogin",
-  props: {
-    msg: String,
-  },
-  data() {
-    return {
-      user: { name: "", script: "" },
-      isAuthenticated: false,
-    };
-  },
-  async created() {
-    await axios
-      .get(`/api/users/status/initialization`)
-      .then((res) => {
-        if (!res.data.initialized) {
-          useRouter().push({ path: "/users/new" });
-        }
-      })
-      .catch(handleError);
-    if (await AuthService.isAuthenticated()) {
-      useRouter().push({ path: "/tasks" });
-    }
-  },
-  methods: {
-    async login() {
-      if (this.user.name && this.user.password) {
-        await axios
-          .post(`/api/users/session`, this.user)
-          .then((res) => {
-            AuthService.saveToken(res.data.token);
-            EventBus.emit(EventTypes.AUTH_UPDATED, {});
-            EventBus.emit(EventTypes.ALERT_MESSAGE, {
-              type: "info",
-              text: "Authentication successful",
-            });
-            useRouter().push({ path: "/tasks" });
-          })
-          .catch(handleError);
-      } else {
-        EventBus.emit(EventTypes.ALERT_MESSAGE, {
-          type: "error",
-          text: "Username or password missing",
-        });
-      }
-      this.isAuthenticated = await AuthService.isAuthenticated();
-    },
-    async logout() {
-      await AuthService.removeToken();
-      EventBus.emit(EventTypes.AUTH_UPDATED, {});
-      EventBus.emit(EventTypes.ALERT_MESSAGE, {
-        type: "info",
-        text: "Logout successful",
-      });
-      this.isAuthenticated = await AuthService.isAuthenticated();
-    },
-  },
-};
+useHead({ title: "Sign in · Telepathy" });
+
+const authentication = AuthenticationStore();
+const name = ref("");
+const password = ref("");
+const error = ref("");
+const submitting = ref(false);
+
+async function login(): Promise<void> {
+  error.value = "";
+  submitting.value = true;
+  try {
+    const { data } = await api.post("/users/session", {
+      name: name.value.trim(),
+      password: password.value,
+    });
+    await AuthService.saveToken(data.token);
+    await authentication.ensureAuthenticated();
+    EventBus.emit(EventTypes.AUTH_UPDATED);
+    notifySuccess("Authentication successful");
+    await navigateTo("/tasks");
+  } catch (requestError) {
+    error.value = errorMessage(requestError);
+  } finally {
+    submitting.value = false;
+  }
+}
 </script>

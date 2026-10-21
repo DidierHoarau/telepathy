@@ -20,6 +20,7 @@ docker buildx build \
    --push \
   -f Dockerfile-server \
   -t ${DOCKER_HUB_USERNAME}/${SERVICE_NAME}:latest \
+  -t ${DOCKER_HUB_USERNAME}/${SERVICE_NAME}:beta \
   -t ${DOCKER_HUB_USERNAME}/${SERVICE_NAME}:${SERVICE_VERSION} \
   -t ${DOCKER_HUB_USERNAME}/${SERVICE_NAME}:${SERVICE_VERSION_MAJOR} \
   -t ${DOCKER_HUB_USERNAME}/${SERVICE_NAME}:${SERVICE_VERSION_MINOR} \
@@ -30,6 +31,7 @@ docker buildx build \
    --push \
   -f Dockerfile-agent-alpine \
   -t ${DOCKER_HUB_USERNAME}/${SERVICE_NAME}-agent:latest \
+  -t ${DOCKER_HUB_USERNAME}/${SERVICE_NAME}-agent:beta \
   -t ${DOCKER_HUB_USERNAME}/${SERVICE_NAME}-agent:${SERVICE_VERSION} \
   -t ${DOCKER_HUB_USERNAME}/${SERVICE_NAME}-agent:${SERVICE_VERSION_MAJOR} \
   -t ${DOCKER_HUB_USERNAME}/${SERVICE_NAME}-agent:${SERVICE_VERSION_MINOR} \
@@ -39,6 +41,7 @@ docker buildx build \
   --platform linux/arm64/v8,linux/amd64 \
    --push \
   -f Dockerfile-agent-ubuntu \
+  -t ${DOCKER_HUB_USERNAME}/${SERVICE_NAME}-agent:beta-ubuntu \
   -t ${DOCKER_HUB_USERNAME}/${SERVICE_NAME}-agent:${SERVICE_VERSION}-ubuntu \
   -t ${DOCKER_HUB_USERNAME}/${SERVICE_NAME}-agent:${SERVICE_VERSION_MAJOR}-ubuntu \
   -t ${DOCKER_HUB_USERNAME}/${SERVICE_NAME}-agent:${SERVICE_VERSION_MINOR}-ubuntu \
