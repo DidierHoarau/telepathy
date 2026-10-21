@@ -14,7 +14,7 @@ module.exports = {
       script: "dist/app.js",
       env: {
         NODE_ENV: "production",
-        TELEPATHY_DATA_DIR: "/data",
+        DATA_DIR: "/data",
       },
     },
     {

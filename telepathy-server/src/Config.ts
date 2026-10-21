@@ -1,56 +1,47 @@
+import { ConfigBase } from "@devopsplaybook.io/common-utils";
 import * as fse from "fs-extra";
+import * as path from "path";
 import { v4 as uuidv4 } from "uuid";
-import { Logger } from "./utils-std-ts/Logger";
-import { ConfigInterface } from "./utils-std-ts/models/ConfigInterface";
+import { OTelLogger } from "./OTelContext";
 
-const logger = new Logger("config");
+const logger = OTelLogger().createModuleLogger("config");
 
-export class Config implements ConfigInterface {
-  //
-  public readonly CONFIG_FILE: string = process.env.TELEPATHY_CONFIG || "";
-  public readonly SERVICE_ID = "telepathy-server";
-  public VERSION = 1;
-  public readonly API_PORT: number = 8080;
-  public AGENT_REGISTRATION_DURATION: number = 30 * 60;
-  public JWT_VALIDITY_DURATION: number = 7 * 24 * 3600;
-  public CORS_POLICY_ORIGIN: string;
-  public DATA_DIR = ".";
-  public AGENT_KEY: string = uuidv4();
-  public JWT_KEY: string = uuidv4();
-  public LOG_LEVEL = "info";
+export class Config extends ConfigBase {
+  public AGENT_REGISTRATION_DURATION = 30 * 60;
   public TASK_HISTORY_MAX_COUNT = 100;
   public TASK_HISTORY_MAX_AGE_DAYS = 30;
   public TASK_ALIVE_TIMEOUT = 100;
   public FILE_REDUNDANCY = 2;
-  public OPENTELEMETRY_COLLECTOR_HTTP: string;
-  public OPENTELEMETRY_COLLECTOR_AWS = false;
+  public AGENT_KEY: string = uuidv4();
+  // Previous configuration key, still accepted so existing deployments keep
+  // exporting traces after the upgrade.
+  public OPENTELEMETRY_COLLECTOR_HTTP = "";
+
+  constructor() {
+    super("telepathy-server", process.env.TELEPATHY_CONFIG || process.env.CONFIG_FILE);
+
+    try {
+      const pkg = fse.readJsonSync(path.resolve(__dirname, "../package.json"));
+      if (pkg && pkg.version) {
+        this.VERSION = pkg.version;
+      }
+    } catch {
+      // Keep the ConfigBase default when running without a package manifest.
+    }
+
+    this.addConfigField({ field: "AGENT_REGISTRATION_DURATION" });
+    this.addConfigField({ field: "TASK_HISTORY_MAX_COUNT" });
+    this.addConfigField({ field: "TASK_HISTORY_MAX_AGE_DAYS" });
+    this.addConfigField({ field: "TASK_ALIVE_TIMEOUT" });
+    this.addConfigField({ field: "FILE_REDUNDANCY" });
+    this.addConfigField({ field: "AGENT_KEY", sensitive: true });
+    this.addConfigField({ field: "OPENTELEMETRY_COLLECTOR_HTTP" });
+  }
 
   public async reload(): Promise<void> {
-    const content = await fse.readJson(this.CONFIG_FILE);
-    const setIfSet = (field: string, displayLog = true) => {
-      if (content[field]) {
-        this[field] = content[field];
-      }
-      if (displayLog) {
-        logger.info(`Configuration Value: ${field}: ${this[field]}`);
-      } else {
-        logger.info(`Configuration Value: ${field}: ********************`);
-      }
-    };
-    logger.info(`Configuration Value: CONFIG_FILE: ${this.CONFIG_FILE}`);
-    logger.info(`Configuration Value: VERSION: ${this.VERSION}`);
-    setIfSet("AGENT_REGISTRATION_DURATION");
-    setIfSet("JWT_VALIDITY_DURATION");
-    setIfSet("CORS_POLICY_ORIGIN");
-    setIfSet("DATA_DIR");
-    setIfSet("TASK_HISTORY_MAX_COUNT");
-    setIfSet("TASK_HISTORY_MAX_AGE_DAYS");
-    setIfSet("AGENT_KEY", false);
-    setIfSet("JWT_KEY", false);
-    setIfSet("TASK_ALIVE_TIMEOUT");
-    setIfSet("LOG_LEVEL");
-    setIfSet("FILE_REDUNDANCY");
-    setIfSet("OPENTELEMETRY_COLLECTOR_HTTP");
-    setIfSet("OPENTELEMETRY_COLLECTOR_AWS");
+    await super.reload((message: string) => logger.info(message));
+    if (!this.OPENTELEMETRY_COLLECTOR_HTTP_TRACES && this.OPENTELEMETRY_COLLECTOR_HTTP) {
+      this.OPENTELEMETRY_COLLECTOR_HTTP_TRACES = this.OPENTELEMETRY_COLLECTOR_HTTP;
+    }
   }
 }

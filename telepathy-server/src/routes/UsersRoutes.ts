@@ -3,7 +3,7 @@ import { UserPassword } from "../data/UserPassword";
 import { Auth } from "../data/Auth";
 import { User } from "../common-model/User";
 import { UsersData } from "../data/UsersData";
-import { StandardTracerGetSpanFromRequest } from "../utils-std-ts/StandardTracer";
+import { OTelRequestSpan } from "../OTelContext";
 
 let usersData: UsersData;
 
@@ -16,7 +16,7 @@ export class UserRoutes {
   public async getRoutes(fastify: FastifyInstance): Promise<void> {
     //
     fastify.get("/status/initialization", async (req, res) => {
-      if ((await usersData.list(StandardTracerGetSpanFromRequest(req))).length === 0) {
+      if ((await usersData.list(OTelRequestSpan(req))).length === 0) {
         res.status(201).send({ initialized: false });
       } else {
         res.status(201).send({ initialized: true });
@@ -36,10 +36,10 @@ export class UserRoutes {
       if (!req.body.password) {
         return res.status(400).send({ error: "Missing: Password" });
       }
-      const user = await usersData.getByName(StandardTracerGetSpanFromRequest(req), req.body.name);
+      const user = await usersData.getByName(OTelRequestSpan(req), req.body.name);
       if (!user) {
         return res.status(403).send({ error: "Authentication Failed" });
-      } else if (await UserPassword.checkPassword(StandardTracerGetSpanFromRequest(req), user, req.body.password)) {
+      } else if (await UserPassword.checkPassword(OTelRequestSpan(req), user, req.body.password)) {
         res.status(201).send({ success: true, token: await Auth.generateJWT(user) });
       } else {
         return res.status(403).send({ error: "Authentication Failed" });
@@ -48,7 +48,7 @@ export class UserRoutes {
 
     fastify.get("/", async (req, res) => {
       await Auth.mustBeAuthenticated(req, res);
-      const users = await usersData.list(StandardTracerGetSpanFromRequest(req));
+      const users = await usersData.list(OTelRequestSpan(req));
       for (const user of users) {
         delete user.passwordEncrypted;
       }
@@ -63,7 +63,7 @@ export class UserRoutes {
     }
     fastify.post<PostUser>("/", async (req, res) => {
       let isInitialized = true;
-      if ((await usersData.list(StandardTracerGetSpanFromRequest(req))).length === 0) {
+      if ((await usersData.list(OTelRequestSpan(req))).length === 0) {
         isInitialized = false;
       }
       const userSession = await Auth.getUserSession(req);
@@ -77,12 +77,12 @@ export class UserRoutes {
       if (!req.body.password) {
         return res.status(400).send({ error: "Missing: Password" });
       }
-      if (await usersData.getByName(StandardTracerGetSpanFromRequest(req), req.body.name)) {
+      if (await usersData.getByName(OTelRequestSpan(req), req.body.name)) {
         return res.status(400).send({ error: "Username Already Exists" });
       }
       newUser.name = req.body.name;
-      await UserPassword.setPassword(StandardTracerGetSpanFromRequest(req), newUser, req.body.password);
-      await usersData.add(StandardTracerGetSpanFromRequest(req), newUser);
+      await UserPassword.setPassword(OTelRequestSpan(req), newUser, req.body.password);
+      await usersData.add(OTelRequestSpan(req), newUser);
       res.status(201).send({});
     });
   }

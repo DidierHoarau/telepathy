@@ -4,7 +4,7 @@ import { Auth } from "../data/Auth";
 import { Task } from "../common-model/Task";
 import { TasksData } from "../data/TasksData";
 import { Scheduler } from "../process/Scheduler";
-import { StandardTracerGetSpanFromRequest } from "../utils-std-ts/StandardTracer";
+import { OTelRequestSpan } from "../OTelContext";
 
 let taskData: TasksData;
 let scheduler: Scheduler;
@@ -20,7 +20,7 @@ export class TasksRoutes {
     //
     fastify.get("/", async (req, res) => {
       await Auth.mustBeAuthenticated(req, res);
-      const tasks = await taskData.list(StandardTracerGetSpanFromRequest(req));
+      const tasks = await taskData.list(OTelRequestSpan(req));
       res.status(200).send({
         tasks,
       });
@@ -46,8 +46,8 @@ export class TasksRoutes {
       }
 
       const newTask = Task.fromJson(req.body);
-      await taskData.add(StandardTracerGetSpanFromRequest(req), newTask);
-      scheduler.calculate(StandardTracerGetSpanFromRequest(req));
+      await taskData.add(OTelRequestSpan(req), newTask);
+      scheduler.calculate(OTelRequestSpan(req));
       res.status(201).send(newTask.toJson());
     });
   }

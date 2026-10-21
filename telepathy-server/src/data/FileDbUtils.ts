@@ -1,11 +1,10 @@
-import { Span } from "@opentelemetry/sdk-trace-base";
+import type { Span } from "@opentelemetry/sdk-trace-base";
 import * as fs from "fs-extra";
-import { Logger } from "../utils-std-ts/Logger";
 import { Config } from "../Config";
-import { StandardTracerStartSpan } from "../utils-std-ts/StandardTracer";
+import { OTelLogger, OTelTracer } from "../OTelContext";
 import { TimeoutWait } from "../utils-std-ts/Timeout";
 
-const logger = new Logger("FileDBUtils");
+const logger = OTelLogger().createModuleLogger("FileDBUtils");
 let config: Config;
 
 export class FileDBUtils {
@@ -16,7 +15,7 @@ export class FileDBUtils {
 
   /* eslint-disable @typescript-eslint/no-explicit-any */
   public static async load(context: Span, collection: string, defaultData: any): Promise<any> {
-    const span = StandardTracerStartSpan("FileDBUtils_load", context);
+    const span = OTelTracer().startSpan("FileDBUtils_load", context);
     let data = defaultData;
     for (let i = 0; i < Math.max(config.FILE_REDUNDANCY, 1); i++) {
       const filename = `${config.DATA_DIR}/${collection}${i > 0 ? `.${i}` : ""}.json`;

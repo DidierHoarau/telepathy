@@ -35,7 +35,6 @@ module.exports = {
       env_development: {
         DEV_MODE: "true",
         TELEPATHY_CONFIG: "../_dev/config/config-agent.json",
-        TELEPATHY_DATA_DIR: "../_dev/data/server",
       },
     },
     {
@@ -52,7 +51,7 @@ module.exports = {
       env_development: {
         DEV_MODE: "true",
         TELEPATHY_CONFIG: "../_dev/config/config-server.json",
-        TELEPATHY_DATA_DIR: "../_dev/data/server",
+        DATA_DIR: "../_dev/data",
       },
     },
     {

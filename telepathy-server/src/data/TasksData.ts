@@ -1,8 +1,8 @@
-import { Span } from "@opentelemetry/sdk-trace-base";
+import type { Span } from "@opentelemetry/sdk-trace-base";
 import * as _ from "lodash";
 import { Task } from "../common-model/Task";
+import { OTelTracer } from "../OTelContext";
 import { FileDBUtils } from "./FileDbUtils";
-import { StandardTracerStartSpan } from "../utils-std-ts/StandardTracer";
 
 export class TasksData {
   //
@@ -21,7 +21,7 @@ export class TasksData {
   }
 
   public async update(context: Span, id: string, taskUpdate: Task): Promise<void> {
-    const span = StandardTracerStartSpan("Tasks_update", context);
+    const span = OTelTracer().startSpan("Tasks_update", context);
     const task = _.find(this.tasks, {
       id,
     }) as Task;
@@ -36,7 +36,7 @@ export class TasksData {
   }
 
   public async delete(context: Span, id: string): Promise<void> {
-    const span = StandardTracerStartSpan("Tasks_delete", context);
+    const span = OTelTracer().startSpan("Tasks_delete", context);
     const position = _.findIndex(this.tasks, {
       id,
     });

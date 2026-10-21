@@ -1,12 +1,12 @@
 import { SpanStatusCode } from "@opentelemetry/api";
-import { Span } from "@opentelemetry/sdk-trace-base";
+import { StandardTracer } from "@devopsplaybook.io/otel-utils";
+import type { Span } from "@opentelemetry/sdk-trace-base";
 import axios from "axios";
 import { Config } from "../Config";
-import { Logger } from "../utils-std-ts/Logger";
-import { StandardTracerAppendHeader, StandardTracerStartSpan } from "../utils-std-ts/StandardTracer";
+import { OTelLogger, OTelTracer } from "../OTelContext";
 import { TimeoutWait } from "../utils-std-ts/Timeout";
 
-const logger = new Logger("agents/auth");
+const logger = OTelLogger().createModuleLogger("agents/auth");
 
 let token = "";
 let config: Config;
@@ -19,7 +19,7 @@ export class Auth {
 
   //
   public static async check(): Promise<void> {
-    const span = StandardTracerStartSpan("Auth_check");
+    const span = OTelTracer().startSpan("Auth_check");
     await axios
       .post(
         `${config.SERVER}/api/agents/${config.AGENT_ID}/session`,
@@ -27,7 +27,7 @@ export class Auth {
           key: config.AGENT_KEY,
           tags: config.TAGS,
         },
-        { headers: StandardTracerAppendHeader(span) }
+        { headers: StandardTracer.updateHttpHeader(span) }
       )
       .then(async (res) => {
         token = res.data.token;
@@ -36,7 +36,7 @@ export class Auth {
       .catch((error) => {
         span.status.code = SpanStatusCode.ERROR;
         span.recordException(error);
-        logger.error(`Error authenticating to server: ${error}`);
+        logger.error("Error authenticating to server", error as Error);
       });
     span.end();
     await TimeoutWait(config.HEARTBEAT_CYCLE * 1000);
@@ -47,7 +47,7 @@ export class Auth {
   public static async getAuthHeader(context: Span): Promise<any> {
     if (token) {
       return {
-        headers: StandardTracerAppendHeader(context, {
+        headers: StandardTracer.updateHttpHeader(context, {
           Authorization: `Bearer ${token}`,
         }),
       };

@@ -3,15 +3,14 @@ import * as _ from "lodash";
 import { Auth } from "./Auth";
 import { TaskExecution } from "../common-model/TaskExecution";
 import { TaskExecutionStatus } from "../common-model/TaskExecutionStatus";
-import { Logger } from "../utils-std-ts/Logger";
 import { ChildProcess, exec } from "child_process";
-import { Span } from "@opentelemetry/sdk-trace-base";
+import type { Span } from "@opentelemetry/sdk-trace-base";
 import { SpanStatusCode } from "@opentelemetry/api";
 import { Config } from "../Config";
+import { OTelLogger, OTelTracer } from "../OTelContext";
 import { TimeoutWait } from "../utils-std-ts/Timeout";
-import { StandardTracerStartSpan } from "../utils-std-ts/StandardTracer";
 
-const logger = new Logger("tasks/taskExecutions");
+const logger = OTelLogger().createModuleLogger("tasks/taskExecutions");
 let config: Config;
 
 export class TaskExecutions {
@@ -21,7 +20,7 @@ export class TaskExecutions {
   }
 
   public static async check(): Promise<void> {
-    const span = StandardTracerStartSpan("TaskExecutions_check");
+    const span = OTelTracer().startSpan("TaskExecutions_check");
     await axios
       .get(`${config.SERVER}/api/agents/${config.AGENT_ID}/tasks/executions`, await Auth.getAuthHeader(span))
       .then(async (res) => {
@@ -35,7 +34,7 @@ export class TaskExecutions {
         }
       })
       .catch((error) => {
-        logger.error(`Error processing task executions: ${error}`);
+        logger.error("Error processing task executions", error as Error);
       });
     span.end();
     await TimeoutWait(config.HEARTBEAT_CYCLE * 1000);
@@ -43,7 +42,7 @@ export class TaskExecutions {
   }
 
   private static async processExecution(taskExecution: TaskExecution): Promise<void> {
-    const span = StandardTracerStartSpan("TaskExecutions_processExecution");
+    const span = OTelTracer().startSpan("TaskExecutions_processExecution");
     span.setAttribute("process", "TaskExecutions_processExecution");
     span.setAttribute("taskExecution", taskExecution.id);
     taskExecution.status = TaskExecutionStatus.executing;
@@ -120,7 +119,7 @@ export class TaskExecutions {
     if (taskExecution.dateExecuted) {
       return;
     }
-    const span = StandardTracerStartSpan("TaskExecutions_monitorTaskExecutionDefinition", context);
+    const span = OTelTracer().startSpan("TaskExecutions_monitorTaskExecutionDefinition", context);
     const taskExecutionServerDefinition = (
       await axios.get(
         `${config.SERVER}/api/tasks/${taskExecution.taskId}/executions/agent/${taskExecution.id}`,
